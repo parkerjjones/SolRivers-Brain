@@ -1,0 +1,61 @@
+# Authentication & Credentials (NEVER COMMIT THESE)
+alsoenergy_curl.txt
+.env
+*.session
+auth.json
+
+# Database & API secrets
+DB_PASSWORD
+API_KEY
+credentials.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Generated files
+ae_sites.xlsx
+ae_hardware.xlsx
+ae_alerts.xlsx
+ae_analysis.xlsx
+ae_summaries_deep.xlsx
+ae_ai_summaries.xlsx
+ae_schema.xlsx
+ae_ruleresults.xlsx
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
