@@ -1,0 +1,476 @@
+AlsoEnergy AI Site Summaries
+Generated: 2026-06-09 03:29 UTC
+======================================================================
+
+======================================================================
+SITE: Green Elementary (S40834)  |  Risk Score: 50
+Generated: 2026-06-09T02:53  |  Cached: True
+----------------------------------------------------------------------
+All 11 Solectria PVI 28TL inverters are online and producing normally as of Jun 8 at 9:08 PM EDT, with site time after sunset.
+
+Today's production tracked expected output well under variable cloud cover from light rain, peaking around 240 kW midday.
+
+30-day Energy Performance Index averaged 0.87 with inverter availability at 100%.
+
+Sampled-inverter PV model losses show ~5% DC/AC age and 7% residual; no major losses identified.
+
+Meter-to-inverter ratio is 0.97, normal. The Weather Station (Standard) ambient temperature is stuck at -20.2Â°F, a sensor data quality issue that may affect expected energy modeling. A stale Jul 2025 rule tool alert remains open with no production correlation.
+
+Forecast calls for rain and highs climbing to 95Â°F by Jun 11; expect variable output and possible thermal derating late week.
+
+======================================================================
+SITE: Gallia Academy (S40835)  |  Risk Score: 50
+Generated: 2026-06-09T03:06  |  Cached: True
+----------------------------------------------------------------------
+Inverter 1 has been offline since Apr 6 at 10:57 AM EDT â the meter-to-inverter ratio of 0.97 confirms a sustained outage rather than a comm-only issue. The remaining 19 inverters are online and producing normally as of this evening, with the site currently under light rain at 72Â°F.
+
+The Inverter 1 outage is the only ongoing event: ~5% of site capacity unavailable for ~63 days, roughly 14 MWh lost to date (~228 kWh/day expected on the sampled inverter).
+
+30-day EPI averages 0.92 and inverter availability is 95%, both consistent with one inverter down.
+
+Meter-to-inverter ratio is 0.97 (normal). Rule tool flags 5% soiling loss on the main meter and 29% residual loss on Inverter 12 â worth monitoring.
+
+Forecast: light rain through Jun 9, rain Jun 10, warming to 95Â°F by Jun 11 â reduced output likely early week.
+
+======================================================================
+SITE: Rio Grande Elementary (S40836)  |  Risk Score: 50
+Generated: 2026-06-09T02:54  |  Cached: True
+----------------------------------------------------------------------
+All 13 Solectria inverters are online and producing, with last uploads between 8:52 PM and 9:12 PM EDT on Jun 8. Meter, weather stations, and gateway are all current as of 10:52 PM. Light rain is present at the site, and the sun is down.
+
+30-day Energy Performance Index averages 0.88 with inverter availability at 100%. Sampled-inverter PV model losses are dominated by DC/AC age (~5% each) and residual (~10%), consistent with a mature system.
+
+Meter-to-inverter ratio is 0.97, normal. An Info-level meter phase alert triggered at 9:05 PM on near-zero power â a nighttime artifact. Weather Station 2 module temperature is stuck at -40Â°F per the rule tool; worth investigating but not affecting expected energy.
+
+Forecast: light rain to rain through Jun 11 with highs rising to 93Â°F. Expect variable production and possible mild thermal derate Jun 11.
+
+======================================================================
+SITE: RRH 1 & 2 (S44485)  |  Risk Score: 50
+Generated: 2026-06-09T02:54  |  Cached: True
+----------------------------------------------------------------------
+All 66 inverters are online and the site is operating normally as of Jun 8 at 10:54 PM EDT, with end-of-day telemetry consistent across both sites. Today's production reached 33,766 kWh, with peak hourly output near 4 MW around midday â typical for clear conditions.
+
+Over the last 30 days, the site has performed well: EPI averaged 1.04, inverter availability averaged 100%, and meter production totaled 840 MWh, 108% of estimate. No major losses identified on the sampled inverter.
+
+Meter-to-inverter ratio is 1.00, normal. The only open item is an Info-level report run-time warning from Mar 24 on the Site 1 production meter â stale, no production correlation. Rule tool flags the KYZ Pulse Meter at 0% availability; meter telemetry is current, so this appears to be a configuration flag rather than an outage.
+
+Forecast calls for rain and light rain Jun 9â11, with reduced production expected.
+
+======================================================================
+SITE: RIT (S44566)  |  Risk Score: 50
+Generated: 2026-06-09T02:54  |  Cached: True
+----------------------------------------------------------------------
+All 27 Chint inverters are online with last updates around Jun 8 at 9:06 PM EDT, and the site produced 12,820 kWh today against an estimate of ~11,083 kWh. Current conditions are clear and 64Â°F after sunset.
+
+30-day EPI averages ~1.10 and inverter availability is 94%, pulled down by a site-wide outage May 27â29 (~25 MWh lost: 3 days, ~11 MWh/day expected, full site affected).
+
+The sustained EPI above 1.1 and the rule tool's high energy ratio flags on six inverters suggest a PV model or POA sensor calibration issue worth review.
+
+Meter-to-inverter ratio is 0.99, normal.
+
+Forecast shows rain and light rain Jun 9â11 with highs 75â79Â°F, which will reduce production but pose no equipment risk.
+
+======================================================================
+SITE: Monroe Landfill (S44882)  |  Risk Score: 50
+Generated: 2026-06-09T02:54  |  Cached: True
+----------------------------------------------------------------------
+Inverter 20 has been offline since May 30, confirmed by zero production and an Insulation Resistance Low fault (IsolationErr) that re-triggered Jun 7 at 6:30 AM EDT.
+
+This is a forced outage affecting ~73 kW (~4% of site). Estimated loss since May 30 is ~3.8 MWh (10 days, ~380 kWh/day per PV model losses for the sampled inverter).
+
+The other 26 inverters are producing normally; site hit ~1.6 MW peak today under clear skies.
+
+30-day EPI averages 1.18 and availability 96%. Persistently high EPI and rule tool "energy above expected" (+22%) suggest a PV model or irradiance sensor calibration issue worth review.
+
+Meter-to-inverter ratio is 0.99 (normal).
+
+Forecast: clear Jun 9 (79Â°F), light rain Jun 10â11 will reduce output.
+
+======================================================================
+SITE: WCPS - William Perry Elementary School (S51957)  |  Risk Score: 50
+Generated: 2026-06-09T02:55  |  Cached: True
+----------------------------------------------------------------------
+All three CPS SCA60KTL inverters are online and producing as of Jun 8 at 9:25 PM EDT, with the meter, weather station, and logger reporting current. Today's peak hourly output reached ~155 kW around midday under variable cloud cover.
+
+The site shows a sustained underperformance pattern. Energy Performance Index has averaged ~0.42 over 30 days, and actual vs. expected production is tracking at 49% over the past 7 days.
+
+PV model losses on the sampled inverter show large DC/AC age losses (~80%+) plus ~58% residual loss, suggesting a model configuration or long-term degradation issue worth review.
+
+Inverter availability is 100% over 30 days and the meter-to-inverter ratio is 1.00, both normal. Active performance and rule tool alerts reflect the underperformance noted above.
+
+Forecast: light rain Jun 9â11 with highs 79â90Â°F; expect reduced output and possible mild thermal derating Jun 11.
+
+======================================================================
+SITE: WCPS - Westwood Hills Elementary School (S51958)  |  Risk Score: 50
+Generated: 2026-06-09T02:55  |  Cached: True
+----------------------------------------------------------------------
+All three inverters are online and producing normally as of Jun 8 at 10:04 PM EDT, with the site having logged 1,033 kWh today against an estimate of 1,021 kWh. Conditions are clear and 63Â°F after sunset.
+
+Production tracked expected output closely over the last two days with no inverter dropouts.
+
+Trailing 30-day Energy Performance Index averages 0.95 and inverter availability is 100%. Sampled-inverter losses show modest DC/AC age (~3% each) and soiling (~1%) â no major losses identified.
+
+Meter-to-inverter ratio is 1.00, normal. Rule tool flags missing default alert configuration on the Microhard Modem â a monitoring setup item, no production impact.
+
+Forecast calls for light rain Jun 9â11 with highs rising from 79Â°F to 90Â°F; expect reduced output on overcast hours but no equipment risk.
+
+======================================================================
+SITE: WCPS - Waynesboro High School (S51959)  |  Risk Score: 50
+Generated: 2026-06-09T02:55  |  Cached: True
+----------------------------------------------------------------------
+Both inverters are online with last telemetry at 8:58 PM EDT on Jun 8, and today's production reached 751 kWh versus an estimate of 678 kWh. It is currently nighttime and clear at 63Â°F.
+
+30-day EPI averages 0.83 and inverter availability is 100%. Total production of 18,416 kWh tracks at 90% of estimate. The sampled inverter shows residual losses of -26%, indicating the PV model is under-predicting actual output.
+
+Meter-to-inverter ratio is 1.00, normal. The rule tool flags high energy ratios on both inverters (1.11 and 1.19) and a production meter capacity configuration mismatch â these point to a model or nameplate calibration issue rather than a field problem.
+
+Forecast calls for light rain Jun 9â11 with highs 79â90Â°F, which will reduce output modestly.
+
+======================================================================
+SITE: WCPS - Kate Collins Middle School (S51960)  |  Risk Score: 50
+Generated: 2026-06-09T02:55  |  Cached: True
+----------------------------------------------------------------------
+All 5 inverters online and producing normally as of Jun 8 at 10:30 PM EDT, with peak output near 248 kW around 1:00 PM under clear skies. Nighttime now; conditions favorable today produced 1,829 kWh, close to the 1,903 kWh estimate.
+
+No production events in the reporting period.
+
+30-day Energy Performance Index averages 0.78, with inverter availability at 100%. Actual-to-estimate ratio is 79%. The sampled inverter shows residual loss of 8% and soiling loss of 3% in PV model losses, suggesting modest persistent underperformance site-wide.
+
+Meter-to-inverter ratio is 0.99, normal. Rule tool flags Inverters 2 and 3 with low energy ratios (0.69 and 0.65) and elevated residual loss versus peers â worth monitoring for relative underperformance. A low-severity Performance Index alert is active (0.79).
+
+Light rain forecast Jun 9â11 with warming temperatures; reduced production expected.
+
+======================================================================
+SITE: Butler Maple (S54553)  |  Risk Score: 50
+Generated: 2026-06-09T02:55  |  Cached: True
+----------------------------------------------------------------------
+Inverter SMA SC4000 and all site hardware are communicating normally as of Jun 8 at 7:55 PM PDT, with the inverter producing 8,930 kWh today under light rain conditions. Production tracked expected output closely through the day.
+
+30-day Energy Performance Index averaged 1.00 and inverter availability was 100%.
+
+Site produced 1,082 MWh against a 933 MWh estimate (116%). PV model losses show only routine age and soiling losses; tracker losses were negligible.
+
+Meter-to-inverter ratio is 0.99 (normal). Rule Tool flagged a minor configuration item: default alerts not enabled on the SEL-351 Relay (Device communication 250, SEL 351 Breaker Bit Alert 720) â monitoring visibility only.
+
+Forecast calls for light rain Jun 9â10 with clearing and 77Â°F on Jun 11, supporting improved production midweek.
+
+======================================================================
+SITE: Warbler (S54613)  |  Risk Score: 50
+Generated: 2026-06-09T02:56  |  Cached: True
+----------------------------------------------------------------------
+All 32 inverters online and reporting as of Jun 8 at 10:55 PM EDT, with the site having completed a normal production day (26.2 MWh at the meter, peaking near 3.7 MW around 2 PM). Current conditions are clear and 73Â°F, post-sunset.
+
+Inverter B19 shows a recurring pattern of zero production during early-to-mid morning hours (roughly 8â11 AM) on Jun 3â6, while peers produced normally â a partial-capability issue worth monitoring on the production and expected chart. Daily impact is minor (<5% site).
+
+30-day EPI averages 0.89 and inverter availability 97%, pulled down by low-irradiance days May 22â26 and Jun 1â2. Sampled-inverter PV model losses show no major issues.
+
+Meter-to-inverter ratio is 0.99 (normal). The Jun 6 rule tool communication warning reflects minor inverter uptime gaps with no production correlation.
+
+Forecast: light to heavy rain Jun 9â11 will reduce output.
+
+======================================================================
+SITE: Eagle (S54681)  |  Risk Score: 50
+Generated: 2026-06-09T02:56  |  Cached: True
+----------------------------------------------------------------------
+Site gateway PowerLogger 1000 and Cell Modem (RV50) stopped reporting on Jun 6 at 3:05 PM EDT, so no inverter, meter, or weather telemetry has updated for ~2 days. The meter-to-inverter ratio over the last hours of available data on Jun 6 was ~0.99, indicating inverters were producing normally up to the comms loss. The production chart shows blank values Jun 7â8; actual site production status is unknown until the data logger is restored.
+
+30-day Energy Performance Index averages 0.97 with inverter availability at 99%. No major losses identified on the sampled inverter.
+
+Two external fan fault alerts on Inv-5 and Inv-8 from Jun 6 morning; Inv-8 had visibly clipped output (~75 kW vs ~125 kW peers) on Jun 2â5. Meter-to-inverter ratio 0.99 (normal).
+
+Forecast calls for light rain Jun 9â11 with highs near 82Â°F; expect reduced production.
+
+======================================================================
+SITE: Whitetail (S59656)  |  Risk Score: 50
+Generated: 2026-06-09T02:56  |  Cached: True
+----------------------------------------------------------------------
+All 80 SunGrow inverters and both trackers are communicating as of Jun 8 at 10:56 PM EDT, with the site operating normally through the day. Peak hourly output reached ~9,996 kW around midday, and actual production tracked expected closely at 98%.
+
+Conditions are clear and 73Â°F after sunset.
+
+Over the past 30 days, EPI averaged 0.94 and inverter availability averaged 99%. No major losses identified on the sampled inverter; tracker lost energy was zero all week.
+
+Meter-to-inverter ratio is 0.99, normal. A GameChange Tracker 2.1 E-Stop fault triggered at 10:49 PM with no production impact (post-sunset). The original GameChange Tracker Control unit has been offline since Jun 2024 â monitoring-only. A stale "not responding" alert from Aug 2025 on that same legacy tracker remains open.
+
+Forecast: light rain Jun 9 and 11, clear Jun 10, with highs to 99Â°F â some heat derating possible Jun 11.
+
+======================================================================
+SITE: Bulloch 1B (S63837)  |  Risk Score: 50
+Generated: 2026-06-09T02:56  |  Cached: True
+----------------------------------------------------------------------
+All 26 inverters are online and producing as of Jun 8 at 10:56 PM EDT, with the site currently in post-sunset hours. Earlier today, peak hourly output reached about 2.35 MW around midday before variable afternoon production consistent with passing clouds.
+
+No production events occurred in the reporting period. The 30-day Energy Performance Index averages 0.99 and inverter availability is 100%. Sampled-inverter losses show no notable issues; tracker losses are minor at roughly 40â95 kWh/day.
+
+Meter-to-inverter ratio is 0.98, normal. The rule tool flags an iPRO security camera upload delay, AE Smart UPS default alert configuration, and three trackers (Position A1 S 22, S 54, S 79) stuck at fixed angles â visibility and tracker positioning items only.
+
+Forecast is clear with highs of 93â95Â°F through Jun 11; favorable for production with mild temperature derate possible.
+
+======================================================================
+SITE: Bulloch 1A (S63838)  |  Risk Score: 50
+Generated: 2026-06-09T02:56  |  Cached: True
+----------------------------------------------------------------------
+All 28 inverters are online and communicating as of Jun 8 at 10:56 PM EDT, with sunset reached and no active production events. The site is operating normally.
+
+30-day Energy Performance Index averages 0.98 with inverter availability at 100%. Meter production totals 659 MWh against 758 MWh estimated (87%). Sampled Inverter 13 PV model losses show only minor age and soiling losses.
+
+Meter-to-inverter ratio is 0.98, normal. The rule tool flags FlexRack tracker "Position A1 S 16" reading 0 degrees and AE Smart UPS default alerts not set; tracker lost energy is minor (~10â40 kWh/day).
+
+Forecast is clear with highs of 93â95Â°F through Jun 11. No weather impacts expected, though sustained high temperatures may produce minor thermal derate.
+
+======================================================================
+SITE: Richmond (S63839)  |  Risk Score: 50
+Generated: 2026-06-09T02:57  |  Cached: True
+----------------------------------------------------------------------
+All 24 inverters are online and reporting as of Jun 8 at 10:56 PM EDT, with nighttime conditions (clear, 77Â°F) and no production expected.
+
+Today's daytime output peaked around 2.5 MW mid-morning before variable production consistent with passing clouds; expected energy tracked actual closely.
+
+30-day Energy Performance Index averaged 0.99 and inverter availability was 100% â site is healthy. Sampled-inverter PV model losses show no notable issues; tracker losses averaged ~40 kWh/day (<0.2% of production).
+
+Meter-to-inverter ratio is 0.98 â normal. Rule tool flags on the 10/11 String INV groups reflect inverter-group rollups (0% availability) that are contradicted by full inverter production; NCU 1 reports two stuck tracker positions worth monitoring. Inverter 24 shows an energy ratio of 1.10, possibly indicating peer-relative overperformance or model calibration.
+
+Forecast: light rain Jun 9, then clear with highs 91â95Â°F Jun 10â11 â favorable production with possible mild heat derate.
+
+======================================================================
+SITE: Upson (S63840)  |  Risk Score: 50
+Generated: 2026-06-09T02:57  |  Cached: True
+----------------------------------------------------------------------
+All 24 inverters communicating as of Jun 8 at 10:57 PM EDT, with last updates within the past few minutes. Site is post-sunset; today's production tracked expected closely under light rain, peaking around 2.2 MWh in the 11 AM hour before clouds reduced output through the afternoon per the production and expected chart.
+
+30-day Energy Performance Index averaged 0.96 with inverter availability at 100%. Sampled-inverter PV model losses and tracker losses show no major issues.
+
+Meter-to-inverter ratio is 0.98, normal. Rule tool flags a POA insolation mismatch of +65% on the Kipp & Zonen SMP-12 (POA) sensor â verify azimuth/tilt configuration, as this can skew expected energy. Also noted: AE Smart UPS default alerts not set, and ION 8650 meter phase current ratio at 100% with near-zero PF (post-sunset artifact).
+
+Light rain forecast through Jun 11 with highs reaching 90Â°F; expect variable output and possible mild thermal derate.
+
+======================================================================
+SITE: McLean (S64602)  |  Risk Score: 50
+Generated: 2026-06-09T02:57  |  Cached: True
+----------------------------------------------------------------------
+All 40 inverters reporting as of Jun 8 at 10:57 PM EDT, with the site producing normally through the day. Peak output reached ~4.8 MW around midday before cloud cover reduced afternoon production, consistent with actual vs expected tracking at 94% over the last 7 days.
+
+30-day EPI averages 0.93 with inverter availability at 100%. Sampled INVERTER 1 model losses show minor soiling (~1%) and age-related derate; no major losses identified.
+
+Meter-to-inverter ratio is 0.98, normal. The BPOA pyranometer (PY2) has been offline since Jun 16, 2025 â sensor repair needed but no production impact. Tracker control shows several stuck/misaligned positions with ~118 kWh/day in tracker losses (<0.3% of daily output).
+
+Forecast: light rain Jun 9 and Jun 11, clear Jun 10 with highs to 97Â°F â minor heat derating possible.
+
+======================================================================
+SITE: Shorthorn (S64603)  |  Risk Score: 50
+Generated: 2026-06-09T02:58  |  Cached: True
+----------------------------------------------------------------------
+All 72 inverters are online and communicating as of Jun 8 at 10:57 PM EDT, with the site closing out the day at EPI 1.00 and 78.3 MWh produced against a 79.3 MWh estimate. Peak hourly output reached ~8.9 MW near AC capacity midday.
+
+Conditions are clear, 75Â°F, with sun down.
+
+No production events in the last two weeks. Daily EPI averaged 0.96 and inverter availability 99% over 30 days. Sampled-inverter PV model losses show nothing notable; tracker losses averaged ~130 kWh/day.
+
+Meter-to-inverter ratio is 0.98, normal. Two active tracker alerts flag an e-stop on slave S 54 (ST1) and low state-of-charge on S 25 and S 48; rule tool also notes ST2 average tracker error of 34Â° on S 25 and two slaves stuck at 0Â°. Worth field follow-up but limited energy impact.
+
+Light rain and highs rising to 99Â°F Jun 9â11 may modestly reduce output.
+
+======================================================================
+SITE: Green Solar (S65216)  |  Risk Score: 50
+Generated: 2026-06-09T03:29  |  Cached: False
+----------------------------------------------------------------------
+All hardware is communicating as of Jun 8 at 8:28 PM PDT, including Inverter 1, the production meter, and weather sensors. The site is producing through light rain today, with cloud-driven variability visible in hourly production versus expected. No production events identified.
+
+Over the last 30 days, the Energy Performance Index averaged 1.00 and inverter availability was 99%, with a brief dip to 85% on May 28.
+
+Site production totaled 99% of estimate. No major losses identified in the sampled-inverter model; tracker losses were minimal (~3â28 kWh/day).
+
+Meter-to-inverter ratio is 0.99, which is normal. No active alerts.
+
+Forecast shows light rain Jun 9, then clear skies Jun 10â11 with highs reaching 77Â°F, favorable for production.
+
+======================================================================
+SITE: Washington Solar (S65784)  |  Risk Score: 50
+Generated: 2026-06-09T02:58  |  Cached: True
+----------------------------------------------------------------------
+All 40 inverters are online and reporting fresh telemetry as of Jun 8 at 10:58 PM EDT, with no active alerts. Site is past sunset; conditions are clear and 75Â°F.
+
+Today's site reached ~4.8 MW peak around midday, with actual production tracking near expected through the day. No production events identified in the last 30 days.
+
+30-day inverter availability is 100%, and total production is 96% of estimate. The Energy Performance Index averages ~1.17, persistently above 1.1, suggesting a PV model or POA/pyranometer calibration issue worth review. Sampled INVERTER 15 shows no notable losses beyond expected age/soiling.
+
+Meter-to-inverter ratio is 0.98 (normal). Rule tool flags stuck AC voltage telemetry on all 40 inverters and many tracker positions stuck at 0Â° on TCU 1 and TCU 95-111 â data quality items not impacting production.
+
+Forecast: light rain Jun 9, heavier rain Jun 10-11 with highs to 97Â°F; expect reduced output.
+
+======================================================================
+SITE: Harding Solar (S65785)  |  Risk Score: 50
+Generated: 2026-06-09T02:58  |  Cached: True
+----------------------------------------------------------------------
+All 24 inverters online and producing normally as of Jun 8 at 10:58 PM EDT, with the site clear at 64Â°F. Today's production reached 31,269 kWh with multiple hours at full 3 MW AC capacity.
+
+30-day EPI averages 0.96 and inverter availability is 100%. Site produced 811.6 MWh versus 789.9 MWh estimate (103%). Sampled-inverter PV losses and tracker losses (~7 kWh/day) are minor.
+
+Meter-to-inverter ratio is 0.98, normal. The rule tool flags soiling losses of 9â11% on Inverters 3, 8, and 17, and a 33Â° average tracker error on TCU 87 tied to an Apr 20 tracker fault alert; worth a field check but no material production impact. The 13 String/12 String 0% availability flags are an inverter-group configuration artifact.
+
+Clear Jun 9 (88Â°F); light rain Jun 10 and rain Jun 11 will reduce output.
+
+======================================================================
+SITE: Whitehall Solar (S65786)  |  Risk Score: 50
+Generated: 2026-06-09T02:58  |  Cached: True
+----------------------------------------------------------------------
+All 16 inverters communicating as of Jun 8 at 10:58 PM EDT, with last uploads within the past 3 minutes. Site is past sunset; daytime peak today reached ~2.0 MW around midday, tracking expected output well.
+
+Conditions are clear at 75Â°F with light winds; nighttime, so no production impact.
+
+Energy Performance Index averaged 0.91 over 30 days, with inverter availability at 100%. Production totaled 479 MWh vs. 552 MWh estimated (87%), reflecting variable weather. Sampled-inverter PV model losses and tracker losses (~5 kWh/day) are minor.
+
+Meter-to-inverter ratio is 0.98, normal. Rule tool notes minor availability dips (~98%) on Inverters 1, 3, 6, 11, 15, a stuck Tracker Position TCU 24 at 0Â°, and module-vs-ambient temperature flag â monitoring items only.
+
+Forecast calls for light rain and highs 88â99Â°F Jun 9â11; expect reduced output and possible temperature derating on the hottest day.
+
+======================================================================
+SITE: Sunflower Solar (S65787)  |  Risk Score: 50
+Generated: 2026-06-09T02:59  |  Cached: True
+----------------------------------------------------------------------
+All 80 inverters are online and communicating as of Jun 8 at 10:58 PM EDT, with the site offline for the night. Today's site produced 86,013 kWh against 88,152 kWh estimated, with a peak hourly output near 9.7 MW mid-morning before variable afternoon output consistent with passing clouds.
+
+No production events occurred in the reporting period.
+
+30-day EPI averages 0.97 and inverter availability is 99%. Sampled INV 21 PV model shows no major losses beyond routine age and soiling.
+
+Meter-to-inverter ratio is 0.98 (normal). A stale 90Â°C transformer liquid temp fault from May 17 on XFMR IO2 remains unresolved with no production correlation. Multiple trackers (TCU 39, 72, 161, 6, 16) report stuck at 0Â°, with ~46 kWh tracker loss today â minor impact worth field verification.
+
+Forecast calls for light rain and highs 88â99Â°F through Jun 11; expect reduced output and possible heat derating on the warmest day.
+
+======================================================================
+SITE: Gray Fox Solar (S65788)  |  Risk Score: 50
+Generated: 2026-06-09T02:59  |  Cached: True
+----------------------------------------------------------------------
+Site is in nighttime hours as of Jun 8 at 10:59 PM EDT; all 40 inverters, meter, data logger, and weather sensors last reported within the past few minutes. INVERTER 2.6 remains in an outage since May 20, last producing data per the rule tool (~1.1 MWh lost over 19 days at ~125 kW nameplate, ~60 kWh/day).
+
+Today's production reached 32.6 MWh with a midday peak near 4.9 MW before clouds reduced afternoon output, consistent with the day's EPI of 0.86.
+
+30-day EPI averages 0.90 with inverter availability at 97%, both pulled down by INV 2.6. Sampled INV 1.1 shows no notable losses beyond curtailment artifacts.
+
+Meter-to-inverter ratio is 0.98 (normal). Rule tool flags 10 trackers with elevated positioning error (3 stuck at 0Â°), but tracker losses remain under 20 kWh/day.
+
+Forecast: light rain Jun 9 and Jun 11, clear Jun 10 with highs reaching 99Â°F â monitor for heat derating.
+
+======================================================================
+SITE: C & B Graham Energy (S65918)  |  Risk Score: 50
+Generated: 2026-06-09T02:59  |  Cached: True
+----------------------------------------------------------------------
+Site is producing but with multiple inverter issues as of Jun 8 at 10:59 PM EDT. Meter-to-inverter ratio today is ~0.36 (5,560+6,300 kWh meter vs 15,619 kWh inverter), well below 0.92, indicating meter data is unreliable; inverter telemetry is authoritative.
+
+INVERTER 4 has been at 0 kW all day with a Solectria fault alert triggered at 5:02 PM â classify as a forced outage (~200 kW, ~1 MWh/day at current output). INVERTERS 7, 9, 13, 17, 23, 34, 35 remain non-communicating (stale 7â63 days); peer inverters produced normally today, so production chart confirms these as communication losses with visibility risk, not confirmed outages.
+
+30-day meter production is 717.6 MWh vs 1,775 MWh estimate (40%); meter gaps drive most of this shortfall. EPI and availability are unavailable.
+
+All weather sensors (POA, GHI, BPOA, ambient) and METER 1 stale since Apr 27âMay 13 â expected energy cannot be calculated. Trackers show ~33â40Â° average position error per rule tool; tracker lost energy chart shows 0 kWh.
+
+Light rain now; rain forecast through Jun 11 with mild temps â modestly reduced production expected.
+
+======================================================================
+SITE: Auburn Solar (S66000)  |  Risk Score: 50
+Generated: 2026-06-09T02:47  |  Cached: True
+----------------------------------------------------------------------
+All hardware is communicating as of Jun 8 at 7:46 PM PDT, with INVERTER 1 producing in line with expected output through the day under light rain (54Â°F).
+
+Today's production is tracking low due to overcast/rain conditions, consistent with weather rather than equipment issues.
+
+Over the last 30 days, the site is healthy: EPI averaged 1.10, inverter availability 100%, and actual vs. estimate at 123%. The persistently elevated EPI suggests a PV model or POA sensor calibration issue worth reviewing. Tracker losses are negligible (<20 kWh/day).
+
+Meter-to-inverter ratio is 0.99 (normal). The rule tool flags the POA pyranometer as configured for a tracker but appearing fixed-tilt â recommend verification, as this may be inflating EPI.
+
+Forecast: light rain Jun 9â10, clearing Jun 11 (75Â°F) for improved production.
+
+======================================================================
+SITE: Sheridan Solar (S66001)  |  Risk Score: 50
+Generated: 2026-06-09T02:59  |  Cached: True
+----------------------------------------------------------------------
+Inverter 1 is online and producing, with all hardware reporting as of Jun 8 at 7:59 PM PDT. Today's output is suppressed by light rain, with hourly production peaking near 1.2 MW midday against expected output tracking actual closely.
+
+No production events in the last two weeks. Daily output has varied with weather but expected energy tracks actual on a daily basis.
+
+30-day Energy Performance Index averages 1.02 and inverter availability is 100%. Sampled PV model losses show no major issues; tracker losses are minimal.
+
+Meter-to-inverter ratio is 0.99, normal. A rule tool weather station "temperature too high" flag is open with no production correlation â monitoring only.
+
+Forecast: light rain Jun 9â10 (continued reduced output), clearing Jun 11 with highs near 77Â°F â good production expected.
+
+======================================================================
+SITE: Elk Solar (S66930)  |  Risk Score: 50
+Generated: 2026-06-09T02:59  |  Cached: True
+----------------------------------------------------------------------
+Site time is after sunset (Jun 8 at 10:59 PM EDT), so inverters are not expected to produce. Inverter - 01.02 has been offline since May 27 at 3:29 AM per the device heartbeat alert; meter-to-inverter ratio context confirms a sustained outage on that single 125 kW unit (~2.5% of capacity). Estimated loss ~14 MWh over 12 days (~1.2 MWh/day expected for the sampled unit per the PV model losses).
+
+Today's production tracked expected through midday then fell off sharply after 1 PM under variable cloud cover; daily availability dropped to 77%.
+
+30-day site availability is 96%. Production meter reports zero â meter-to-inverter ratio is unusable; use inverter totals.
+
+Monitoring flags: SEL 735 meter not reporting energy, weather station POA insolation +25%, and multiple NCU 1/2 tracker motor current anomalies per the rule tool.
+
+Forecast: light rain and highs 88â99Â°F Jun 9â11; expect variable output and possible heat derating.
+
+======================================================================
+SITE: Wallace Solar (S68112)  |  Risk Score: 50
+Generated: 2026-06-09T03:00  |  Cached: True
+----------------------------------------------------------------------
+Inverter 1 is online and producing, with the most recent hardware update at 7:53 PM PDT on Jun 8. Today's production has been limited by light rain, with a peak hourly output near 1.49 MWh during the afternoon per the production and expected chart. No production events identified.
+
+The 30-day Energy Performance Index averages about 1.07, persistently above 1.0, suggesting a PV model or pyranometer calibration issue rather than a plant problem. Inverter availability is 100%. Tracker losses have been minimal (under 60 kWh/day) per the tracker chart.
+
+Meter-to-inverter ratio is 0.99, normal. The rule tool flags high energy ratios and a POA pyranometer reading about 55% above the other sensors â recommend verifying POA tilt/azimuth and BPOA calibration.
+
+Forecast: light rain Jun 9â10, then clear and warm Jun 11 (77Â°F) â good production conditions returning midweek.
+
+======================================================================
+SITE: Marble Solar (S68113)  |  Risk Score: 50
+Generated: 2026-06-09T03:00  |  Cached: True
+----------------------------------------------------------------------
+All hardware is communicating as of Jun 8 at 7:59 PM PDT, with the inverter, meter, and weather sensors reporting current data. The site is producing under light rain, with today's meter production at 8,775 kWh against a 24,550 kWh estimate, consistent with overcast conditions.
+
+Over the last 30 days, the site averaged a 0.99 Energy Performance Index and 100% inverter availability, with total production 107% of estimate. No major PV model losses identified beyond normal age and inverter losses; tracker losses are negligible.
+
+Meter-to-inverter ratio is 0.99, which is normal. No active alerts and the rule tool reports all tests passed.
+
+Light rain continues through Jun 10, with clear skies and a high of 75Â°F forecast Jun 11, which should support strong production.
+
+======================================================================
+SITE: Longleaf Pine Solar, LLC (S70532)  |  Risk Score: 50
+Generated: 2026-06-09T03:00  |  Cached: True
+----------------------------------------------------------------------
+All 40 inverters online and producing normally as of Jun 8 at 11:00 PM EDT, with the site approaching nightfall under clear skies (70Â°F).
+
+A site-wide grid outage occurred Jun 3â4, with all inverters offline and meter production at zero. Production resumed Jun 5 at normal levels. Estimated loss ~83 MWh (2 days, ~42 MWh/day estimated, 100% capacity). A similar one-day production drop occurred May 17 (EPI 0.06).
+
+30-day EPI averages ~1.00 on producing days; availability 93%, dragged by the Jun 3â4 outage. Tracker losses ~28 kWh/day are negligible.
+
+Meter-to-inverter ratio 0.98 (normal). Rule tool flags Tracker Controller 1 comm loss since Jun 3 and a TCU 33 motor overcurrent warning on Tracker Controller 2 â visibility/positioning flags only. A transformer vacuum fault alert from Jun 2 remains open.
+
+Forecast: light rain Jun 9â11 with highs to 97Â°F; expect reduced output and possible heat derating.
+
+======================================================================
+SITE: Williams Solar, LLC (S70645)  |  Risk Score: 50
+Generated: 2026-06-09T03:00  |  Cached: True
+----------------------------------------------------------------------
+INVERTER A20 (125 kW, ~2.5% of site capacity) has been offline since Jun 5 following a grid overvoltage fault on Jun 8 at 3:10 PM EDT, followed by a device communication loss at 3:39 PM. Meter-to-inverter ratio confirms a true outage, not just comm loss. Estimated loss ~4.2 MWh (4 days, ~1.05 MWh/day expected per PV model). The remaining 39 inverters are online and producing in line with peers as of 11:00 PM.
+
+No other production events in the past two weeks. Brief A20 dropouts also occurred May 26â28 and Jun 4, contributing to the availability dip.
+
+30-day EPI averages 0.97 and inverter availability 99%. Site totals 1,291 MWh against 1,270 MWh estimated (102%).
+
+Meter-to-inverter ratio 0.97 (normal). Rule tool flags on A20 align with the confirmed outage above.
+
+Clear tonight; light rain and highs 86â99Â°F Jun 9â11 may modestly reduce output.
+
+======================================================================
+SITE: Manuel Lawrence Dairy (S55935)  |  Risk Score: 50
+Generated: 2026-06-09T03:00  |  Cached: True
+----------------------------------------------------------------------
+Site status cannot be fully assessed at this time. Hardware inventory, production charts, availability, and performance index data were all unavailable for retrieval.
+
+Without inverter telemetry or meter data, current operational state, the meter-to-inverter ratio, and 30-day performance metrics cannot be confirmed.
+
+The rule tool reports 0% availability across all inverters and flags invalid module temperature and irradiance from the IMT Ref. Cell, plus an inability to calculate energy ratio or PV losses for all 15 CPS SCA 60KTL-DO inverters. These findings are consistent with a broader data retrieval issue rather than a confirmed field event, and should be re-validated once telemetry is restored. A weather station sensor check is also warranted given the invalid irradiance and module temperature readings.
+
+No active alerts are present.
+
+Weather is currently clear at 79Â°F, with a clear and warming forecast through Jun 11 reaching 106Â°F. High temperatures late in the forecast window may cause some inverter thermal derating during peak hours.
+
