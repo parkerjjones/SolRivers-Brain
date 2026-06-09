@@ -230,9 +230,9 @@ if __name__ == "__main__":
 
     # Console summary
     total = len(sites)
-    passed = sum(1 for s in sites if s.get("passed"))
-    failed = sum(1 for s in sites if not s.get("passed") and s.get("passed") is not None)
-    print(f"\nResults: {passed}/{total} pass, {failed} fail")
+    sites_with_fails = [s for s in sites if any(r.get("result") == 3 for r in s.get("results", []))]
+    sites_clean = total - len(sites_with_fails)
+    print(f"\nResults: {sites_clean}/{total} sites fully clean, {len(sites_with_fails)} have at least one failing check")
     print(f"Saved -> {args.output}")
     failing_names = [s.get("name", s["key"]) for s in sites
                      if any(r.get("result") == 3 for r in s.get("results", []))]
