@@ -32,8 +32,11 @@ import time
 from datetime import date, datetime, timedelta
 
 import requests
-import psycopg2
-import psycopg2.extras
+try:
+    import psycopg2
+    import psycopg2.extras
+except ImportError:
+    psycopg2 = None
 
 # ----------------------------------------------------------------------
 # CONFIG
@@ -389,6 +392,8 @@ def main():
 
     conn = None
     if not args.excel_only:
+        if psycopg2 is None:
+            sys.exit("psycopg2 is not installed. Run: pip install psycopg2-binary")
         conn = psycopg2.connect(DB_DSN)
         ensure_schema(conn)
 
