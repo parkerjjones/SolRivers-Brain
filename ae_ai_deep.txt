@@ -460,17 +460,3 @@ Meter-to-inverter ratio 0.97 (normal). Rule tool flags on A20 align with the con
 
 Clear tonight; light rain and highs 86â99Â°F Jun 9â11 may modestly reduce output.
 
-======================================================================
-SITE: Manuel Lawrence Dairy (S55935)  |  Risk Score: 50
-Generated: 2026-06-09T03:00  |  Cached: True
-----------------------------------------------------------------------
-Site status cannot be fully assessed at this time. Hardware inventory, production charts, availability, and performance index data were all unavailable for retrieval.
-
-Without inverter telemetry or meter data, current operational state, the meter-to-inverter ratio, and 30-day performance metrics cannot be confirmed.
-
-The rule tool reports 0% availability across all inverters and flags invalid module temperature and irradiance from the IMT Ref. Cell, plus an inability to calculate energy ratio or PV losses for all 15 CPS SCA 60KTL-DO inverters. These findings are consistent with a broader data retrieval issue rather than a confirmed field event, and should be re-validated once telemetry is restored. A weather station sensor check is also warranted given the invalid irradiance and module temperature readings.
-
-No active alerts are present.
-
-Weather is currently clear at 79Â°F, with a clear and warming forecast through Jun 11 reaching 106Â°F. High temperatures late in the forecast window may cause some inverter thermal derating during peak hours.
-

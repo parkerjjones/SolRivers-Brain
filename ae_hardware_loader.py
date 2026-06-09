@@ -61,12 +61,14 @@ def build_session():
 # FETCH
 # -----------------------------------------------------------------------
 
+EXCLUDE_SITES = {"S55935"}  # not in portfolio
+
 def get_portfolio_sites(session):
     r = session.get(f"{API_BASE}/view/portfolio/{PORTFOLIO}", timeout=20)
     if r.status_code in (401, 403):
         sys.exit("Auth expired — re-copy a fresh cURL into alsoenergy_curl.txt")
     r.raise_for_status()
-    return r.json().get("sites", [])
+    return [s for s in r.json().get("sites", []) if s.get("key") not in EXCLUDE_SITES]
 
 
 def get_site_hardware(session, site_key):

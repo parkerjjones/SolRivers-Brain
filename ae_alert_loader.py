@@ -445,7 +445,14 @@ def main():
         print(f"  python ae_alert_loader.py --since {last_changed_cursor} --excel-only")
 
     if args.excel or args.excel_only:
-        export_excel(all_rows, args.excel or "ae_alerts.xlsx")
+        export_rows = all_rows
+        if d_from:
+            export_rows = [r for r in export_rows
+                           if r.get("alert_start") and r["alert_start"].date() >= d_from]
+        if d_to:
+            export_rows = [r for r in export_rows
+                           if r.get("alert_start") and r["alert_start"].date() < d_to]
+        export_excel(export_rows, args.excel or "ae_alerts.xlsx")
 
 
 if __name__ == "__main__":

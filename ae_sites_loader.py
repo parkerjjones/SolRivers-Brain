@@ -92,8 +92,9 @@ if __name__ == "__main__":
     if r.status_code in (401, 403):
         sys.exit("Auth expired — re-copy a fresh cURL.")
     r.raise_for_status()
+    EXCLUDE_SITES = {"S55935"}  # not in portfolio
     portfolio = r.json()
-    site_list = portfolio.get("sites", [])
+    site_list = [s for s in portfolio.get("sites", []) if s.get("key") not in EXCLUDE_SITES]
     print(f"  {len(site_list)} sites in portfolio")
 
     # Build live-power lookup

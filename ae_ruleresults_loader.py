@@ -93,7 +93,8 @@ if __name__ == "__main__":
 
     print(f"  Last run:     {data.get('latestRun')}")
     print(f"  Last changed: {data.get('lastChanged')}")
-    sites = data.get("sites", [])
+    EXCLUDE_SITES = {"S55935"}  # not in portfolio
+    sites = [s for s in data.get("sites", []) if s.get("key") not in EXCLUDE_SITES]
     print(f"  Sites:        {len(sites)}")
 
     wb = openpyxl.Workbook()

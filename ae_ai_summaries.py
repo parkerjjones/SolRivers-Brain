@@ -159,7 +159,8 @@ if __name__ == "__main__":
     r = session.get(f"{API_BASE}/view/portfolio/{PORTFOLIO}", timeout=20)
     if r.status_code in (401, 403):
         sys.exit("Auth expired — re-copy cURL.")
-    sites = r.json().get("sites", [])
+    EXCLUDE_SITES = {"S55935"}  # not in portfolio
+    sites = [s for s in r.json().get("sites", []) if s.get("key") not in EXCLUDE_SITES]
     print(f"  {len(sites)} sites")
 
     rows = []

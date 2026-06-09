@@ -38,6 +38,8 @@ USAGE IN YOUR SCRIPTS
 import json
 import os
 import shlex
+import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -108,7 +110,7 @@ def _load():
 
 def _is_auth_failure(r):
     """True when the server actively rejected our credentials."""
-    if r.status_code in (401, 403):
+    if r.status_code in (401, 403, 419):
         return True
     if r.status_code == 500 and not r.text.strip():
         return True   # AlsoEnergy returns empty 500 for expired sessions
@@ -171,9 +173,29 @@ def get_session(verbose=True):
         return s
 
     if _is_auth_failure(r):
+        # ── 3. Try automated re-login via ae_auto_login.py ────────────────
+        auto_login_script = Path(__file__).parent / "ae_auto_login.py"
+        if auto_login_script.exists():
+            _log("Attempting automatic re-login via ae_auto_login.py...")
+            result = subprocess.run(
+                [sys.executable, str(auto_login_script)],
+                cwd=str(auto_login_script.parent),
+            )
+            if result.returncode == 0:
+                cache = _load()
+                if cache:
+                    s2 = _build_session_from(cache["headers"], cache["cookies"])
+                    r2 = s2.get(HEALTH_URL, timeout=15)
+                    if r2.ok:
+                        _log("Auto-login succeeded!")
+                        return s2
+            _log("Auto-login failed — falling back to manual instructions")
+
         raise RuntimeError(
             f"\nAuthentication failed (HTTP {r.status_code}).\n"
-            f"Your cURL cookies have expired.  Paste a fresh cURL into {CURL_FILE}:\n"
+            f"Option 1 — automated: ensure .env has AE_USERNAME and AE_PASSWORD,\n"
+            f"  then run: python ae_auto_login.py\n"
+            f"Option 2 — manual: paste a fresh cURL into {CURL_FILE}:\n"
             f"  Chrome/Edge → PowerTrack → F12 → Network → any request\n"
             f"  → right-click → Copy as cURL (bash) → save to {CURL_FILE}\n"
         )
