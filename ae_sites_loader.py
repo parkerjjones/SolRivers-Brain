@@ -44,30 +44,8 @@ RED   = "FFC7CE"
 
 
 def build_session():
-    with open(CURL_FILE, "r", encoding="utf-8") as f:
-        raw = f.read().replace("\\\r\n", " ").replace("\\\n", " ")
-    tokens = shlex.split(raw)
-    headers, cookie = {}, None
-    i = 0
-    while i < len(tokens):
-        t = tokens[i]
-        if t in ("-H", "--header"):
-            k, _, v = tokens[i + 1].partition(":")
-            headers[k.strip()] = v.strip()
-            i += 2
-        elif t in ("-b", "--cookie"):
-            cookie = tokens[i + 1]
-            i += 2
-        else:
-            i += 1
-    s = requests.Session()
-    s.headers.update({k: v for k, v in headers.items() if k.lower() != "cookie"})
-    if cookie:
-        for part in cookie.split("; "):
-            if "=" in part:
-                n, _, v = part.partition("=")
-                s.cookies.set(n, v)
-    return s
+    from ae_auth import get_session
+    return get_session()
 
 
 def hdr(cell, text, bg=DARK):
@@ -162,8 +140,8 @@ if __name__ == "__main__":
         val(ws.cell(ri, 9), SITE_STATUS.get(d.get("status", -1), str(d.get("status"))), alt)
         val(ws.cell(ri, 10), d.get("capacityAc") or 0, alt, "0.00")
         val(ws.cell(ri, 11), d.get("capacityDc") or 0, alt, "0.00")
-        val(ws.cell(ri, 12), round(d.get("dailyProductionEstimate") or 0, 1), alt, "0.0")
-        val(ws.cell(ri, 13), round(d.get("monthlyProductionEstimate") or 0, 1), alt, "0.0")
+        val(ws.cell(ri, 12), round(float(d.get("dailyProductionEstimate") or 0), 1), alt, "0.0")
+        val(ws.cell(ri, 13), round(float(d.get("monthlyProductionEstimate") or 0), 1), alt, "0.0")
         val(ws.cell(ri, 14), ts(d.get("actualCommissioningDate")), alt)
         val(ws.cell(ri, 15), ts(d.get("validDataDate")), alt)
         val(ws.cell(ri, 16), "Yes" if d.get("isMonitored") else "No", alt)
@@ -181,13 +159,13 @@ if __name__ == "__main__":
         alt = ri % 2
         val(ws2.cell(ri, 1), site["key"], alt)
         val(ws2.cell(ri, 2), site.get("name", ""), alt)
-        val(ws2.cell(ri, 3), round(site.get("power") or 0, 2), alt, "0.00")
-        val(ws2.cell(ri, 4), round(site.get("powerAvg15") or 0, 2), alt, "0.00")
-        val(ws2.cell(ri, 5), round(site.get("powerAvg15Exp") or 0, 2), alt, "0.00")
+        val(ws2.cell(ri, 3), round(float(site.get("power") or 0), 2), alt, "0.00")
+        val(ws2.cell(ri, 4), round(float(site.get("powerAvg15") or 0), 2), alt, "0.00")
+        val(ws2.cell(ri, 5), round(float(site.get("powerAvg15Exp") or 0), 2), alt, "0.00")
         val(ws2.cell(ri, 6), ts(site.get("lastDataUTC")), alt)
         # Highlight underperforming (actual < 50% of expected)
-        pwr = site.get("powerAvg15") or 0
-        exp = site.get("powerAvg15Exp") or 0
+        pwr = float(site.get("powerAvg15") or 0)
+        exp = float(site.get("powerAvg15Exp") or 0)
         if exp > 0 and pwr < exp * 0.5:
             for ci in range(1, 7):
                 ws2.cell(ri, ci).fill = PatternFill("solid", fgColor=RED)

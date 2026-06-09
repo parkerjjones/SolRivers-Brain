@@ -363,8 +363,8 @@ def main():
                     help="write Excel only, skip DB load")
     args = ap.parse_args()
 
-    _, headers, cookie = parse_curl(CURL_FILE)
-    session = build_session(headers, cookie)
+    from ae_auth import get_session
+    session = get_session()
 
     if args.probe:
         key = args.key or PORTFOLIO_KEYS[0]

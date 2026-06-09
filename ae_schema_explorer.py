@@ -560,8 +560,8 @@ if __name__ == "__main__":
     probe_results = None
 
     if not args.schema:
-        headers, cookie = parse_curl(CURL_FILE)
-        session = build_session(headers, cookie)
+        from ae_auth import get_session
+        session = get_session()
         probe_results = run_probes(session)
 
     if not args.probe:

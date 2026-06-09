@@ -28,28 +28,8 @@ DARK, MID, WHITE, ALT = "1F4E79", "2E75B6", "FFFFFF", "EBF3FB"
 RED, GREEN, YELL = "FFC7CE", "C6EFCE", "FFEB9C"
 
 def build_session():
-    with open(CURL_FILE, encoding="utf-8") as f:
-        raw = f.read().replace("\\\r\n", " ").replace("\\\n", " ")
-    tokens = shlex.split(raw)
-    headers, cookie = {}, None
-    i = 0
-    while i < len(tokens):
-        t = tokens[i]
-        if t in ("-H", "--header"):
-            k, _, v = tokens[i+1].partition(":")
-            headers[k.strip()] = v.strip(); i += 2
-        elif t in ("-b", "--cookie"):
-            cookie = tokens[i+1]; i += 2
-        else:
-            i += 1
-    s = requests.Session()
-    s.headers.update({k: v for k, v in headers.items() if k.lower() != "cookie"})
-    if cookie:
-        for part in cookie.split("; "):
-            if "=" in part:
-                n, _, v = part.partition("=")
-                s.cookies.set(n, v)
-    return s
+    from ae_auth import get_session
+    return get_session()
 
 
 def fetch_full_summary(session, site_id):
