@@ -344,7 +344,7 @@ INDEX_HTML_HEAD = """\
     <h1>SolRiver Capital — Portfolio KPI Dashboard</h1>
     <div style="font-size:13px;margin-top:2px;opacity:.8">C12941 &bull; {site_count} Active Sites</div>
   </div>
-  <div class="meta">Generated: {generated_at}</div>
+  <div class="meta">Generated: {generated_at}<br><a href="alerts.html" style="color:#ffd54f;font-weight:600">⚠ Operational Alerts</a></div>
 </header>
 
 <div class="summary-grid">

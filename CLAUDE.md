@@ -72,8 +72,12 @@ pip install requests openpyxl pandas scikit-learn matplotlib seaborn numpy
 | `ae_summaries_analyzer.py` | `ae_summaries_deep.xlsx` | NLP analysis + embedded chart URLs |
 | `ae_ml_analysis.py` | `ae_analysis.xlsx` | TF-IDF clustering + correlation analysis |
 | `ae_master_dashboard.py` | `ae_master.xlsx` | Portfolio health dashboard joining all sources |
+| `ae_inverter_report.py` | `ae_inverter_report.xlsx` | Comprehensive inverter issue tracker — alerts, active issues, inventory |
 | `ae_schema_explorer.py` | `ae_schema.xlsx` | API endpoint discovery + DB schema design |
 | `aekpi_dashboard.py` | `dashboards/index.html` + `dashboards/S<key>_<Name>.html` | KPI dashboards — portfolio overview + one per site (Chart.js inlined for offline use) |
+| `ae_alert_dashboard.py` | `dashboards/alerts.html` | Operational alert dashboard — critical-alert table, per-site inverter heatmaps, tracker/TCU charts (Chart.js inlined) |
+| `ae_diagnosis.py` | (used by alert dashboard) | Root-cause diagnosis + recommender: correlates alerts + rule results + AI summaries + live power per site into ranked diagnoses (rule base mirrors FAILURE_ROOT_CAUSES.md) |
+| `ae_refresh.py` | refreshed xlsx + dashboards | Auto-refresh: session check (auto-login via `.env`) + alert/site endpoints + alert dashboard; `--full` adds hardware, rules, KPI pages — `ae_refresh.bat` |
 | `run_all.py` | all xlsx | One-shot runner for full pipeline — double-click `run_all.bat` |
 
 ---
@@ -97,6 +101,28 @@ python ae_master_dashboard.py
 ```
 
 ---
+
+## Alert Dashboard — Chart & Unit Selection
+
+`ae_alert_dashboard.py` classifies alerts and picks visualization + measurement unit
+(mirrors PowerTrack Chart Builder):
+
+| Alert category | Chart | Measurement (unit) |
+|---|---|---|
+| Inverter fault / stop | inverter x day heatmap (red) | Power (kW), AC Current (A) |
+| Inverter comm loss | heatmap (orange) | Availability (%) |
+| Tracker / TCU fault | alarms-per-day bars + parsed TCU fault table | Phase Angle (deg), SOC (%) |
+| Grid / recloser / islanding | critical table (top) | AC Voltage (V) |
+| Meter issue | critical table | Power (kW) per phase |
+| Performance / irradiance | table | Performance Index (%) |
+
+Unit map: AC Current=A, AC/DC Voltage=V, Power=kW, Energy=kWh, Irradiance=W/m2,
+Temperature=degC, Availability/PI/Energy Ratio/Capacity Factor=%, Phase Angle=deg.
+Noise filter drops gateway/modem comm blips (<5 min, resolved) and low-value categories.
+
+Note: `POST /api/view/chart` payload shape is still unknown (guesses return 500).
+To add per-inverter production overlays, capture a Copy-as-cURL (bash) of a
+`chart?lastChanged=...` POST from DevTools (keep `--data-raw`) and rebuild.
 
 ## Portfolio Structure
 

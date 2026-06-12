@@ -70,6 +70,7 @@ def main():
         ("Diagnostic rule results", [py, "ae_ruleresults_loader.py"]),
         ("AI site summaries", [py, "ae_ai_summaries.py"]),
         ("Master dashboard", [py, "ae_master_dashboard.py"]),
+        ("Operational alert dashboard", [py, "ae_alert_dashboard.py"]),
     ]
 
     results = {}
