@@ -54,6 +54,7 @@ ae_summaries_deep.xlsx
 ae_ai_summaries.xlsx
 ae_schema.xlsx
 ae_ruleresults.xlsx
+ae_inverter_report.xlsx
 *.log
 
 # OS
