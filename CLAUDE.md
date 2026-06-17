@@ -144,11 +144,42 @@ To add per-inverter production overlays, capture a Copy-as-cURL (bash) of a
 | `GET /api/ruleresults/{key}?lastChanged=1900-01-01T00:00:00.000Z&mergeHash=` | GET | Diagnostic check results |
 | `GET /api/ai-site-summary?siteId={key}&lang=en-US` | GET (SSE) | AI natural language site summary |
 | `POST /api/view/kpidashboard?lastChanged=...` | POST | KPI dashboard data |
-| `POST /api/view/chart?lastChanged=...` | POST | Chart configurations |
+| `POST /api/view/chart?lastChanged=...` | POST | **Per-device time-series data** — see payload structure below |
+| `POST /api/view/chart/kpimenu` | POST | Chart menu: available measurement categories per site |
 | `POST /api/node?lastChanged=...` | POST | Site/hardware node hierarchy |
 | `GET /api/reportconfig/public/dashboardlistitems` | GET | Public dashboard/report template list |
 
 **Auth headers required on all requests:** `ae_s`, `ae_v` (static per account)
+
+### Chart Endpoint Payload (Time-Series Data)
+
+The chart endpoint requires a complex nested JSON body. Key fields:
+
+```json
+{
+  "chartType": 1, "binSize": 15, "context": "site",
+  "start": "2026-03-01", "end": "2026-03-02", "futureDays": 0,
+  "hardwareSet": ["H312394"],
+  "sectionCode": 0,
+  "query": {
+    "name": "CustomChart", "title": "Custom Chart", "initialSpan": 1, "dataItems": [],
+    "kpiChart": {
+      "siteKeys": ["S59656"],
+      "categories": { "measurements": [{"value":1,"enabled":true,"checked":true},...] },
+      "inlineOptions": { "aggregationMode": 3, "includePOA": true, ... }
+    }
+  },
+  "source": ["S59656"]
+}
+```
+
+**Measurement bitmask values:** 1=AC Power, 2=Energy, 4/8=Irradiance, 16=DC Current, 32=DC Voltage, 64=AC Current, 128=AC Voltage, 256=Power Factor, 1024=Fault/Status.
+
+**binSize options:** 15 (15-min), 60 (hourly), 1440 (daily).
+
+Response `series[]` array contains one entry per field per device with `dataBinned` (array of values per bin) and `name` (e.g. `"SunGrow SG125HV - Inverter 7, DC Voltage1"`).
+
+See `whitetail_investigation/whitetail_timeseries.py` for a complete working example.
 
 ---
 
