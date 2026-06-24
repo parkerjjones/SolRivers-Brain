@@ -1389,6 +1389,7 @@ def main():
     for a in filtered:
         alerts_by_site[a["site_name"]].append(a)
     all_sites = sorted(set(hw.keys()) | set(heatmap_data.keys()))
+    print(f"  all_sites: {len(all_sites)}, hw: {len(hw)}, heatmap_data: {len(heatmap_data)}")
 
     def hours(site, kind):
         return sum(c[kind] for invs in heatmap_data.get(site, {}).values()
@@ -1397,11 +1398,13 @@ def main():
     site_order = sorted(all_sites,
                         key=lambda s: (-hours(s, "fault"), -hours(s, "comm"), s))
     heatmaps_html = ""
+    skipped = []
     for sid, site in enumerate(site_order):
         strip = build_strip_data(site, hw, d_from, d_to,
                                  production=prod_by_site.get(site),
                                  n_bins_api=prod_bins_by_site.get(site, 0))
         if not strip["invs"]:
+            skipped.append(site)
             continue
         strip = apply_alerts_to_strips(strip, alerts_by_site.get(site, []), d_from)
         heatmaps_html += render_site_accordion(
@@ -1409,6 +1412,9 @@ def main():
             hours(site, "fault"), hours(site, "comm"),
             ai_summary=ai_sums.get(site, ""),
             irrad_data=irrad_by_site.get(site))
+
+    if skipped:
+        print(f"  SKIPPED (no invs): {skipped}")
 
     trackers_html = "".join(
         render_tracker_html(s, tracker_data[s], days, f"trk{i}")
