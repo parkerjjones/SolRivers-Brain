@@ -82,20 +82,6 @@
   .diag-ev li { margin-bottom: 2px; }
   .diag-action { font-size: 12.5px; color: #155724; background: #f0f8f1;
                  border-radius: 4px; padding: 6px 10px; }
-  /* email / field context */
-  .ec-section { margin: 14px 0 4px; }
-  .ec-card { background:#fffdf5; border-left:4px solid #f5b301; border-radius:4px;
-             box-shadow:0 1px 3px rgba(0,0,0,.08); padding:10px 14px; margin-bottom:9px; }
-  .ec-head { font-size:13.5px; color:#222; font-weight:700; }
-  .ec-head .ec-tag { font-size:10px; font-weight:700; background:#f5b301; color:#3d2f00;
-             border-radius:10px; padding:2px 8px; margin-left:8px; vertical-align:middle; }
-  .ec-body { font-size:12px; color:#4a3c10; margin-top:5px; line-height:1.45; }
-  .ec-body b { color:#3d2f00; }
-  .ec-src { font-size:10.5px; color:#8a7a3a; margin-top:5px; font-style:italic; }
-  .email-ctx { background:#fffdf5; border-left:3px solid #f5b301; border-radius:4px;
-               padding:6px 10px; margin-top:8px; font-size:11.5px; color:#4a3c10; line-height:1.4; }
-  .email-ctx .ec-tag { font-size:9.5px; font-weight:700; background:#f5b301; color:#3d2f00;
-               border-radius:10px; padding:1px 7px; margin-right:6px; }
   /* site accordion */
   .site-acc { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.12);
               margin-bottom: 8px; overflow-x: auto; }
@@ -156,47 +142,6 @@
 <div class="nav"><a href="index.html">Portfolio</a><span style="color:#cde">Operational Alerts</span></div>
 
 
-<section class="ec-section">
-  <h2>✉ Field &amp; Email Context <span class="muted">(human O&amp;M emails from the AE Reports label, updated 2026-06-24 — newer than the alert data below)</span></h2>
-
-  <div class="ec-card">
-    <div class="ec-head">Elk Solar <span class="ec-tag">ESCALATE — ACTIVE THEFT</span></div>
-    <div class="ec-body">The offline inverters are <b>not</b> a simple utility/equipment event — the site is under <b>repeated DC-wire theft and fence vandalism</b>. First theft <b>5/27</b>; thieves keep returning (fence cut, breakers switched off, string wire stolen). Scale: <b>~100 runs of string wire stolen, 47 rows vandalized</b>. Of 43 inverters, <b>35 offline by 6/18</b>, ~10 online 6/22, and <b>only 3 operational the morning of 6/23</b> (4 knocked back offline 6/24). NARENCO now classifies further truck rolls as <b>"non-covered service" until the fence is repaired</b>. Actions in motion: Carolina Solar Services DC-wire repair quote — site visit <b>Fri 6/26</b>; overnight security patrol (Investigate NC, 8pm–6am) in contracting; fence-repair quote pending. Separately, a utility trip 6/18 19:45 → 6/19 07:15 (WO 50379).</div>
-    <div class="ec-src">Source: AE Reports — "SR/NRCO Elk Inverters Offline" + CSS theft threads + Investigate NC patrol (6/23–6/24)</div>
-  </div>
-
-  <div class="ec-card">
-    <div class="ec-head">Whitetail <span class="ec-tag">DAS / COMMS</span></div>
-    <div class="ec-body"><b>Utility trips:</b> WO 50366 — 6/17 04:30 → 08:30; WO 50397 — 6/23 15:15 → 15:45 (both remote-restored by NCC, minor impact). <b>DAS/communications remediation underway (larger issue):</b> the original DAS install is defective/incomplete — missing fiber between cabinets, no cell modem for off-site comms, unterminated/unlabeled wiring. Casey Electric recommends a <b>full DAS replacement</b>; Sargent Electric (earliest on-site ~6/29, blocked on PO) and Stem/AlsoEnergy (modem BOM + re-commissioning, blocked on PO) also engaged. A possible Solectria thermal / neutral-conductor inverter-failure issue is under investigation. Expect intermittent data quality until resolved.</div>
-    <div class="ec-src">Source: AE Reports — Whitetail fiber/DAS thread (Casey Electric), Sargent &amp; Stem threads (6/16–6/24)</div>
-  </div>
-
-  <div class="ec-card">
-    <div class="ec-head">Washington Solar <span class="ec-tag">UTILITY TRIP</span></div>
-    <div class="ec-body">Utility tripped the site offline — WO 50396, <b>6/22 19:21 → 6/23 09:00</b>, restored remotely by NCC. (Unrelated to the high-EPI / pyranometer-calibration flag in the data.)</div>
-    <div class="ec-src">Source: AE Reports — NCC Daily WO Report / NARENCO 6/23 Incident Report</div>
-  </div>
-
-  <div class="ec-card">
-    <div class="ec-head">Sunflower Solar <span class="ec-tag">UTILITY TRIP</span></div>
-    <div class="ec-body">Utility trip — WO 50380, <b>6/18 20:30 → 6/19 07:15</b>, restored remotely by NCC. Distinct from the transformer 90°C liquid-temp flag in the alert data.</div>
-    <div class="ec-src">Source: AE Reports — NARENCO 6/19 Incident Report</div>
-  </div>
-
-  <div class="ec-card">
-    <div class="ec-head">Williams Solar <span class="ec-tag">UTILITY TRIP</span></div>
-    <div class="ec-body">Site-wide utility trip — WO 50381, <b>6/18 20:30 → 6/19 07:15</b>, restored remotely — on top of INVERTER A20 offline since 6/5 (grid overvoltage, forced outage).</div>
-    <div class="ec-src">Source: AE Reports — NARENCO 6/19 Incident Report</div>
-  </div>
-
-  <div class="ec-card">
-    <div class="ec-head">Green (Elementary / Solar) <span class="ec-tag">SECURITY</span></div>
-    <div class="ec-body">Fence-screening change order with Konisto (screening fabric on 400 ft of fence line north of the entrance; wind-relief holes recommended). <b>Pending county approval</b> as of 6/17; 2–4 weeks to procure/install once approved; Konisto will not warranty the work. No production impact — noted given the regional theft pattern.</div>
-    <div class="ec-src">Source: AE Reports — Green fence-screening thread (Konisto, 6/17)</div>
-  </div>
-</section>
-
-
 <section>
   <h2>⚕ Diagnosis &amp; Recommended Actions
     <span class="muted">(cross-referenced: alerts + rule tool + AI summaries + live power)</span></h2>
@@ -207,7 +152,6 @@
         <span class='pill pill-inverter_fault'>OPEN</span><span class="diag-impact">5000 kW at risk</span></div>
       <ul class="diag-ev"><li>[alert 06-11 09:49] Inverter - 01.13: Sungrow Inverter Fault Alert — Islanding (Grid power outage) (OPEN)</li><li>[alert 06-11 09:50] Inverter - 01.11: Sungrow Inverter Fault Alert — Islanding (Grid power outage) (OPEN)</li><li>[alert 06-13 10:06] Inverter - 01.08: Sungrow Inverter Fault Alert — Islanding (Grid power outage) (OPEN)</li><li>[pattern] 3 inverters faulted within 30 min of each other</li><li>[AI summary] “…Inverter 01.02 has been offline since May 27 at 3:29 AM EDT (forced outage, ~750 kWh/day downtime loss on sampl…”</li></ul>
       <div class="diag-action">→ Confirm utility outage/voltage event for the window; check recloser/breaker closed; verify inverters auto-restarted (production back to expected). Truck roll only if any unit failed to reconnect.</div>
-      <div class="email-ctx"><span class="ec-tag">EMAIL 6/24</span><b>Active DC-wire theft, not a clean utility trip.</b> 35 of 43 inverters offline by 6/18; only 3 operational 6/23; ~100 runs string wire stolen / 47 rows vandalized. NARENCO truck rolls non-covered until fence repaired. CSS DC-wire repair visit 6/26; overnight security patrol (Investigate NC) in contracting. See Field &amp; Email Context above.</div>
     </div>
     <div class="diag-card">
       <div class="diag-head"><span class='diag-rank'>#2</span><b>Sunflower Solar</b> — Transformer over-temperature fault
@@ -215,7 +159,6 @@
         <span class='pill pill-inverter_fault'>OPEN</span><span class="diag-impact">4998 kW at risk</span></div>
       <ul class="diag-ev"><li>[alert 05-17 11:37] DIGITAL I/O - XFMR ALARMS (IO2): Transformer Monitor — 90 degree liquid temp fault - Temperature greater than 90 C. (OPEN)</li><li>[alert 06-24 16:47] DIGITAL I/O - XFMR ALARMS (IO1): Transformer Monitor — 90 degree liquid temp fault - Temperature greater than 90 C.	 105 degree liquid temp fault (OPEN)</li><li>[live power] site output now: -20.5 kW (capacity 9996 kW)</li></ul>
       <div class="diag-action">→ Verify cooling (radiators/fans), oil level and load profile. Sustained &gt;90°C liquid temp degrades insulation — consider derate until inspected.</div>
-      <div class="email-ctx"><span class="ec-tag">EMAIL 6/24</span>Utility trip WO 50380, 6/18 20:30 → 6/19 07:15, restored remotely by NCC — separate from this transformer over-temp flag.</div>
     </div>
     <div class="diag-card">
       <div class="diag-head"><span class='diag-rank'>#3</span><b>Longleaf Pine Solar, LLC</b> — Transformer over-temperature fault
@@ -1177,7 +1120,6 @@ Production meter reports zero (meter/inverter ratio undefined); voltage calc 173
         <span class='pill pill-inverter_fault'>OPEN</span><span class="diag-impact">5000 kW at risk</span></div>
       <ul class="diag-ev"><li>[alert 06-11 09:49] Inverter - 01.13: Sungrow Inverter Fault Alert — Islanding (Grid power outage) (OPEN)</li><li>[alert 06-11 09:50] Inverter - 01.11: Sungrow Inverter Fault Alert — Islanding (Grid power outage) (OPEN)</li><li>[alert 06-13 10:06] Inverter - 01.08: Sungrow Inverter Fault Alert — Islanding (Grid power outage) (OPEN)</li><li>[pattern] 3 inverters faulted within 30 min of each other</li><li>[AI summary] “…Inverter 01.02 has been offline since May 27 at 3:29 AM EDT (forced outage, ~750 kWh/day downtime loss on sampl…”</li></ul>
       <div class="diag-action">→ Confirm utility outage/voltage event for the window; check recloser/breaker closed; verify inverters auto-restarted (production back to expected). Truck roll only if any unit failed to reconnect.</div>
-      <div class="email-ctx"><span class="ec-tag">EMAIL 6/24</span><b>Active DC-wire theft, not a clean utility trip.</b> 35 of 43 inverters offline by 6/18; only 3 operational 6/23; ~100 runs string wire stolen / 47 rows vandalized. NARENCO truck rolls non-covered until fence repaired. CSS DC-wire repair visit 6/26; overnight security patrol (Investigate NC) in contracting. See Field &amp; Email Context above.</div>
     </div>
     <div class="diag-card">
       <div class="diag-head"><b>Elk Solar</b> — Datalogger / gateway failure — site reporting dark (production may continue)
@@ -1185,7 +1127,6 @@ Production meter reports zero (meter/inverter ratio undefined); voltage calc 173
         <span class="diag-impact">monitoring impact</span></div>
       <ul class="diag-ev"><li>[pattern] 45 of ~45 devices in comm loss</li><li>[AI summary] “…Inverter 01.02 has been offline since May 27 at 3:29 AM EDT (forced outage, ~750 kWh/day downtime loss on sampl…”</li></ul>
       <div class="diag-action">→ Remote-reboot the datalogger / cell modem. If telemetry doesn't return in ~4h, send tech to power-cycle; check cellular signal and modem data contract (contract expiry causes permanent disconnect).</div>
-      <div class="email-ctx"><span class="ec-tag">EMAIL 6/24</span><b>Active DC-wire theft, not a clean utility trip.</b> 35 of 43 inverters offline by 6/18; only 3 operational 6/23; ~100 runs string wire stolen / 47 rows vandalized. NARENCO truck rolls non-covered until fence repaired. CSS DC-wire repair visit 6/26; overnight security patrol (Investigate NC) in contracting. See Field &amp; Email Context above.</div>
     </div>
         <div class="hm-controls">
           <label>View:</label>
