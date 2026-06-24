@@ -58,7 +58,7 @@ TZ_OFFSET_MIN = 360  # minutes west of UTC; match offset in cURL body (360 = US/
 
 # Columns written to the Excel export (subset of normalize() output keys).
 EXCEL_COLUMNS = [
-    "alert_id", "site_name", "hardware_name", "event_type_name",
+    "alert_id", "site_name", "hardware_name", "event_type_code", "event_type_name",
     "description", "severity", "is_resolved", "is_acknowledged",
     "alert_start", "alert_end", "resolved_time", "timezone",
     "asset_code", "impact", "capacity", "resolved_by",
