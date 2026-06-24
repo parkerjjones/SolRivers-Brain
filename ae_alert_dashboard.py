@@ -244,9 +244,11 @@ def fetch_alerts_offline(d_from, d_to):
 
 
 def load_hardware():
-    """site_name -> {'inverters': [names...], 'trackers': [names...]}"""
+    """site_name -> {'inverters': [names...], 'trackers': [names...],
+                     'weather_keys': [hw_keys...], 'site_key': str}"""
     import openpyxl
-    hw = defaultdict(lambda: {"inverters": [], "trackers": []})
+    hw = defaultdict(lambda: {"inverters": [], "trackers": [],
+                               "weather_keys": [], "site_key": None})
     if not HW_XLSX.exists():
         return hw
     wb = openpyxl.load_workbook(HW_XLSX, read_only=True)
@@ -262,7 +264,116 @@ def load_hardware():
             hw[site]["inverters"].append(name)
         elif fc == 24:
             hw[site]["trackers"].append(name)
+        if fc == 5:
+            hw_key = r[idx["HW Key"]]
+            name_low = (name or "").lower()
+            if "poa" in name_low and "offline" not in name_low:
+                hw[site]["weather_keys"].insert(0, hw_key)
+            elif "offline" not in name_low:
+                hw[site]["weather_keys"].append(hw_key)
+        if hw[site]["site_key"] is None and "Site Key" in idx:
+            hw[site]["site_key"] = r[idx["Site Key"]]
     return hw
+
+
+SUMMARIES_XLSX = HERE / "ae_ai_summaries.xlsx"
+
+def load_ai_summaries():
+    """site_name -> summary text"""
+    import openpyxl
+    sums = {}
+    if not SUMMARIES_XLSX.exists():
+        return sums
+    wb = openpyxl.load_workbook(SUMMARIES_XLSX, read_only=True)
+    ws = wb.active
+    rows_iter = ws.values
+    hdr = next(rows_iter)
+    idx = {h: i for i, h in enumerate(hdr)}
+    for r in rows_iter:
+        site = r[idx.get("Site Name", 1)]
+        txt = r[idx.get("AI Summary (Plain Text)", 2)]
+        if site and txt:
+            sums[site] = str(txt)[:800]
+    return sums
+
+
+SITES_XLSX = HERE / "ae_sites.xlsx"
+
+def load_site_keys():
+    """site_name -> site_key (e.g. 'S59656')"""
+    import openpyxl
+    keys = {}
+    if not SITES_XLSX.exists():
+        return keys
+    wb = openpyxl.load_workbook(SITES_XLSX, read_only=True)
+    ws = wb["Sites Overview"]
+    rows_iter = ws.values
+    hdr = next(rows_iter)
+    idx = {h: i for i, h in enumerate(hdr)}
+    for r in rows_iter:
+        keys[r[idx["Site Name"]]] = r[idx["Site Key"]]
+    return keys
+
+
+IRRAD_MEASUREMENT_CATS = [
+    {"value": 1, "enabled": True, "checked": True, "modelOptions": None},
+    {"value": 4, "enabled": True, "checked": True, "modelOptions": None},
+    {"value": 8, "enabled": True, "checked": True, "modelOptions": None},
+]
+IRRAD_INLINE = {
+    "aggregationMode": 3, "autoSource": False, "lineType": 0,
+    "weatherMode": 0, "modelIndex": 0,
+    "useOnSiteWeatherStations": True, "primaryWeatherSource": 10,
+    "showNetEnergy": True, "powerAverage": True,
+    "includePOA": True, "includeGHI": False, "fillGaps": False,
+    "showExternalTemperature": False, "showDeviceTemperature": False,
+    "showAggregateLayers": True, "showSourceLayers": False,
+    "xSeriesKey": None,
+}
+
+
+def fetch_irradiance(session, site_key, weather_keys, d_from, d_to):
+    """Fetch hourly POA irradiance for a site. Returns list of hourly W/m2 values."""
+    if not weather_keys or not site_key:
+        return []
+    hw_key = weather_keys[0]
+    payload = {
+        "chartType": 1, "binSize": 60, "context": "site",
+        "start": d_from.isoformat(), "end": d_to.isoformat(),
+        "futureDays": 0, "hardwareSet": [hw_key], "sectionCode": 0,
+        "query": {
+            "name": "CustomChart", "title": "Custom Chart",
+            "initialSpan": 1, "dataItems": [],
+            "kpiChart": {
+                "siteKeys": [site_key],
+                "categories": {
+                    "measurements": IRRAD_MEASUREMENT_CATS,
+                    "calculations": [], "losses": [], "financials": [],
+                    "events": [], "special": [],
+                },
+                "availabilityReferenceMode": 0, "availabilityPassMode": 0,
+                "availabilityPowerThreshold": 0, "weatherModes": [],
+                "weatherSources": [0],
+                "inlineOptions": IRRAD_INLINE,
+            },
+        },
+        "source": [site_key],
+    }
+    try:
+        r = session.post(f"{API_BASE}/view/chart?lastChanged=1900-01-01T00:00:00.000Z",
+                         json=payload, timeout=30)
+        if not r.ok:
+            return []
+        data = r.json()
+        for s in data.get("series", []):
+            name = str(s.get("name", "")).lower()
+            if "poa" in name or "irradiance" in name or "w/m" in name:
+                return s.get("dataBinned", [])
+        if data.get("series"):
+            return data["series"][0].get("dataBinned", [])
+    except Exception as e:
+        print(f"  [irrad] {site_key}: {e}")
+    return []
 
 
 # ── Enrichment ────────────────────────────────────────────────────────────
@@ -439,8 +550,9 @@ def render_diag_card(d, rank=None):
     </div>"""
 
 
-def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h):
-    """Clickable <details> per site: badge + canvas strip heatmap + diagnoses."""
+def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
+                          ai_summary="", irrad_data=None):
+    """Clickable <details> per site: badge + canvas strip heatmap + diagnoses + AI context + irradiance."""
     n_inv = len(strip["invs"])
     if fault_h > 1:
         badge = f"<span class='acc-badge acc-red'>{fault_h:.0f}h fault</span>"
@@ -450,21 +562,35 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h):
         badge = "<span class='acc-badge acc-green'>healthy</span>"
     diag_html = "".join(render_diag_card(d) for d in site_diags[:3])
     open_attr = " open" if fault_h > 1 or any(d["open"] for d in site_diags) else ""
+    summary_html = ""
+    if ai_summary:
+        summary_html = f"""<div class="ai-summary"><div class="ai-label">AI Site Summary</div>{esc(ai_summary)}</div>"""
+    irrad_chart = ""
+    if irrad_data:
+        strip["irrad"] = irrad_data
+        irrad_chart = f"""<div class="irrad-wrap"><canvas id="ir{sid}" class="irrad-canvas"></canvas></div>"""
     return f"""
     <details class="site-acc" data-site="{esc(site.lower())}"{open_attr}>
       <summary><span class="acc-name">{esc(site)}</span>
         <span class="acc-meta">{n_inv} inverters</span>{badge}</summary>
       <div class="acc-body">
+        {summary_html}
         {diag_html}
+        {irrad_chart}
         <div class="strip-wrap">
           <div class="strip-labels" id="lb{sid}"></div>
           <div style="flex:1;min-width:0"><canvas id="hm{sid}" class="strip-canvas"></canvas></div>
         </div>
-        <div class="legend" style="display:flex;align-items:center;gap:14px">
-          <span style="font-size:11px;color:#666">Capacity Factor / Availability (%)</span>
-          <span class="scalebar"></span>
-          <span style="font-size:10px;color:#888">0%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;100%</span>
-          <span class="legend"><i style="background:#cfcfcf"></i>Comm loss / no data</span>
+        <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-size:11px;color:#555;font-weight:600">Capacity Factor</span>
+          <div class="scale-ruler">
+            <div class="scalebar"></div>
+            <div class="scale-ticks">
+              <span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span>
+            </div>
+          </div>
+          <span class="legend"><i style="background:#bfbfbf"></i>No data</span>
+          <span class="legend"><i style="background:#1a1a1a"></i>Night</span>
         </div>
       </div>
       <script type="application/json" id="d{sid}">{json.dumps(strip)}</script>
@@ -618,13 +744,16 @@ PAGE = """<!DOCTYPE html>
   /* strip heatmap (PowerTrack inverter-heatmap style) */
   .strip-wrap {{ display: flex; gap: 8px; margin: 8px 0 6px; }}
   .strip-labels {{ display: flex; flex-direction: column; }}
-  .strip-labels div {{ height: 18px; line-height: 18px; font-size: 11px; color: #555;
+  .strip-labels div {{ height: 16px; line-height: 16px; font-size: 10px; color: #555;
                       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
                       max-width: 200px; min-width: 140px; }}
   .strip-labels div.avg {{ font-weight: 700; color: #1F4E79; }}
   .strip-canvas {{ width: 100%; display: block; }}
-  .scalebar {{ display: inline-block; width: 140px; height: 12px; border-radius: 2px;
-    background: linear-gradient(90deg,#00007f,#0000ff,#007fff,#00ffff,#7fff7f,#ffff00,#ff7f00,#ff0000,#7f0000); }}
+  .scale-ruler {{ display: inline-flex; flex-direction: column; }}
+  .scalebar {{ width: 200px; height: 12px; border-radius: 2px;
+    background: linear-gradient(90deg,#a50026,#d73027,#f46d43,#fdae61,#fee08b,#ffffbf,#d9ef8b,#a6d96a,#66bd63,#1a9850,#006837); }}
+  .scale-ticks {{ display: flex; justify-content: space-between; width: 200px; }}
+  .scale-ticks span {{ font-size: 9px; color: #888; }}
   .hm-tip {{ position: fixed; background: rgba(20,30,40,.95); color: #fff; font-size: 11px;
             padding: 6px 9px; border-radius: 4px; pointer-events: none; z-index: 99;
             max-width: 340px; display: none; line-height: 1.5; }}
@@ -634,13 +763,19 @@ PAGE = """<!DOCTYPE html>
   .controls button {{ padding: 6px 12px; border: 1px solid #2E75B6; background: #fff;
                      color: #2E75B6; border-radius: 4px; font-size: 12px; cursor: pointer; }}
   .controls button:hover {{ background: #2E75B6; color: #fff; }}
+  .ai-summary {{ background: #f0f6ff; border-left: 3px solid #2E75B6; border-radius: 4px;
+               padding: 10px 14px; margin-bottom: 10px; font-size: 12px; color: #444; line-height: 1.5; }}
+  .ai-label {{ font-size: 10px; font-weight: 700; color: #2E75B6; text-transform: uppercase;
+              letter-spacing: .5px; margin-bottom: 4px; }}
+  .irrad-wrap {{ position: relative; height: 120px; margin-bottom: 8px; }}
+  .irrad-canvas {{ width: 100%; height: 100%; }}
   footer {{ text-align: center; font-size: 11px; color: #aaa; padding: 14px; }}
 </style>
 </head>
 <body>
 <header>
   <div>
-    <h1>Operational Alerts — Last {days_n} Days</h1>
+    <h1>Operational Alerts</h1>
     <div style="font-size:13px;margin-top:2px;opacity:.8">SolRiver Capital · {window_label}</div>
   </div>
   <div class="meta">Generated: {generated_at}<br><a href="index.html" style="color:#cde">← Portfolio Overview</a></div>
@@ -668,7 +803,7 @@ PAGE = """<!DOCTYPE html>
 
 <section>
   <h2>Inverter Heatmaps — All Sites
-    <span class="muted">— click a site to expand · hourly strips, jet scale (blue = 0%, red = 100%)</span></h2>
+    <span class="muted">— click to expand · hourly capacity factor (green = 100%, red = 0%)</span></h2>
   <div class="controls">
     <input id="siteSearch" type="text" placeholder="Search sites…" oninput="filterSites(this.value)">
     <button onclick="setAll(true)">Expand all</button>
@@ -712,27 +847,55 @@ new Chart(document.getElementById('dayChart'), {{
     plugins: {{legend: {{position: 'bottom'}}}} }}
 }});
 
-/* ── PowerTrack-style strip heatmaps ─────────────────────────────── */
-function jet(v) {{
-  const r = Math.max(0, Math.min(255, Math.round(255*(1.5 - Math.abs(4*v - 3)))));
-  const g = Math.max(0, Math.min(255, Math.round(255*(1.5 - Math.abs(4*v - 2)))));
-  const b = Math.max(0, Math.min(255, Math.round(255*(1.5 - Math.abs(4*v - 1)))));
-  return [r, g, b];
+/* ── AlsoEnergy PowerTrack heatmap ────────────────────────────────── */
+/* RdYlGn color ramp: 0% = dark red, 50% = yellow, 100% = dark green */
+const AE_STOPS = [
+  [0.00, 165, 0, 38],
+  [0.10, 215, 48, 39],
+  [0.20, 244, 109, 67],
+  [0.30, 253, 174, 97],
+  [0.40, 254, 224, 139],
+  [0.50, 255, 255, 191],
+  [0.60, 217, 239, 139],
+  [0.70, 166, 217, 106],
+  [0.80, 102, 189, 99],
+  [0.90, 26, 152, 80],
+  [1.00, 0, 104, 55],
+];
+function aeColor(v) {{
+  if (v <= 0) return [165, 0, 38];
+  if (v >= 1) return [0, 104, 55];
+  for (let i = 1; i < AE_STOPS.length; i++) {{
+    if (v <= AE_STOPS[i][0]) {{
+      const lo = AE_STOPS[i - 1], hi = AE_STOPS[i];
+      const t = (v - lo[0]) / (hi[0] - lo[0]);
+      return [
+        Math.round(lo[1] + t * (hi[1] - lo[1])),
+        Math.round(lo[2] + t * (hi[2] - lo[2])),
+        Math.round(lo[3] + t * (hi[3] - lo[3]))
+      ];
+    }}
+  }}
+  return [0, 104, 55];
 }}
-const ROW_H = 18, GAP = 1, AXIS_H = 22;
+function isNight(hour) {{ return hour < 5 || hour >= 21; }}
+
+const ROW_H = 16, GAP = 1, AVG_H = 20, AXIS_H = 20;
 
 function drawStrip(sid) {{
   const dEl = document.getElementById('d' + sid);
   const cv = document.getElementById('hm' + sid);
   if (!dEl || !cv || cv.dataset.drawn) return;
   const data = JSON.parse(dEl.textContent);
-  const nRows = data.invs.length + 1;
+  const nInv = data.invs.length;
+  const totalH = AVG_H + nInv * ROW_H + AXIS_H;
   const wCss = Math.max(cv.parentElement.clientWidth, 400);
   const dpr = window.devicePixelRatio || 1;
-  cv.width = wCss * dpr; cv.height = (nRows * ROW_H + AXIS_H) * dpr;
-  cv.style.height = (nRows * ROW_H + AXIS_H) + 'px';
+  cv.width = wCss * dpr; cv.height = totalH * dpr;
+  cv.style.height = totalH + 'px';
   const ctx = cv.getContext('2d'); ctx.scale(dpr, dpr);
   const bw = wCss / data.bins;
+  const t0 = new Date(data.start.replace(' ', 'T'));
 
   const avg = [];
   for (let b = 0; b < data.bins; b++) {{
@@ -740,53 +903,66 @@ function drawStrip(sid) {{
     for (const row of data.vals) if (row[b] >= 0) {{ s += row[b]; n++; }}
     avg.push(n ? s / n : -1);
   }}
-  const paint = (rowVals, y) => {{
+
+  const paintRow = (rowVals, y, h) => {{
     for (let b = 0; b < data.bins; b++) {{
+      const hr = (t0.getHours() + b) % 24;
       const v = rowVals[b];
-      if (v < 0) ctx.fillStyle = '#cfcfcf';
-      else {{ const c = jet(v / 100); ctx.fillStyle = `rgb(${{c[0]}},${{c[1]}},${{c[2]}})`; }}
-      ctx.fillRect(b * bw, y, Math.ceil(bw), ROW_H - GAP);
+      if (v < 0) {{
+        ctx.fillStyle = isNight(hr) ? '#2a2a2a' : '#bfbfbf';
+      }} else if (isNight(hr) && v >= 95) {{
+        ctx.fillStyle = '#1a1a1a';
+      }} else {{
+        const c = aeColor(v / 100);
+        ctx.fillStyle = `rgb(${{c[0]}},${{c[1]}},${{c[2]}})`;
+      }}
+      ctx.fillRect(b * bw, y, Math.ceil(bw) + 0.5, h - GAP);
     }}
   }};
-  paint(avg, 0);
-  data.vals.forEach((row, i) => paint(row, (i + 1) * ROW_H));
 
-  ctx.fillStyle = '#888'; ctx.font = '10px Segoe UI'; ctx.textAlign = 'center';
-  const t0 = new Date(data.start.replace(' ', 'T'));
+  paintRow(avg, 0, AVG_H);
+  data.vals.forEach((row, i) => paintRow(row, AVG_H + i * ROW_H, ROW_H));
+
+  const gridTop = AVG_H + nInv * ROW_H;
+  ctx.fillStyle = '#999'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
   for (let h = 0; h < data.bins; h += 24) {{
     const d = new Date(t0.getTime() + h * 3600e3);
-    const x = (h + 12) * bw;
-    ctx.fillText((d.getMonth()+1) + '/' + d.getDate(), x, nRows * ROW_H + 14);
-    ctx.fillStyle = '#ddd';
-    ctx.fillRect(h * bw, 0, 1, nRows * ROW_H);
-    ctx.fillStyle = '#888';
+    ctx.fillStyle = 'rgba(255,255,255,.25)';
+    ctx.fillRect(h * bw, 0, 1, gridTop);
+    ctx.fillStyle = '#999';
+    ctx.fillText((d.getMonth()+1) + '/' + d.getDate(), (h + 12) * bw, gridTop + 14);
   }}
 
   const lb = document.getElementById('lb' + sid);
-  lb.innerHTML = '<div class="avg">Average of All Inverters</div>' +
+  lb.innerHTML = '<div class="avg" style="height:' + AVG_H + 'px;line-height:' + AVG_H + 'px">Average</div>' +
     data.invs.map(n => `<div title="${{n}}">${{n}}</div>`).join('');
   cv.dataset.drawn = '1';
 
   const tip = document.getElementById('hmTip');
   cv.onmousemove = e => {{
-    const r = cv.getBoundingClientRect();
-    const b = Math.floor((e.clientX - r.left) / bw);
-    const row = Math.floor((e.clientY - r.top) / ROW_H);
-    if (b < 0 || b >= data.bins || row >= nRows) {{ tip.style.display = 'none'; return; }}
+    const rect = cv.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    const b = Math.floor(mx / bw);
+    let row, rowIdx;
+    if (my < AVG_H) {{ row = 'avg'; rowIdx = -1; }}
+    else {{ rowIdx = Math.floor((my - AVG_H) / ROW_H); row = 'inv'; }}
+    if (b < 0 || b >= data.bins || (row === 'inv' && rowIdx >= nInv)) {{
+      tip.style.display = 'none'; return;
+    }}
     const t = new Date(t0.getTime() + b * 3600e3);
-    const when = t.toLocaleString([], {{month:'numeric', day:'numeric', hour:'numeric'}});
+    const when = t.toLocaleString([], {{month:'numeric', day:'numeric', hour:'numeric', minute:'2-digit'}});
     let html;
-    if (row === 0) {{
+    if (row === 'avg') {{
       const v = avg[b];
-      html = `<b>Average of all inverters</b><br>${{when}} — ` +
-             (v < 0 ? 'no data' : v.toFixed(0) + '%');
+      html = `<b>Average of All Inverters</b><br>${{when}}<br>` +
+             (v < 0 ? '<span style="color:#bbb">No data</span>' : `<b>${{v.toFixed(1)}}%</b> capacity`);
     }} else {{
-      const i = row - 1, v = data.vals[i][b];
-      html = `<b>${{data.invs[i]}}</b><br>${{when}} — ` +
-             (v < 0 ? 'comm loss / no data' : v.toFixed(0) + '%');
-      if (data.alerts[i].length)
-        html += '<br><span style="color:#ffb3b3">' +
-                data.alerts[i].slice(0, 4).join('<br>') + '</span>';
+      const v = data.vals[rowIdx][b];
+      html = `<b>${{data.invs[rowIdx]}}</b><br>${{when}}<br>` +
+             (v < 0 ? '<span style="color:#bbb">Comm loss / no data</span>' : `<b>${{v.toFixed(1)}}%</b> capacity`);
+      if (data.alerts[rowIdx] && data.alerts[rowIdx].length)
+        html += '<br><span style="color:#ff9999;font-size:10px">' +
+                data.alerts[rowIdx].slice(0, 4).join('<br>') + '</span>';
     }}
     tip.innerHTML = html; tip.style.display = 'block';
     tip.style.left = Math.min(e.clientX + 14, window.innerWidth - 360) + 'px';
@@ -795,12 +971,52 @@ function drawStrip(sid) {{
   cv.onmouseleave = () => tip.style.display = 'none';
 }}
 
+function drawIrrad(sid) {{
+  const dEl = document.getElementById('d' + sid);
+  const cv = document.getElementById('ir' + sid);
+  if (!dEl || !cv || cv.dataset.drawn) return;
+  const data = JSON.parse(dEl.textContent);
+  if (!data.irrad || !data.irrad.length) return;
+  const irrad = data.irrad;
+  const t0 = new Date(data.start.replace(' ', 'T'));
+  const labels = irrad.map((_, i) => {{
+    const d = new Date(t0.getTime() + i * 3600e3);
+    return (d.getMonth()+1) + '/' + d.getDate() + ' ' + d.getHours() + ':00';
+  }});
+  new Chart(cv, {{
+    type: 'line',
+    data: {{ labels: labels,
+      datasets: [{{
+        label: 'POA Irradiance (W/m²)',
+        data: irrad.map(v => v === null || v === undefined ? null : Math.round(v)),
+        borderColor: '#f5a623', backgroundColor: 'rgba(245,166,35,.12)',
+        fill: true, tension: .3, pointRadius: 0, borderWidth: 1.5
+      }}]
+    }},
+    options: {{
+      responsive: true, maintainAspectRatio: false,
+      scales: {{
+        x: {{ display: true, ticks: {{ maxTicksLimit: 14, font: {{size: 9}}, color: '#999' }},
+              grid: {{display: false}} }},
+        y: {{ beginAtZero: true, title: {{display: true, text: 'W/m²', font: {{size: 10}}}},
+              ticks: {{font: {{size: 9}}}}, grid: {{color: '#f0f0f0'}} }}
+      }},
+      plugins: {{
+        legend: {{display: true, position: 'top', labels: {{font: {{size: 10}}}}}},
+        title: {{display: true, text: 'Irradiance (POA) — hourly', font: {{size: 11}}, color: '#666'}}
+      }}
+    }}
+  }});
+  cv.dataset.drawn = '1';
+}}
+
 document.querySelectorAll('details.site-acc').forEach(d => {{
-  const cvEl = d.querySelector('canvas');
+  const cvEl = d.querySelector('canvas.strip-canvas');
   if (!cvEl) return;
   const sid = cvEl.id.slice(2);
-  if (d.open) requestAnimationFrame(() => drawStrip(sid));
-  d.addEventListener('toggle', () => {{ if (d.open) drawStrip(sid); }});
+  const init = () => {{ drawStrip(sid); drawIrrad(sid); }};
+  if (d.open) requestAnimationFrame(init);
+  d.addEventListener('toggle', () => {{ if (d.open) init(); }});
 }});
 
 function filterSites(q) {{
@@ -885,6 +1101,29 @@ def main():
         render_diag_card(d, i + 1) for i, d in enumerate(diags[:10])) or \
         "<div class='card muted'>No diagnoses generated for this window.</div>"
 
+    # ── AI summaries ───────────────────────────────────────────────────
+    ai_sums = load_ai_summaries()
+    site_keys = load_site_keys()
+    # back-fill site keys from hw data
+    for sn, hwd in hw.items():
+        if sn not in site_keys and hwd.get("site_key"):
+            site_keys[sn] = hwd["site_key"]
+
+    # ── irradiance fetch ─────────────────────────────────────────────
+    irrad_by_site = {}
+    if not args.offline:
+        print("Fetching irradiance per site ...")
+        for sn, hwd in hw.items():
+            wk = hwd.get("weather_keys", [])
+            sk = site_keys.get(sn)
+            if wk and sk:
+                vals = fetch_irradiance(session, sk, wk, d_from, d_to)
+                if vals:
+                    irrad_by_site[sn] = vals
+                    print(f"  {sn}: {len(vals)} hourly bins")
+                time.sleep(SLEEP)
+        print(f"  irradiance fetched for {len(irrad_by_site)} sites")
+
     # ── per-site strip heatmaps for EVERY site ────────────────────────
     alerts_by_site = defaultdict(list)
     for a in filtered:
@@ -905,7 +1144,9 @@ def main():
         strip = apply_alerts_to_strips(strip, alerts_by_site.get(site, []), d_from)
         heatmaps_html += render_site_accordion(
             sid, site, strip, by_site_diag.get(site, []),
-            hours(site, "fault"), hours(site, "comm"))
+            hours(site, "fault"), hours(site, "comm"),
+            ai_summary=ai_sums.get(site, ""),
+            irrad_data=irrad_by_site.get(site))
 
     trackers_html = "".join(
         render_tracker_html(s, tracker_data[s], days, f"trk{i}")
