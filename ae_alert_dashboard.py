@@ -968,28 +968,43 @@ def render_tracker_html(site, data, days, chart_id):
     </script>"""
 
 
-def render_critical_table(alerts, top_n=40):
+def render_critical_table(alerts):
     crit = [a for a in alerts if a["category"] in
             ("INVERTER_FAULT", "GRID", "TRACKER_FAULT", "METER")]
-    crit.sort(key=lambda a: -a["score"])
+    crit.sort(key=lambda a: a["start"] or datetime.min, reverse=True)
+    sites = sorted(set(a["site_name"] for a in crit))
     rows = []
-    for a in crit[:top_n]:
+    for a in crit:
         sev = SEVERITY_LABEL.get(a["severity"], a["severity"])
         status = "✔ resolved" if a["is_resolved"] else "<b class='red'>OPEN</b>"
-        rows.append(f"""<tr>
+        ts = a["start"].strftime("%Y-%m-%d %H:%M") if a["start"] else ""
+        ts_display = a["start"].strftime("%m-%d %H:%M") if a["start"] else "—"
+        rows.append(f"""<tr data-site="{esc(a['site_name'])}" data-ts="{ts}" data-cat="{esc(a['cat_label'])}">
           <td><span class="pill pill-{a['category'].lower()}">{esc(a['cat_label'])}</span></td>
           <td>{esc(a['site_name'])}</td>
           <td title="{esc(a['hardware_name'])}">{esc((a['hardware_name'] or '—')[:34])}</td>
           <td title="{esc(a['description'])}">{esc(a['event_type'])}<div class="desc">{esc(a['description'][:120])}</div></td>
-          <td>{a['start'].strftime('%m-%d %H:%M') if a['start'] else '—'}</td>
+          <td>{ts_display}</td>
           <td>{a['duration_h']:.1f} h</td>
           <td>{esc(sev)}</td>
           <td>{status}</td>
           <td class="muted">{esc(a['measurement'])} ({esc(a['unit'])})</td>
         </tr>""")
     if not rows:
-        rows = ["<tr><td colspan='9' class='muted'>No critical alerts in window 🎉</td></tr>"]
-    return f"""<table class="big">
+        rows = ["<tr><td colspan='9' class='muted'>No critical alerts in window</td></tr>"]
+    site_opts = "".join(f'<option value="{esc(s)}">{esc(s)}</option>' for s in sites)
+    cats = sorted(set(a["cat_label"] for a in crit))
+    cat_opts = "".join(f'<option value="{esc(c)}">{esc(c)}</option>' for c in cats)
+    return f"""<div class="alert-filters">
+      <select id="alertSiteFilter" onchange="filterAlerts()">
+        <option value="">All sites</option>{site_opts}</select>
+      <select id="alertCatFilter" onchange="filterAlerts()">
+        <option value="">All categories</option>{cat_opts}</select>
+      <label>From:</label><input type="date" id="alertDateFrom" onchange="filterAlerts()">
+      <label>To:</label><input type="date" id="alertDateTo" onchange="filterAlerts()">
+      <span class="muted" id="alertCount">{len(rows)} alerts</span>
+    </div>
+    <table class="big" id="alertTable">
       <tr><th>Category</th><th>Site</th><th>Device</th><th>Alert</th>
           <th>Start</th><th>Duration</th><th>Severity</th><th>Status</th><th>Check unit</th></tr>
       {''.join(rows)}</table>"""
@@ -1118,6 +1133,11 @@ PAGE = """<!DOCTYPE html>
                padding: 1px 6px; border-radius: 8px; white-space: nowrap; }}
   .email-body {{ font-size: 11px; color: #666; line-height: 1.4; }}
   .email-ev {{ border-left: 2px solid #ef8c1e; padding-left: 6px; margin-top: 4px; }}
+  .alert-filters {{ display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f6f9fd;
+                   border-bottom: 1px solid #e0e6ef; flex-wrap: wrap; }}
+  .alert-filters select, .alert-filters input[type="date"] {{ font-size: 12px; padding: 4px 8px; border: 1px solid #bcd;
+                   border-radius: 4px; background: #fff; }}
+  .alert-filters label {{ font-size: 11px; color: #666; }}
   .legend-title {{ font-size: 11px; color: #555; font-weight: 600; }}
   .night-swatch {{ display: inline-block; width: 14px; height: 12px; border-radius: 2px;
     background: repeating-linear-gradient(-45deg, #fff, #fff 2px, #d0d0d0 2px, #d0d0d0 3px); border: 1px solid #ccc; }}
@@ -1205,6 +1225,27 @@ function switchTab(id, el) {{
     }});
   }}
 }}
+function filterAlerts() {{
+  const site = document.getElementById('alertSiteFilter').value;
+  const cat = document.getElementById('alertCatFilter').value;
+  const from = document.getElementById('alertDateFrom').value;
+  const to = document.getElementById('alertDateTo').value;
+  const rows = document.querySelectorAll('#alertTable tr[data-site]');
+  let shown = 0;
+  rows.forEach(tr => {{
+    const rs = tr.dataset.site;
+    const rc = tr.dataset.cat;
+    const rt = tr.dataset.ts;
+    let show = true;
+    if (site && rs !== site) show = false;
+    if (cat && rc !== cat) show = false;
+    if (from && rt < from) show = false;
+    if (to && rt > to + 'T23:59') show = false;
+    tr.style.display = show ? '' : 'none';
+    if (show) shown++;
+  }});
+  document.getElementById('alertCount').textContent = shown + ' alerts';
+}}
 new Chart(document.getElementById('catChart'), {{
   type: 'doughnut',
   data: {{ labels: {cat_labels}, datasets: [{{ data: {cat_counts},
@@ -1230,7 +1271,7 @@ function jet(v) {{
   return [r, g, b];
 }}
 
-const ROW_H = 14, GAP = 1, AVG_H = 16, IRR_H = 16, AXIS_H = 22;
+const ROW_H = 14, GAP = 1, AVG_H = 16, IRR_H = 16, AXIS_H = 36;
 const stripCache = {{}};
 
 function drawStrip(sid, mode) {{
@@ -1352,24 +1393,24 @@ function drawStrip(sid, mode) {{
   const gridTop = irradOffset + AVG_H + nInv * ROW_H;
   const tickHours = [5, 8, 12, 16, 20];
   const tickLabels = ['5a', '8a', '12p', '4p', '8p'];
-  ctx.font = '9px Segoe UI, Arial';
+  ctx.font = '11px Segoe UI, Arial';
   for (let b = 0; b < data.bins; b++) {{
     const dt = new Date(t0.getTime() + b * bm * 60000);
     const hr = dt.getHours(), mn = dt.getMinutes();
     if (hr === 0 && mn === 0) {{
-      ctx.fillStyle = 'rgba(0,0,0,.15)';
+      ctx.fillStyle = 'rgba(0,0,0,.2)';
       ctx.fillRect(b * bw, 0, 1, gridTop);
     }}
     const ti = tickHours.indexOf(hr);
     if (ti >= 0 && mn === 0) {{
-      ctx.fillStyle = '#999'; ctx.textAlign = 'center';
-      ctx.fillText(tickLabels[ti], b * bw, gridTop + 12);
+      ctx.fillStyle = '#777'; ctx.textAlign = 'center';
+      ctx.fillText(tickLabels[ti], b * bw, gridTop + 14);
     }}
   }}
-  ctx.fillStyle = '#666'; ctx.font = '10px Segoe UI, Arial'; ctx.textAlign = 'center';
+  ctx.fillStyle = '#444'; ctx.font = 'bold 12px Segoe UI, Arial'; ctx.textAlign = 'center';
   for (let b = 0; b < data.bins; b += binsPerHour * 24) {{
     const d = new Date(t0.getTime() + b * bm * 60000);
-    ctx.fillText((d.getMonth()+1) + '/' + d.getDate(), (b + binsPerHour * 12) * bw, gridTop + 20);
+    ctx.fillText((d.getMonth()+1) + '/' + d.getDate(), (b + binsPerHour * 12) * bw, gridTop + 30);
   }}
 
   /* labels */
