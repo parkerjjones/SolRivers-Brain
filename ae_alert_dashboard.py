@@ -302,14 +302,116 @@ def load_hardware():
     return hw
 
 
+SITE_EMAIL_ALIASES = {
+    "elk": "Elk Solar", "elk solar": "Elk Solar",
+    "whitetail": "Whitetail", "sunflower": "Sunflower Solar",
+    "williams": "Williams Solar, LLC", "williams solar": "Williams Solar, LLC",
+    "washington": "Washington Solar", "washington solar": "Washington Solar",
+    "wallace": "Wallace Solar", "wallace solar": "Wallace Solar",
+    "graham": "C & B Graham Energy", "c&b graham": "C & B Graham Energy",
+    "c & b graham": "C & B Graham Energy", "c&b graham energy": "C & B Graham Energy",
+    "green solar": "Green Solar", "green elementary": "Green Elementary",
+    "gallia": "Gallia Academy", "gallia academy": "Gallia Academy",
+    "richmond": "Richmond", "shorthorn": "Shorthorn",
+    "bulloch": "Bulloch 1A", "bulloch 1a": "Bulloch 1A", "bulloch 1b": "Bulloch 1B",
+    "bulloch 1a & 1b": "Bulloch 1A",
+    "monroe": "Monroe Landfill", "eagle": "Eagle",
+    "warbler": "Warbler", "mclean": "McLean",
+    "harding": "Harding Solar", "whitehall": "Whitehall Solar",
+    "gray fox": "Gray Fox Solar", "longleaf": "Longleaf Pine Solar, LLC",
+    "marble": "Marble Solar", "sheridan": "Sheridan Solar",
+    "auburn": "Auburn Solar", "rit": "RIT", "rrh": "RRH 1 & 2",
+    "butler maple": "Butler Maple", "maple": "Butler Maple",
+    "upson": "Upson",
+}
+
+
+def load_site_emails():
+    """Load the AE Reports Site Emails xlsx. Returns {canonical_site: [email_dicts]}"""
+    import glob as _glob
+    files = sorted(_glob.glob(str(HERE / "AE_Reports_Site_Emails*.xlsx")), reverse=True)
+    if not files:
+        return {}
+    import openpyxl
+    wb = openpyxl.load_workbook(files[0], read_only=True)
+    ws = wb.active
+    rows_iter = ws.values
+    hdr = next(rows_iter)
+    idx = {h: i for i, h in enumerate(hdr)}
+    by_site = defaultdict(list)
+    for r in rows_iter:
+        raw_sites = str(r[idx.get("Site(s)", 3)] or "")
+        date_val = r[idx.get("Date", 0)]
+        email = {
+            "date": str(date_val)[:10] if date_val else "",
+            "from": str(r[idx.get("From / Participants", 1)] or "")[:120],
+            "subject": str(r[idx.get("Subject", 2)] or ""),
+            "category": str(r[idx.get("Category", 4)] or ""),
+            "contents": str(r[idx.get("Contents", 5)] or ""),
+            "raw_sites": raw_sites,
+        }
+        matched = set()
+        raw_lower = raw_sites.lower()
+        for alias, canonical in SITE_EMAIL_ALIASES.items():
+            if alias in raw_lower:
+                matched.add(canonical)
+        if "bulloch 1a & 1b" in raw_lower or "bulloch 1a and 1b" in raw_lower:
+            matched.add("Bulloch 1A")
+            matched.add("Bulloch 1B")
+        if "duke nc" in raw_lower:
+            for s in ["Elk Solar", "Williams Solar, LLC", "Shorthorn",
+                       "Sunflower Solar", "Gray Fox Solar"]:
+                matched.add(s)
+        if "oregon" in raw_lower or "or site" in raw_lower:
+            for s in ["Green Solar", "Wallace Solar", "Marble Solar",
+                       "Auburn Solar", "Sheridan Solar"]:
+                matched.add(s)
+        if "ga site" in raw_lower or "ga-" in raw_lower:
+            for s in ["Bulloch 1A", "Bulloch 1B", "Richmond", "Upson"]:
+                matched.add(s)
+        if not matched:
+            matched.add("PORTFOLIO")
+        for site in matched:
+            by_site[site].append(email)
+    print(f"  Loaded {sum(len(v) for v in by_site.values())} email refs across {len(by_site)} sites from {Path(files[0]).name}")
+    return by_site
+
+
 SUMMARIES_XLSX = HERE / "ae_ai_summaries.xlsx"
 
 def _fix_encoding(s):
-    """Fix common UTF-8-as-Latin-1 mojibake."""
-    try:
-        return s.encode("cp1252").decode("utf-8")
-    except (UnicodeDecodeError, UnicodeEncodeError):
-        pass
+    """Fix UTF-8 bytes stored as individual Latin-1/cp1252 characters."""
+    # Reassemble UTF-8 byte sequences from their Latin-1 character codes
+    out = []
+    i = 0
+    while i < len(s):
+        c = ord(s[i])
+        # Three-byte UTF-8: 0xE0-0xEF + two continuation bytes
+        if (0xE0 <= c <= 0xEF and i + 2 < len(s)
+                and 0x80 <= ord(s[i+1]) <= 0xBF
+                and 0x80 <= ord(s[i+2]) <= 0xBF):
+            try:
+                out.append(bytes([c, ord(s[i+1]), ord(s[i+2])]).decode("utf-8"))
+                i += 3
+                continue
+            except UnicodeDecodeError:
+                pass
+        # Two-byte UTF-8: 0xC0-0xDF + one continuation byte
+        if (0xC0 <= c <= 0xDF and i + 1 < len(s)
+                and 0x80 <= ord(s[i+1]) <= 0xBF):
+            try:
+                out.append(bytes([c, ord(s[i+1])]).decode("utf-8"))
+                i += 2
+                continue
+            except UnicodeDecodeError:
+                pass
+        out.append(s[i])
+        i += 1
+    return "".join(out)
+
+
+def _fix_encoding_old(s):
+    """Fallback replacement-based fix."""
     replacements = [
         ("Â°", "°"),   # Â° -> °
         ("Â·", "·"),   # Â· -> ·
@@ -381,6 +483,35 @@ IRRAD_INLINE = {
     "showAggregateLayers": True, "showSourceLayers": False,
     "xSeriesKey": None,
 }
+
+
+PROD_CACHE = HERE / "ae_production_cache.json"
+
+
+def save_prod_cache(prod_by_site, prod_bins_by_site, irrad_by_site, d_from, d_to):
+    cache = {
+        "d_from": d_from.isoformat(), "d_to": d_to.isoformat(),
+        "saved_at": datetime.now().isoformat(),
+        "prod": {s: {k: v for k, v in data.items()} for s, data in prod_by_site.items()},
+        "bins": prod_bins_by_site,
+        "irrad": irrad_by_site,
+    }
+    PROD_CACHE.write_text(json.dumps(cache), encoding="utf-8")
+    print(f"  Production cache saved ({len(prod_by_site)} sites)")
+
+
+def load_prod_cache():
+    if not PROD_CACHE.exists():
+        return {}, {}, {}, None, None
+    try:
+        cache = json.loads(PROD_CACHE.read_text(encoding="utf-8"))
+        d_from = date.fromisoformat(cache["d_from"])
+        d_to = date.fromisoformat(cache["d_to"])
+        print(f"  Production cache loaded ({len(cache['prod'])} sites, {cache['d_from']}..{cache['d_to']}, saved {cache['saved_at'][:16]})")
+        return cache["prod"], cache["bins"], cache.get("irrad", {}), d_from, d_to
+    except Exception as e:
+        print(f"  [warn] cache load failed: {e}")
+        return {}, {}, {}, None, None
 
 
 CHART_MEASUREMENT_CATS = [
@@ -706,24 +837,51 @@ def apply_alerts_to_strips(strip, site_alerts, d_from):
     return strip
 
 
-def render_diag_card(d, rank=None):
+def render_email_items(emails, limit=4):
+    if not emails:
+        return ""
+    items = []
+    for e in emails[:limit]:
+        date = e["date"]
+        cat = e["category"]
+        subj = e["subject"][:80]
+        body = e["contents"][:200]
+        items.append(f"<li class='email-ev'><b>[{esc(cat)}]</b> {esc(date)} — {esc(subj)}<br>"
+                     f"<span class='email-body'>{esc(body)}</span></li>")
+    return "".join(items)
+
+
+def render_diag_card(d, rank=None, emails=None):
     ev = "".join(f"<li>{esc(e)}</li>" for e in d["evidence"][:6])
-    badge = {"High": "diag-high", "Medium": "diag-med", "Low": "diag-low"}[d["conf_label"]]
-    impact = f"{d['impact_kw']:.0f} kW at risk" if d["impact_kw"] else "monitoring impact"
-    openpill = "<span class='pill pill-inverter_fault'>OPEN</span>" if d["open"] else ""
+    email_ev = render_email_items(emails or [])
     rk = f"<span class='diag-rank'>#{rank}</span>" if rank else ""
     return f"""
     <div class="diag-card">
-      <div class="diag-head">{rk}<b>{esc(d['site'])}</b> — {esc(d['title'])}
-        <span class="diag-badge {badge}">{d['conf_label']} confidence</span>
-        {openpill}<span class="diag-impact">{impact}</span></div>
-      <ul class="diag-ev">{ev}</ul>
+      <div class="diag-head">{rk}<b>{esc(d['site'])}</b> — {esc(d['title'])}</div>
+      <ul class="diag-ev">{ev}{email_ev}</ul>
       <div class="diag-action">→ {esc(d['action'])}</div>
     </div>"""
 
 
+def render_site_emails(emails):
+    if not emails:
+        return ""
+    rows = []
+    for e in emails[:6]:
+        rows.append(f"""<tr>
+          <td>{esc(e['date'])}</td>
+          <td><span class="email-cat">{esc(e['category'])}</span></td>
+          <td><b>{esc(e['subject'][:60])}</b><br><span class="email-body">{esc(e['contents'][:250])}</span></td>
+          <td class="muted">{esc(e['from'][:50])}</td>
+        </tr>""")
+    return f"""<div class="email-section">
+      <div class="email-header">Site Emails ({len(emails)})</div>
+      <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
+      {''.join(rows)}</table></div>"""
+
+
 def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
-                          ai_summary="", irrad_data=None):
+                          ai_summary="", irrad_data=None, site_emails=None):
     """Clickable <details> per site: badge + canvas strip heatmap + diagnoses + AI context + irradiance."""
     n_inv = len(strip["invs"])
     if fault_h > 1:
@@ -733,7 +891,8 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
     else:
         badge = "<span class='acc-badge acc-green'>healthy</span>"
     diag_html = "".join(render_diag_card(d) for d in site_diags[:3])
-    open_attr = " open" if fault_h > 1 or any(d["open"] for d in site_diags) else ""
+    emails_html = render_site_emails(site_emails) if site_emails else ""
+    open_attr = " open" if fault_h > 1 or any(d["open"] for d in site_diags) or site_emails else ""
     summary_html = ""
     if ai_summary:
         summary_html = f"""<div class="ai-summary"><div class="ai-label">AI Site Summary</div>{esc(ai_summary)}</div>"""
@@ -744,6 +903,7 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
       <summary><span class="acc-name">{esc(site)}</span>
         <span class="acc-meta">{n_inv} inverters</span>{badge}</summary>
       <div class="acc-body">
+        {emails_html}
         {summary_html}
         {diag_html}
         <div class="hm-controls">
@@ -850,8 +1010,12 @@ PAGE = """<!DOCTYPE html>
   header {{ background: #1F4E79; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }}
   header h1 {{ font-size: 20px; }}
   header .meta {{ font-size: 12px; opacity: .75; text-align: right; }}
-  .nav {{ background: #2E75B6; padding: 6px 24px; }}
-  .nav a {{ color: #cde; text-decoration: none; font-size: 13px; margin-right: 16px; }}
+  .nav {{ background: #2E75B6; padding: 0 24px; display: flex; align-items: stretch; gap: 0; }}
+  .nav a {{ color: #cde; text-decoration: none; font-size: 13px; padding: 10px 16px; }}
+  .nav a:hover {{ background: rgba(255,255,255,.1); }}
+  .nav a.tab-link.active {{ color: #fff; background: rgba(255,255,255,.15); border-bottom: 2px solid #fff; font-weight: 600; }}
+  .tab-panel {{ display: none; }}
+  .tab-panel.active {{ display: block; }}
   .kpis {{ display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; padding: 18px 24px 0; }}
   .card {{ background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.12); padding: 16px; }}
   .card-title {{ font-size: 12px; color: #777; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }}
@@ -948,6 +1112,12 @@ PAGE = """<!DOCTYPE html>
   .hm-controls label {{ font-size: 11px; color: #666; font-weight: 600; }}
   .hm-controls select {{ font-size: 12px; padding: 3px 8px; border: 1px solid #bcd; border-radius: 4px;
                         background: #fff; color: #333; cursor: pointer; }}
+  .email-section {{ margin-bottom: 10px; }}
+  .email-header {{ font-size: 11px; font-weight: 700; color: #8e4500; margin-bottom: 4px; }}
+  .email-cat {{ font-size: 10px; font-weight: 600; color: #8e4500; background: #fff3e0;
+               padding: 1px 6px; border-radius: 8px; white-space: nowrap; }}
+  .email-body {{ font-size: 11px; color: #666; line-height: 1.4; }}
+  .email-ev {{ border-left: 2px solid #ef8c1e; padding-left: 6px; margin-top: 4px; }}
   .legend-title {{ font-size: 11px; color: #555; font-weight: 600; }}
   .night-swatch {{ display: inline-block; width: 14px; height: 12px; border-radius: 2px;
     background: repeating-linear-gradient(-45deg, #fff, #fff 2px, #d0d0d0 2px, #d0d0d0 3px); border: 1px solid #ccc; }}
@@ -962,38 +1132,52 @@ PAGE = """<!DOCTYPE html>
   </div>
   <div class="meta">Generated: {generated_at}<br><a href="index.html" style="color:#cde">← Portfolio Overview</a></div>
 </header>
-<div class="nav"><a href="index.html">Portfolio</a><span style="color:#cde">Operational Alerts</span></div>
+<div class="nav">
+  <a href="index.html">Portfolio</a>
+  <a href="#" class="tab-link active" onclick="switchTab('diagnosis',this);return false">Diagnosis</a>
+  <a href="#" class="tab-link" onclick="switchTab('heatmaps',this);return false">Inverter Heatmaps</a>
+  <a href="#" class="tab-link" onclick="switchTab('trackers',this);return false">Tracker / TCU</a>
+  <a href="#" class="tab-link" onclick="switchTab('alerts',this);return false">Critical Alerts</a>
+  <a href="#" class="tab-link" onclick="switchTab('breakdown',this);return false">Category Breakdown</a>
+</div>
 
-
+<div class="tab-panel active" id="tab-diagnosis">
 <section>
-  <h2>⚕ Diagnosis &amp; Recommended Actions
-    <span class="muted">(cross-referenced: alerts + rule tool + AI summaries + live power)</span></h2>
+  <h2>Diagnosis &amp; Recommended Actions
+    <span class="muted">(cross-referenced: alerts + rule tool + AI summaries + live power + emails)</span></h2>
   {recommender}
 </section>
+</div>
 
-<section>
-  <h2>Critical Alerts — faults, production stops, grid events</h2>
-  <div class="card" style="padding:0; max-height: 520px; overflow-y:auto">{critical_table}</div>
-</section>
-
+<div class="tab-panel" id="tab-heatmaps">
 <section>
   <h2>Inverter Heatmaps — All Sites
-    <span class="muted">— click to expand · hourly capacity factor (green = 100%, red = 0%)</span></h2>
+    <span class="muted">— click to expand · 15-min capacity factor</span></h2>
   <div class="controls">
     <input id="siteSearch" type="text" placeholder="Search sites…" oninput="filterSites(this.value)">
     <button onclick="setAll(true)">Expand all</button>
     <button onclick="setAll(false)">Collapse all</button>
-    <span class="muted">{strip_note}</span>
   </div>
   {heatmaps}
 </section>
 <div class="hm-tip" id="hmTip"></div>
+</div>
 
+<div class="tab-panel" id="tab-trackers">
 <section>
   <h2>Tracker / TCU Issues</h2>
   <div class="grid2">{trackers}</div>
 </section>
+</div>
 
+<div class="tab-panel" id="tab-alerts">
+<section>
+  <h2>Critical Alerts — faults, production stops, grid events</h2>
+  <div class="card" style="padding:0; max-height: 700px; overflow-y:auto">{critical_table}</div>
+</section>
+</div>
+
+<div class="tab-panel" id="tab-breakdown">
 <section>
   <h2>Category Breakdown</h2>
   <div class="grid2">
@@ -1003,8 +1187,24 @@ PAGE = """<!DOCTYPE html>
       <div class="chart-wrap"><canvas id="dayChart"></canvas></div></div>
   </div>
 </section>
+</div>
 
 <script>
+function switchTab(id, el) {{
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-link').forEach(a => a.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  /* trigger heatmap draw for newly visible canvases */
+  if (id === 'heatmaps') {{
+    document.querySelectorAll('details.site-acc[open] canvas.strip-canvas').forEach(cv => {{
+      if (!cv.dataset.drawn) {{
+        const sid = cv.id.slice(2);
+        drawStrip(sid);
+      }}
+    }});
+  }}
+}}
 new Chart(document.getElementById('catChart'), {{
   type: 'doughnut',
   data: {{ labels: {cat_labels}, datasets: [{{ data: {cat_counts},
@@ -1336,6 +1536,9 @@ def main():
     n_open = sum(1 for a in filtered if not a["is_resolved"])
     sites_hit = {a["site_name"] for a in filtered}
 
+    # ── site emails ───────────────────────────────────────────────────
+    site_emails = load_site_emails()
+
     # ── diagnosis + recommender ───────────────────────────────────────
     try:
         from ae_diagnosis import diagnose_portfolio
@@ -1348,7 +1551,8 @@ def main():
         if d["site"] != "PORTFOLIO":
             by_site_diag[d["site"]].append(d)
     recommender_html = "".join(
-        render_diag_card(d, i + 1) for i, d in enumerate(diags[:10])) or \
+        render_diag_card(d, i + 1, emails=site_emails.get(d["site"], []))
+        for i, d in enumerate(diags[:10])) or \
         "<div class='card muted'>No diagnoses generated for this window.</div>"
 
     # ── AI summaries ───────────────────────────────────────────────────
@@ -1383,6 +1587,17 @@ def main():
                     irrad_by_site[sn] = vals
                 time.sleep(SLEEP)
         print(f"  production: {len(prod_by_site)} sites, irradiance: {len(irrad_by_site)} sites")
+        if prod_by_site:
+            save_prod_cache(prod_by_site, prod_bins_by_site, irrad_by_site, d_from, d_to)
+
+    # Fall back to cached production data if live fetch got nothing
+    if not prod_by_site:
+        cached_prod, cached_bins, cached_irrad, c_from, c_to = load_prod_cache()
+        if cached_prod:
+            prod_by_site = cached_prod
+            prod_bins_by_site = cached_bins
+            if not irrad_by_site:
+                irrad_by_site = cached_irrad
 
     # ── per-site strip heatmaps for EVERY site ────────────────────────
     alerts_by_site = defaultdict(list)
@@ -1411,7 +1626,8 @@ def main():
             sid, site, strip, by_site_diag.get(site, []),
             hours(site, "fault"), hours(site, "comm"),
             ai_summary=ai_sums.get(site, ""),
-            irrad_data=irrad_by_site.get(site))
+            irrad_data=irrad_by_site.get(site),
+            site_emails=site_emails.get(site))
 
     if skipped:
         print(f"  SKIPPED (no invs): {skipped}")
@@ -1446,9 +1662,6 @@ def main():
         critical_table=render_critical_table(filtered),
         recommender=recommender_html,
         heatmaps=heatmaps_html,
-        strip_note="Strips show alert-derived availability on the CF scale; "
-                   "real per-inverter Capacity Factor activates once the chart "
-                   "API payload is captured.",
         trackers=trackers_html,
         cat_labels=json.dumps([k for k, _ in cat_counter.most_common()]),
         cat_counts=json.dumps([v for _, v in cat_counter.most_common()]),

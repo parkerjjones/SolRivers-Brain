@@ -675,15 +675,14 @@ if __name__ == "__main__":
         if not sites:
             sys.exit(f"Site {args.site} not found in portfolio.")
 
-    # Remove stale HTML files, then ensure dir exists
+    # Remove stale KPI HTML files only (S*.html + index.html), preserve alerts.html etc.
     if out_dir.exists():
-        for f in out_dir.glob("*.html"):
+        for f in out_dir.glob("S*.html"):
             try:
                 f.unlink()
             except Exception:
                 pass
     out_dir.mkdir(parents=True, exist_ok=True)
-    print(f"  Output dir reset: {out_dir}/")
 
     # Generate per-site HTML
     for s in sites:

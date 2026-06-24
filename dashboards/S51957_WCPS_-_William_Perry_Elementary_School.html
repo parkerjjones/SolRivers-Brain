@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WCPS - William Perry Elementary School — KPI Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #333; }
+  header { background: #1F4E79; color: #fff; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }
+  header h1 { font-size: 20px; font-weight: 600; }
+  header .meta { font-size: 12px; opacity: 0.75; text-align: right; }
+  .nav { background: #2E75B6; padding: 6px 24px; }
+  .nav a { color: #cde; text-decoration: none; font-size: 13px; margin-right: 16px; }
+  .nav a:hover { color: #fff; }
+  .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 20px 24px 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px 24px 24px; }
+  .card { background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.12); padding: 16px; }
+  .card-title { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 10px; }
+  .big-num { font-size: 36px; font-weight: 700; color: #1F4E79; }
+  .sub-num { font-size: 13px; color: #666; margin-top: 2px; }
+  .gauge-wrap { text-align: center; }
+  svg.gauge { overflow: visible; }
+  .rule-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .rule-table th { font-size: 11px; color: #888; font-weight: 500; padding: 4px 8px; border-bottom: 1px solid #eee; text-align: left; }
+  .rule-table td { padding: 6px 8px; border-bottom: 1px solid #f5f5f5; }
+  .badge { display: inline-block; min-width: 28px; padding: 1px 6px; border-radius: 3px; text-align: center; font-weight: 600; font-size: 12px; }
+  .badge-ok { background: #d4edda; color: #155724; }
+  .badge-warn { background: #fff3cd; color: #856404; }
+  .badge-fail { background: #f8d7da; color: #721c24; }
+  .loss-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+  .loss-label { color: #555; }
+  .loss-val { font-weight: 600; }
+  .deploy-bar { margin-top: 8px; }
+  .deploy-label { font-size: 13px; font-weight: 600; color: #1F4E79; }
+  .progress-track { background: #e9ecef; border-radius: 4px; height: 8px; margin-top: 6px; }
+  .progress-fill { height: 8px; border-radius: 4px; transition: width .5s; }
+  .chart-container { position: relative; height: 280px; }
+  .pct-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #777; }
+  .pct-good { color: #155724; font-weight: 600; }
+  .pct-bad { color: #721c24; font-weight: 600; }
+  footer { text-align: center; font-size: 11px; color: #aaa; padding: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>WCPS - William Perry Elementary School</h1>
+    <div style="font-size:13px;margin-top:2px;opacity:.8">S51957 &bull; SolRiver Capital</div>
+  </div>
+  <div class="meta">
+    Generated: 2026-06-24 21:31 UTC<br>
+    <a href="index.html" style="color:#cde">← Portfolio Overview</a>
+  </div>
+</header>
+<div class="nav">
+  <a href="index.html">Portfolio</a>
+  <span style="color:#cde">WCPS - William Perry Elementary School</span>
+</div>
+
+<div class="grid">
+  <!-- Current Power -->
+  <div class="card">
+    <div class="card-title">Current Power</div>
+    <div class="gauge-wrap">
+      <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
+        <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
+        <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
+              stroke-dasharray="106.6 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">102.9 kW</text>
+        <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 182.0 kW</text>
+        <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
+        <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">182</text>
+      </svg>
+    </div>
+    <div class="pct-row">
+      <span>1 site</span>
+      <span class="">56.5% capacity</span>
+    </div>
+  </div>
+
+  <!-- Losses Past 24hr -->
+  <div class="card">
+    <div class="card-title">Losses Past 24hr</div>
+    
+    <div class="big-num" style="font-size:22px;color:#721c24">2.31 MWh Loss</div>
+    <div style="margin-top:8px">
+      <div class="loss-row"><span class="loss-label">Downtime Loss</span><span class="loss-val">732.0 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">0.0 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Snow Loss</span><span class="loss-val">0.0 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">1.58 MWh</span></div>
+    </div>
+  </div>
+
+  <!-- Rule Tool Summary -->
+  <div class="card">
+    <div class="card-title">Rule Tool Summary</div>
+    <table class="rule-table">
+      <tr><th>Category</th><th>Warnings</th></tr>
+      <tr><td>Configuration</td><td><span class="badge badge-ok">0</span></td></tr><tr><td>Communication</td><td><span class="badge badge-fail">3</span></td></tr><tr><td>Data</td><td><span class="badge badge-ok">0</span></td></tr><tr><td>Performance</td><td><span class="badge badge-fail">3</span></td></tr>
+    </table>
+  </div>
+
+  <!-- Deployment Status -->
+  <div class="card">
+    <div class="card-title">Deployment Status</div>
+    <div class="deploy-bar">
+      <div class="deploy-label">Fully Approved</div>
+      <div style="font-size:12px;color:#888;margin-top:4px">System: 182.0 kW AC / 222.1 kW DC</div>
+      <div class="progress-track" style="margin-top:10px">
+        <div class="progress-fill" style="width:100%;background:#5cb85c"></div>
+      </div>
+      <div class="pct-row">
+        <span>Active Alerts: <strong>0</strong></span>
+        <span>Inverters: <strong>3/3</strong></span>
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <div class="loss-row">
+        <span class="loss-label">Availability</span>
+        <span class="loss-val pct-bad">66.7%</span>
+      </div>
+      <div class="loss-row">
+        <span class="loss-label">Inverter Avail.</span>
+        <span class="loss-val">66.7%</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="grid2">
+  <!-- Production Chart -->
+  <div class="card">
+    <div class="card-title">Production — Actual vs Expected (24h)</div>
+    <div class="chart-container">
+      <canvas id="prodChart"></canvas>
+    </div>
+    <div class="pct-row">
+      <span>Measured: <strong>793.4 kWh</strong></span>
+      <span>Expected: <strong>2.48 MWh</strong></span>
+      <span class="pct-bad">31.9% performance</span>
+    </div>
+  </div>
+
+  <!-- Energy Summary -->
+  <div class="card">
+    <div class="card-title">Energy Summary</div>
+    <div class="chart-container">
+      <canvas id="energyChart"></canvas>
+    </div>
+    <div class="pct-row">
+      <span>Today: <strong>838.9 kWh</strong> (69.5%)</span>
+      <span>Yesterday: <strong>460.0 kWh</strong> (38.0%)</span>
+    </div>
+  </div>
+</div>
+
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-06-24 21:31 UTC</footer>
+
+<script>
+const prodCtx = document.getElementById('prodChart').getContext('2d');
+new Chart(prodCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Measured', 'Expected'],
+    datasets: [{
+      label: 'kWh (24h)',
+      data: [793.4, 2484.6],
+      backgroundColor: ['#2E75B6', '#e9ecef'],
+      borderColor: ['#1F4E79', '#ccc'],
+      borderWidth: 1,
+      borderRadius: 4,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: '#f0f0f0' }, ticks: { callback: v => v >= 1000 ? (v/1000).toFixed(1)+'MWh' : v+'kWh' } },
+      x: { grid: { display: false } }
+    }
+  }
+});
+
+const energyCtx = document.getElementById('energyChart').getContext('2d');
+new Chart(energyCtx, {
+  type: 'bar',
+  data: {
+    labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
+    datasets: [{
+      data: [838.9, 1207.8, 460.0, 1210.6, 22216.5, 130414.8],
+      backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { beginAtZero: true, grid: { color: '#f0f0f0' },
+            ticks: { callback: v => v >= 1000000 ? (v/1000000).toFixed(1)+'GWh' : v >= 1000 ? (v/1000).toFixed(0)+'MWh' : v+'kWh' } },
+      x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+    }
+  }
+});
+</script>
+</body>
+</html>

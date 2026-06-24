@@ -1,1 +1,2 @@
 - [Missing data is signal](feedback_missing_data.md) — don't fix gaps in production data; they indicate site/AE problems Parker is analyzing
+- [Never use --offline](feedback_no_offline.md) — offline mode blanks all heatmaps; always run live
