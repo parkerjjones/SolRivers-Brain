@@ -377,6 +377,117 @@ def load_site_emails():
     return by_site
 
 
+def load_email_transcripts():
+    """Parse AE_Reports_Email_Transcripts_*.md — returns (threads_list, lookup_by_subject).
+
+    threads_list: [{title, date, from_, sites, category, body, n_messages}] sorted newest-first
+    lookup_by_subject: {subject_lower: body_text} for enriching xlsx rows
+    """
+    import glob as _glob
+    files = sorted(_glob.glob(str(HERE / "AE_Reports_Email_Transcripts*.md")), reverse=True)
+    if not files:
+        return [], {}
+
+    content = Path(files[0]).read_text(encoding="utf-8")
+    threads = []
+    lookup = {}
+
+    for block in re.split(r'\n(?=## )', content):
+        hdr = re.match(r'## (.+)', block)
+        if not hdr:
+            continue
+        title = hdr.group(1).strip()
+
+        # Extract per-message sections
+        msg_parts = re.split(r'\n### Message \d+ — ', block)
+        first_date, first_from = "", ""
+        bodies = []
+        for mp in msg_parts[1:]:
+            lines = mp.strip().split('\n')
+            # Grab date from the timestamp on the same line as "Message N — "
+            ts_m = re.match(r'(\S+)', lines[0]) if lines else None
+            date_str = ts_m.group(1)[:10] if ts_m else ""
+            if not first_date:
+                first_date = date_str
+
+            body_lines = []
+            in_header = True
+            for line in lines[1:]:
+                if in_header:
+                    if line.startswith('**From:') and not first_from:
+                        fm = re.search(r'\*\*From:\*\* (.+)', line)
+                        if fm:
+                            first_from = fm.group(1).strip()
+                    if line.startswith('**'):
+                        continue
+                    in_header = False
+                body_lines.append(line)
+            body = '\n'.join(body_lines).strip()
+            if body:
+                bodies.append(body)
+
+        full_body = '\n\n---\n\n'.join(bodies)
+        thread = {
+            "title": title,
+            "date": first_date,
+            "from_": first_from,
+            "body": full_body,
+            "n_messages": len(bodies),
+        }
+        threads.append(thread)
+        lookup[title.lower()] = full_body
+
+    threads.sort(key=lambda t: t["date"], reverse=True)
+    print(f"  Loaded {len(threads)} transcript threads from {Path(files[0]).name}")
+    return threads, lookup
+
+
+def render_comms_html(threads, site_emails_by_site):
+    """Render the Communications tab — all email threads, searchable, with site tags."""
+    if not threads:
+        return "<div class='card muted'>No email transcripts found (place AE_Reports_Email_Transcripts_YYYY-MM-DD.md here).</div>"
+
+    # Build reverse lookup: title → sites
+    title_to_sites = {}
+    for site, emails in site_emails_by_site.items():
+        if site == "PORTFOLIO":
+            continue
+        for e in emails:
+            key = e["subject"].lower()
+            title_to_sites.setdefault(key, set()).add(site)
+
+    items = []
+    for t in threads:
+        site_set = title_to_sites.get(t["title"].lower(), set())
+        site_tags = "".join(
+            f"<span class='comm-site-tag'>{esc(s)}</span>" for s in sorted(site_set)
+        ) or "<span class='comm-site-tag comm-portfolio'>Portfolio</span>"
+        body_html = esc(t["body"][:3000]) + ("…" if len(t["body"]) > 3000 else "")
+        items.append(f"""<details class="comm-thread">
+  <summary class="comm-summary">
+    <span class="comm-date">{esc(t['date'])}</span>
+    <span class="comm-title">{esc(t['title'])}</span>
+    {site_tags}
+    <span class="comm-meta muted">({t['n_messages']} msg{'s' if t['n_messages']!=1 else ''} · {esc(t['from_'][:60])})</span>
+  </summary>
+  <pre class="comm-body">{body_html}</pre>
+</details>""")
+
+    return f"""<div class="controls" style="margin-bottom:10px">
+  <input id="commSearch" type="text" placeholder="Search communications…"
+         oninput="filterComms(this.value)" style="min-width:300px">
+</div>
+<div id="commList">{''.join(items)}</div>
+<script>
+function filterComms(q) {{
+  q = q.toLowerCase();
+  document.querySelectorAll('#commList details.comm-thread').forEach(el => {{
+    el.style.display = !q || el.textContent.toLowerCase().includes(q) ? '' : 'none';
+  }});
+}}
+</script>"""
+
+
 SUMMARIES_XLSX = HERE / "ae_ai_summaries.xlsx"
 
 def _fix_encoding(s):
@@ -756,16 +867,30 @@ def heat_color(fault_h, comm_h):
     return "#eef3ea"
 
 
+def _agg_hourly(rows, n_bins):
+    """Downsample 15-min bins to hourly (4→1) by averaging non-null values."""
+    n_out = n_bins // 4
+    out = []
+    for row in rows:
+        r = []
+        for h in range(n_out):
+            chunk = [row[h * 4 + k] for k in range(4)
+                     if h * 4 + k < len(row) and row[h * 4 + k] is not None]
+            r.append(round(sum(chunk) / len(chunk), 1) if chunk else None)
+        out.append(r)
+    return out, n_out
+
+
 def build_strip_data(site, hw, d_from, d_to, production=None, n_bins_api=0):
-    """Build 15-min strip data for the heatmap.
+    """Build hourly strip data for the heatmap.
 
     If production data is available (from chart API), compute CF%.
     Otherwise fall back to alert-derived binary availability.
 
     Returns dict for JS:
       invs    : inverter names
-      bins    : number of 15-min bins
-      binMin  : 15
+      bins    : number of hourly bins
+      binMin  : 60
       vals    : per inverter, per bin: CF% (0-100) or null (no data)
       kw      : per inverter, per bin: raw kW values (for tooltip)
       caps    : per inverter: rated capacity kW
@@ -779,7 +904,7 @@ def build_strip_data(site, hw, d_from, d_to, production=None, n_bins_api=0):
     inv_names = sorted(hwd.get("inverters", []),
                        key=lambda x: (len(str(x)), str(x)))
     if not inv_names:
-        return {"invs": [], "bins": 0, "binMin": 15,
+        return {"invs": [], "bins": 0, "binMin": 60,
                 "start": start.strftime("%Y-%m-%d %H:%M"),
                 "vals": [], "kw": [], "caps": [], "alerts": []}
 
@@ -805,8 +930,8 @@ def build_strip_data(site, hw, d_from, d_to, production=None, n_bins_api=0):
                     row_cf.append(None)
                     row_kw.append(None)
                 else:
-                    row_kw.append(round(v, 2))
-                    row_cf.append(round(v / cap * 100, 2) if cap > 0 else 0)
+                    row_kw.append(round(v, 1))
+                    row_cf.append(round(v / cap * 100, 1) if cap > 0 else 0)
             vals.append(row_cf)
             kw_data.append(row_kw)
     else:
@@ -814,7 +939,13 @@ def build_strip_data(site, hw, d_from, d_to, production=None, n_bins_api=0):
         vals = [[None] * n_bins for _ in inv_names]
         kw_data = [[None] * n_bins for _ in inv_names]
 
-    return {"invs": inv_names, "bins": n_bins, "binMin": 15,
+    # Aggregate from 15-min to hourly to keep the output file size manageable
+    if n_bins >= 4:
+        orig_bins = n_bins
+        vals, n_bins = _agg_hourly(vals, orig_bins)
+        kw_data, _ = _agg_hourly(kw_data, orig_bins)
+
+    return {"invs": inv_names, "bins": n_bins, "binMin": 60,
             "start": start.strftime("%Y-%m-%d %H:%M"),
             "vals": vals, "kw": kw_data, "caps": caps,
             "alerts": [[] for _ in inv_names]}
@@ -868,10 +999,17 @@ def render_site_emails(emails):
         return ""
     rows = []
     for e in emails[:6]:
+        body = e.get("body", "").strip()
+        transcript_html = ""
+        if body:
+            transcript_html = (f"<details class='transcript-details'><summary>Full transcript</summary>"
+                               f"<pre class='comm-body'>{esc(body[:2000])}{'…' if len(body)>2000 else ''}</pre>"
+                               f"</details>")
         rows.append(f"""<tr>
           <td>{esc(e['date'])}</td>
           <td><span class="email-cat">{esc(e['category'])}</span></td>
-          <td><b>{esc(e['subject'][:60])}</b><br><span class="email-body">{esc(e['contents'][:250])}</span></td>
+          <td><b>{esc(e['subject'][:60])}</b><br><span class="email-body">{esc(e['contents'][:250])}</span>
+            {transcript_html}</td>
           <td class="muted">{esc(e['from'][:50])}</td>
         </tr>""")
     return f"""<div class="email-section">
@@ -1133,6 +1271,19 @@ PAGE = """<!DOCTYPE html>
                padding: 1px 6px; border-radius: 8px; white-space: nowrap; }}
   .email-body {{ font-size: 11px; color: #666; line-height: 1.4; }}
   .email-ev {{ border-left: 2px solid #ef8c1e; padding-left: 6px; margin-top: 4px; }}
+  .transcript-details summary {{ font-size: 11px; color: #0d47a1; cursor: pointer; margin-top: 3px; }}
+  .comm-thread {{ border: 1px solid #e0e6ef; border-radius: 6px; margin-bottom: 6px; padding: 0; }}
+  .comm-summary {{ display: flex; align-items: baseline; gap: 8px; padding: 8px 12px; cursor: pointer;
+    flex-wrap: wrap; list-style: none; }}
+  .comm-date {{ font-size: 11px; color: #888; white-space: nowrap; }}
+  .comm-title {{ font-weight: 600; font-size: 13px; flex: 1; min-width: 200px; }}
+  .comm-site-tag {{ font-size: 10px; background: #e3f2fd; color: #1565c0; border-radius: 10px;
+    padding: 1px 7px; white-space: nowrap; }}
+  .comm-portfolio {{ background: #f3e5f5; color: #6a1b9a; }}
+  .comm-meta {{ font-size: 11px; }}
+  .comm-body {{ font-size: 12px; line-height: 1.5; padding: 10px 14px; background: #f8f9fc;
+    border-top: 1px solid #e0e6ef; white-space: pre-wrap; max-height: 400px; overflow-y: auto;
+    margin: 0; border-radius: 0 0 6px 6px; }}
   .alert-filters {{ display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: #f6f9fd;
                    border-bottom: 1px solid #e0e6ef; flex-wrap: wrap; }}
   .alert-filters select, .alert-filters input[type="date"] {{ font-size: 12px; padding: 4px 8px; border: 1px solid #bcd;
@@ -1159,6 +1310,7 @@ PAGE = """<!DOCTYPE html>
   <a href="#" class="tab-link" onclick="switchTab('trackers',this);return false">Tracker / TCU</a>
   <a href="#" class="tab-link" onclick="switchTab('alerts',this);return false">Critical Alerts</a>
   <a href="#" class="tab-link" onclick="switchTab('breakdown',this);return false">Category Breakdown</a>
+  <a href="#" class="tab-link" onclick="switchTab('comms',this);return false">Communications</a>
 </div>
 
 <div class="tab-panel active" id="tab-diagnosis">
@@ -1206,6 +1358,14 @@ PAGE = """<!DOCTYPE html>
     <div class="card"><div class="card-title">Alerts per day (all categories)</div>
       <div class="chart-wrap"><canvas id="dayChart"></canvas></div></div>
   </div>
+</section>
+</div>
+
+<div class="tab-panel" id="tab-comms">
+<section>
+  <h2>Communications
+    <span class="muted">— email threads from AE Reports label, newest first</span></h2>
+  {comms}
 </section>
 </div>
 
@@ -1577,8 +1737,21 @@ def main():
     n_open = sum(1 for a in filtered if not a["is_resolved"])
     sites_hit = {a["site_name"] for a in filtered}
 
-    # ── site emails ───────────────────────────────────────────────────
+    # ── site emails + transcripts ─────────────────────────────────────
     site_emails = load_site_emails()
+    transcript_threads, transcript_lookup = load_email_transcripts()
+    # Enrich xlsx email rows with full body from transcript (match by subject)
+    for emails in site_emails.values():
+        for e in emails:
+            key = e["subject"].lower()
+            if key in transcript_lookup:
+                e["body"] = transcript_lookup[key]
+            else:
+                # fuzzy: check if any transcript title is a substring of the subject
+                for tkey, tbody in transcript_lookup.items():
+                    if tkey[:40] in key or key[:40] in tkey:
+                        e["body"] = tbody
+                        break
 
     # ── diagnosis + recommender ───────────────────────────────────────
     try:
@@ -1692,6 +1865,8 @@ def main():
     if not chartjs:
         print("[warn] assets/chart.umd.min.js missing — charts will not render offline")
 
+    comms_html = render_comms_html(transcript_threads, site_emails)
+
     html = PAGE.format(
         chartjs=chartjs,
         days_n=args.days,
@@ -1704,6 +1879,7 @@ def main():
         recommender=recommender_html,
         heatmaps=heatmaps_html,
         trackers=trackers_html,
+        comms=comms_html,
         cat_labels=json.dumps([k for k, _ in cat_counter.most_common()]),
         cat_counts=json.dumps([v for _, v in cat_counter.most_common()]),
         day_labels=json.dumps([d.strftime("%m/%d") for d in days]),

@@ -69,6 +69,7 @@ def main():
         ("Sites + live power", [py, "ae_sites_loader.py"]),
         ("Diagnostic rule results", [py, "ae_ruleresults_loader.py"]),
         ("AI site summaries", [py, "ae_ai_summaries.py"]),
+        ("Summaries NLP analysis", [py, "ae_summaries_analyzer.py", "--cached"]),
         ("Master dashboard", [py, "ae_master_dashboard.py"]),
         ("Operational alert dashboard", [py, "ae_alert_dashboard.py"]),
     ]

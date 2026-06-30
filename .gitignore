@@ -45,7 +45,12 @@ MANIFEST
 *~
 .DS_Store
 
-# Generated files
+# Authentication & session state
+ae_session.json
+alsoenergy_curl.txt
+ae_production_cache.json
+
+# Generated output files (regenerate with run_all.py)
 ae_sites.xlsx
 ae_hardware.xlsx
 ae_alerts.xlsx
@@ -55,6 +60,13 @@ ae_ai_summaries.xlsx
 ae_schema.xlsx
 ae_ruleresults.xlsx
 ae_inverter_report.xlsx
+ae_master.xlsx
+ae_ai_deep.xlsx
+ae_ai_deep.txt
+ae_alerts_clean.xlsx
+issue_tracker_combined.csv
+
+
 *.log
 
 # OS
