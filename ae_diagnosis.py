@@ -123,7 +123,6 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
     """Return list of diagnosis dicts for one site."""
     out = []
     inv_total = max(len(hw.get(site, {}).get("inverters", [])), 1)
-    per_inv_kw = cap_kw / inv_total if cap_kw else 0
 
     inv_alerts = [a for a in site_alerts if a["category"] in
                   ("INVERTER_FAULT", "INVERTER_COMM")]
@@ -157,15 +156,17 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
                     f"(weather: {r['weather']})")
         return None
 
-    def add(key, title, conf, evidence, action, impact_kw, priority):
+    def add(key, title, conf, evidence, action, priority):
+        # priority = editorial severity-class rank per diagnosis type (not a measured
+        # quantity, never displayed) — used only to order the triage list. Ordering is
+        # by real signals: is it an open alert, confidence from corroborating evidence,
+        # severity class, and how many alerts corroborate it.
         evidence = [e for e in evidence if e]
         out.append({
             "site": site, "key": key, "title": title,
             "confidence": conf, "conf_label": CONF_LABEL[conf],
-            "evidence": evidence, "action": action,
-            "impact_kw": round(impact_kw, 1), "priority": priority,
+            "evidence": evidence, "action": action, "priority": priority,
             "open": any("OPEN" in e for e in evidence),
-            "score": round(priority * conf * (1 + impact_kw / 250.0), 1),
         })
 
     # 1 ── GROUND FAULT → inverter offline ────────────────────────────────
@@ -185,7 +186,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             "Do NOT blind-reset. Dispatch electrician: insulation-resistance (megger) "
             "test the DC strings, inspect combiner boxes/wiring for water ingress or "
             "rodent damage, then clear GFDI and re-energize.",
-            per_inv_kw * len(gf_hw), 100)
+            100)
 
     # 2 ── GRID EVENT: simultaneous multi-inverter trip or explicit grid alarms ─
     grid = [a for a in site_alerts if _has("grid", a["event_type"], a["description"])]
@@ -209,7 +210,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             "Confirm utility outage/voltage event for the window; check recloser/breaker "
             "closed; verify inverters auto-restarted (production back to expected). "
             "Truck roll only if any unit failed to reconnect.",
-            cap_kw if grid else per_inv_kw * max(n_inv, 1), 95)
+            95)
 
     # 3 ── GATEWAY/DATALOGGER DOWN: site-wide comm loss ────────────────────
     comm = [a for a in site_alerts if a["category"] in
@@ -228,7 +229,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             "Remote-reboot the datalogger / cell modem. If telemetry doesn't return in "
             "~4h, send tech to power-cycle; check cellular signal and modem data contract "
             "(contract expiry causes permanent disconnect).",
-            0, 55)
+            55)
 
     # 4 ── RECURRING SINGLE-INVERTER HARDWARE FAULT ────────────────────────
     by_hw = defaultdict(list)
@@ -249,7 +250,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
                 "Pull the inverter's internal event log, check warranty status, and "
                 "schedule component or unit replacement. Same-model faults at other "
                 "sites would indicate a batch defect.",
-                per_inv_kw, 85)
+                85)
 
     # 5 ── DC OVERVOLTAGE ─────────────────────────────────────────────────
     dcov = [a for a in inv_alerts if _has("dc_overvolt", a["event_type"], a["description"])]
@@ -261,7 +262,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             "Check string Voc against inverter max input at low ambient temps; verify "
             "no recent re-string; inspect DC surge protection. Recurs in cold mornings → "
             "string config issue.",
-            per_inv_kw, 70)
+            70)
 
     # 6 ── THERMAL ────────────────────────────────────────────────────────
     th = [a for a in site_alerts if _has("thermal", a["event_type"], a["description"])
@@ -273,7 +274,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             [ev_alert(a) for a in th[:3]],
             "Clean inverter air filters/heat-sink fins, verify fans spin up, clear "
             "vegetation/obstructions around enclosures. Persistent → fan replacement.",
-            per_inv_kw * 0.3, 60)
+            60)
 
     # 7 ── TRACKER: battery / comm / TCU faults ───────────────────────────
     if trk_alerts:
@@ -287,7 +288,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
                 [ev_alert(a) for a in soc[:3]],
                 "Replace TCU batteries on the flagged rows; verify charge controller / "
                 "panel on the TCU. Stuck trackers off-angle bleed production daily.",
-                cap_kw * 0.03 * max(len(soc), 1) if cap_kw else 0, 65)
+                65)
         if nocom:
             n = len(set(re.findall(r"(?:Alarm|S)\s*(\d+)", " ".join(texts(nocom)))))
             add("TRACKER_MESH",
@@ -296,7 +297,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
                 [ev_alert(a) for a in nocom[:3]],
                 "Check tracker network controller / repeater power and antennas. If units "
                 "are stowed flat meanwhile, expect measurable production loss on clear days.",
-                cap_kw * 0.05 if cap_kw else 0, 55)
+                55)
         if tcu:
             add("TCU_FAULT",
                 "TCU hardware fault (system monitor out-of-range)",
@@ -304,7 +305,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
                 [ev_alert(a) for a in tcu[:3]],
                 "Inspect flagged TCUs: check 24V supply, motor current draw, and limit "
                 "switches; clear fault and observe tracking through a full day.",
-                cap_kw * 0.03 if cap_kw else 0, 60)
+                60)
 
     # 8 ── METER MISREAD ──────────────────────────────────────────────────
     mtr = [a for a in site_alerts if a["category"] == "METER"]
@@ -316,7 +317,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             "Compare meter kW vs sum of inverter kW. Phase reading ~0 on one leg → "
             "loose CT or wiring. Fix before settlement period closes; backfill from "
             "inverter data if needed.",
-            0, 65)
+            65)
 
     # 9 ── UNDERPERFORMANCE (no faults to explain it) ─────────────────────
     perf = [a for a in site_alerts if a["category"] == "PERFORMANCE"]
@@ -328,9 +329,8 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             [ev_alert(a) for a in perf[:2]] + [rule_corroboration("perf"),
              ai_corroboration()],
             "Cross-check irradiance vs output. Clear-day deficit → schedule module wash "
-            "/ vegetation survey; deficit only vs model → recalibrate expected baseline "
-            "(stale baselines cause ~40% of these alerts).",
-            cap_kw * 0.05 if cap_kw else 0, 40)
+            "/ vegetation survey; deficit only vs model → recalibrate expected baseline.",
+            40)
 
     # 10 ── BALANCE OF PLANT (UPS / transformer) ──────────────────────────
     ups = [a for a in site_alerts if _has("ups", a["event_type"], a["description"])]
@@ -341,7 +341,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             [ev_alert(a) for a in ups[:2]],
             "Replace UPS battery module. Cheap fix that prevents site-dark events "
             "during grid blips.",
-            0, 35)
+            35)
     tx = [a for a in site_alerts if _has("transformer", a["event_type"], a["description"])]
     if tx:
         add("TRANSFORMER",
@@ -350,7 +350,7 @@ def diagnose_site(site, site_alerts, hw, rules, ai_text, pwr, cap_kw):
             [ev_alert(a) for a in tx[:2]],
             "Verify cooling (radiators/fans), oil level and load profile. Sustained "
             ">90°C liquid temp degrades insulation — consider derate until inspected.",
-            cap_kw * 0.5 if cap_kw else 0, 90)
+            90)
 
     # live-power sanity: site producing nothing right now during day?
     p = pwr.get(site)
@@ -394,10 +394,11 @@ def diagnose_portfolio(alerts, hw):
             "evidence": [f"[pattern] grid-event diagnosis at: {', '.join(sorted(gf_sites)[:6])}"],
             "action": "Treat as utility-side event; verify all sites auto-reconnected "
                       "rather than dispatching to each individually.",
-            "impact_kw": 0, "priority": 95, "open": False, "score": 250.0,
+            "priority": 95, "open": False,
         })
 
-    all_diag.sort(key=lambda d: (-d["open"], -d["score"]))
+    all_diag.sort(key=lambda d: (-d["open"], -d["confidence"], -d["priority"],
+                                 -len(d["evidence"])))
     return all_diag
 
 

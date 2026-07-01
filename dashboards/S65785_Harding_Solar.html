@@ -50,7 +50,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S65785 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-06-24 21:31 UTC<br>
+    Generated: 2026-07-01 16:23 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -67,8 +67,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="155.0 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">2.47 MW</text>
+              stroke-dasharray="178.8 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">2.85 MW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 3.00 MW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">3000</text>
@@ -76,7 +76,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="pct-good">82.2% capacity</span>
+      <span class="pct-good">94.9% capacity</span>
     </div>
   </div>
 
@@ -119,7 +119,7 @@
     <div style="margin-top:12px">
       <div class="loss-row">
         <span class="loss-label">Availability</span>
-        <span class="loss-val pct-good">100.0%</span>
+        <span class="loss-val pct-good">96.5%</span>
       </div>
       <div class="loss-row">
         <span class="loss-label">Inverter Avail.</span>
@@ -137,9 +137,9 @@
       <canvas id="prodChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Measured: <strong>26.71 MWh</strong></span>
-      <span>Expected: <strong>28.13 MWh</strong></span>
-      <span class="pct-good">95.0% performance</span>
+      <span>Measured: <strong>27.26 MWh</strong></span>
+      <span>Expected: <strong>31.46 MWh</strong></span>
+      <span class="">86.7% performance</span>
     </div>
   </div>
 
@@ -150,13 +150,13 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>27.67 MWh</strong> (104.5%)</span>
-      <span>Yesterday: <strong>21.42 MWh</strong> (80.8%)</span>
+      <span>Today: <strong>13.57 MWh</strong> (51.6%)</span>
+      <span>Yesterday: <strong>25.88 MWh</strong> (98.3%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-06-24 21:31 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -166,7 +166,7 @@ new Chart(prodCtx, {
     labels: ['Measured', 'Expected'],
     datasets: [{
       label: 'kWh (24h)',
-      data: [26714.0, 28125.6],
+      data: [27260.0, 31456.0],
       backgroundColor: ['#2E75B6', '#e9ecef'],
       borderColor: ['#1F4E79', '#ccc'],
       borderWidth: 1,
@@ -189,7 +189,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [27668.0, 26484.0, 21424.0, 26511.7, 655572.0, 3575486.0],
+      data: [13568.0, 26291.2, 25882.0, 26318.0, 13568.0, 3730524.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

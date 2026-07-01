@@ -1,0 +1,3 @@
+site_id,exception_type,description,start_date,end_date,suppression_rule,owner,confidence,last_reviewed,notes
+SAMPLE001,expected_model_stale,Expected energy model is known to overstate output by around 8% pending recalibration.,2026-01-01,,Reduce confidence of PI-based underperformance alerts,Asset Management,Medium,2026-06-30,Do not suppress actual outage alerts.
+SAMPLE002,utility_curtailment,Utility-requested curtailment occurs on high-voltage days.,2026-05-01,,Classify curtailment separately from controllable loss when curtailment flag is present.,Asset Management,High,2026-06-30,Requires supporting utility notice.

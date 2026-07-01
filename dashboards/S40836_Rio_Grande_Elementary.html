@@ -50,7 +50,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S40836 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-06-24 21:31 UTC<br>
+    Generated: 2026-07-01 16:23 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -67,8 +67,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="90.7 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">175.2 kW</text>
+              stroke-dasharray="164.6 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">317.8 kW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 364.0 kW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">364</text>
@@ -76,7 +76,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="">48.1% capacity</span>
+      <span class="pct-good">87.3% capacity</span>
     </div>
   </div>
 
@@ -84,12 +84,12 @@
   <div class="card">
     <div class="card-title">Losses Past 24hr</div>
     
-    <div class="big-num" style="font-size:22px;color:#721c24">589.1 kWh Loss</div>
+    <div class="big-num" style="font-size:22px;color:#721c24">304.4 kWh Loss</div>
     <div style="margin-top:8px">
-      <div class="loss-row"><span class="loss-label">Downtime Loss</span><span class="loss-val">65.0 kWh</span></div>
-      <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">4.4 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Downtime Loss</span><span class="loss-val">0.0 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">68.0 kWh</span></div>
       <div class="loss-row"><span class="loss-label">Snow Loss</span><span class="loss-val">0.0 kWh</span></div>
-      <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">519.7 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">236.4 kWh</span></div>
     </div>
   </div>
 
@@ -119,7 +119,7 @@
     <div style="margin-top:12px">
       <div class="loss-row">
         <span class="loss-label">Availability</span>
-        <span class="loss-val pct-good">97.7%</span>
+        <span class="loss-val pct-good">100.0%</span>
       </div>
       <div class="loss-row">
         <span class="loss-label">Inverter Avail.</span>
@@ -138,8 +138,8 @@
     </div>
     <div class="pct-row">
       <span>Measured: <strong>2.04 MWh</strong></span>
-      <span>Expected: <strong>2.50 MWh</strong></span>
-      <span class="">81.6% performance</span>
+      <span>Expected: <strong>2.34 MWh</strong></span>
+      <span class="">87.2% performance</span>
     </div>
   </div>
 
@@ -150,13 +150,13 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>1.95 MWh</strong> (97.3%)</span>
-      <span>Yesterday: <strong>2.31 MWh</strong> (115.2%)</span>
+      <span>Today: <strong>643.0 kWh</strong> (32.5%)</span>
+      <span>Yesterday: <strong>2.17 MWh</strong> (109.4%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-06-24 21:31 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -166,7 +166,7 @@ new Chart(prodCtx, {
     labels: ['Measured', 'Expected'],
     datasets: [{
       label: 'kWh (24h)',
-      data: [2043.0, 2502.6],
+      data: [2041.8, 2340.3],
       backgroundColor: ['#2E75B6', '#e9ecef'],
       borderColor: ['#1F4E79', '#ccc'],
       borderWidth: 1,
@@ -189,7 +189,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [1947.5, 2002.5, 2310.5, 2005.7, 46078.5, 242221.0],
+      data: [643.0, 1980.4, 2169.0, 1983.5, 643.0, 251954.5],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

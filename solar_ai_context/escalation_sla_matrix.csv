@@ -1,0 +1,5 @@
+severity,condition,initial_owner,response_target,escalate_to,escalation_trigger,asset_manager_action
+critical,Full site outage during daylight or major safety/compliance issue,O&M,Same day / immediate,O&M manager + Asset Management lead,No acknowledgment within 4 hours or no restoration plan same day,"Open issue, estimate lost revenue, request ETA, preserve evidence"
+high,"Material underperformance, multiple inverters offline, critical data outage",O&M or DAS/SCADA Provider,Within 24 hours,O&M manager or DAS account manager,No update within 1 business day,Track lost MWh and push for RCA
+medium,"Moderate underperformance, tracker issue, sensor/model issue",Asset Management or O&M,Within 3 business days,Asset Management lead,Issue persists > 7 days,Validate economics of dispatch or model fix
+low,"Configuration issue, minor data mapping issue, informational alert",Asset Management,Next reporting cycle,Dashboard/data owner,Issue repeats or affects reporting,Clean up context/config and document exception

@@ -181,28 +181,13 @@ if not live_df.empty:
         lv.columns = ["site_key", "current_kw"]
         site_master = site_master.merge(lv, on="site_key", how="left")
 
-# Composite risk score (0-100)
-def risk_score(row):
-    score = 0
-    score += min(row.get("open_alerts", 0) * 5, 35)
-    score += min(row.get("rule_failures", 0) * 3, 25)
-    score += {"High": 25, "Medium": 15, "Low": 5, "Clean": 0}.get(
-        str(row.get("urgency_label", "")), 10)
-    score += {"Partial / Issues": 15, "Unknown": 5, "All Communicating": 0}.get(
-        str(row.get("comm_status", "")), 5)
-    score += {"Below Expected": 10, "Unknown": 5, "On Track": 0}.get(
-        str(row.get("prod_status", "")), 5)
-    return min(score, 100)
-
-site_master["risk_score"] = site_master.apply(risk_score, axis=1)
-site_master["risk_tier"] = pd.cut(
-    site_master["risk_score"],
-    bins=[-1, 20, 40, 60, 101],
-    labels=["Low", "Medium", "High", "Critical"]
-)
-
-site_master = site_master.sort_values("risk_score", ascending=False)
-site_master["risk_tier"] = site_master["risk_tier"].astype(str)
+# Rank sites by real, measured signals — open alert count, then rule-tool failures,
+# then total alerts. (A composite 0-100 "risk score" was removed: its weights were
+# arbitrary and it read as an objective metric when it was not.)
+sort_cols = [c for c in ("open_alerts", "rule_failures", "total_alerts")
+             if c in site_master.columns]
+if sort_cols:
+    site_master = site_master.sort_values(sort_cols, ascending=False)
 site_master = site_master.fillna("")
 
 # -----------------------------------------------------------------------
@@ -212,23 +197,24 @@ site_master = site_master.fillna("")
 print("Building ae_master.xlsx...")
 wb = openpyxl.Workbook()
 wb.remove(wb.active)
-risk_colors = {"Critical": RED, "High": ORANGE, "Medium": YELL, "Low": GREEN}
+# Color rows by the AI-derived urgency classification (a label, not a computed score)
+urgency_colors = {"High": RED, "Medium": ORANGE, "Low": YELL, "Clean": GREEN}
 
 # Sheet 1 — Portfolio Overview
 ws1 = wb.create_sheet("Portfolio Overview")
-overview_cols = ["site_key", "site_name", "risk_score", "risk_tier",
+overview_cols = ["site_key", "site_name",
                  "open_alerts", "total_alerts", "rule_failures",
                  "urgency_label", "comm_status", "prod_status",
                  "has_active_alert", "device_count"]
 ov = site_master[[c for c in overview_cols if c in site_master.columns]]
-write_df(ws1, ov, color_col="risk_tier", color_map=risk_colors)
+write_df(ws1, ov, color_col="urgency_label", color_map=urgency_colors)
 
-# Sheet 2 — Risk Matrix
-ws2 = wb.create_sheet("Risk Matrix")
-risk_cols = ["site_name", "risk_score", "risk_tier", "open_alerts",
+# Sheet 2 — Attention Ranking (by open alert / rule-failure counts)
+ws2 = wb.create_sheet("Attention Ranking")
+risk_cols = ["site_name", "open_alerts", "total_alerts",
              "rule_failures", "urgency_label", "comm_status", "prod_status"]
 rm = site_master[[c for c in risk_cols if c in site_master.columns]]
-write_df(ws2, rm, color_col="risk_tier", color_map=risk_colors)
+write_df(ws2, rm, color_col="urgency_label", color_map=urgency_colors)
 
 # Sheet 3 — Alert Summary by Site & Type
 if not alerts_df.empty:
@@ -303,22 +289,23 @@ if not hw_cols_df.empty:
 
 # Sheet 8 — Full Site Master
 ws8 = wb.create_sheet("Full Site Master")
-write_df(ws8, site_master, color_col="risk_tier", color_map=risk_colors)
+write_df(ws8, site_master, color_col="urgency_label", color_map=urgency_colors)
 
 wb.save("ae_master.xlsx")
 print(f"Saved -> ae_master.xlsx")
 print(f"Sheets: {[ws.title for ws in wb.worksheets]}")
 
-print("\n--- Portfolio Health Summary ---")
-if "risk_tier" in site_master.columns:
-    print(site_master["risk_tier"].value_counts().to_string())
+print("\n--- Portfolio Summary ---")
+if "urgency_label" in site_master.columns:
+    print(site_master["urgency_label"].value_counts().to_string())
 def safe_sum(df, col):
     if col not in df.columns: return "N/A"
     return pd.to_numeric(df[col], errors="coerce").sum()
 
 print(f"\nTotal open alerts:   {safe_sum(site_master, 'open_alerts'):.0f}")
 print(f"Total rule failures: {safe_sum(site_master, 'rule_failures'):.0f}")
-if "risk_score" in site_master.columns:
-    top5 = site_master[["site_name","risk_score","risk_tier"]].head(5)
-    print("\nTop 5 highest-risk sites:")
-    print(top5.to_string(index=False))
+top_cols = [c for c in ("site_name", "open_alerts", "rule_failures", "urgency_label")
+            if c in site_master.columns]
+if top_cols:
+    print("\nTop 5 sites by open alert / rule-failure count:")
+    print(site_master[top_cols].head(5).to_string(index=False))

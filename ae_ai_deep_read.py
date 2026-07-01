@@ -114,7 +114,7 @@ def write_xlsx(path, records):
 
     # --- Sheet 1: Full AI Text ---
     ws1 = wb.create_sheet("Full AI Summaries")
-    for ci, h in enumerate(["Site Key","Site Name","Risk","Generated At","Cached",
+    for ci, h in enumerate(["Site Key","Site Name","Open Alerts","Generated At","Cached",
                              "Full Summary (Plain Text)"], start=1):
         c = ws1.cell(1, ci, h)
         c.font = Font(bold=True, color=WHITE, size=10)
@@ -131,7 +131,7 @@ def write_xlsx(path, records):
     for ri, rec in enumerate(records, start=2):
         alt = ri % 2
         bg = ALT if alt == 0 else None
-        for ci, v in enumerate([rec["site_key"], rec["site_name"], rec["risk"],
+        for ci, v in enumerate([rec["site_key"], rec["site_name"], rec["open_alerts"],
                                   rec["generated_at"], "Yes" if rec["cached"] else "No",
                                   rec["plain_text"]], start=1):
             cell = ws1.cell(ri, ci, v)
@@ -141,7 +141,7 @@ def write_xlsx(path, records):
 
     # --- Sheet 2: Extracted Facts ---
     ws2 = wb.create_sheet("Extracted Facts")
-    fact_cols = ["site_key","site_name","risk","all_communicating","comm_issues",
+    fact_cols = ["site_key","site_name","open_alerts","all_communicating","comm_issues",
                  "production_low","production_ok","has_fault","has_alert",
                  "weather_sunny","weather_cloudy","weather_rain",
                  "inverter_issue","meter_issue",
@@ -166,7 +166,7 @@ def write_xlsx(path, records):
         else:
             bg = ALT if alt == 0 else None
 
-        row_vals = [rec["site_key"], rec["site_name"], rec["risk"],
+        row_vals = [rec["site_key"], rec["site_name"], rec["open_alerts"],
                     "YES" if f.get("all_communicating") else "no",
                     "YES" if f.get("comm_issues") else "no",
                     "YES" if f.get("production_low") else "no",
@@ -191,7 +191,7 @@ def write_xlsx(path, records):
 
     # --- Sheet 3: Site Rankings ---
     ws3 = wb.create_sheet("Site Rankings")
-    rank_cols = ["Rank","Site Key","Site Name","Risk Score",
+    rank_cols = ["Rank","Site Key","Site Name","Open Alerts",
                  "Comm OK","Prod OK","Has Fault","Has Alert","Weather"]
     for ci, h in enumerate(rank_cols, start=1):
         c = ws3.cell(1, ci, h)
@@ -200,12 +200,12 @@ def write_xlsx(path, records):
         c.alignment = Alignment(horizontal="center")
     ws3.freeze_panes = "A2"
 
-    sorted_recs = sorted(records, key=lambda r: r["risk"], reverse=True)
+    sorted_recs = sorted(records, key=lambda r: r["open_alerts"], reverse=True)
     for ri, rec in enumerate(sorted_recs, start=2):
         f = rec["facts"]
         weather = "Rainy" if f.get("weather_rain") else ("Cloudy" if f.get("weather_cloudy") else ("Sunny" if f.get("weather_sunny") else ""))
-        bg = RED if rec["risk"] >= 80 else (YELL if rec["risk"] >= 50 else GREEN)
-        for ci, v in enumerate([ri-1, rec["site_key"], rec["site_name"], rec["risk"],
+        bg = RED if rec["open_alerts"] >= 3 else (YELL if rec["open_alerts"] >= 1 else GREEN)
+        for ci, v in enumerate([ri-1, rec["site_key"], rec["site_name"], rec["open_alerts"],
                                   "OK" if f.get("all_communicating") else ("ISSUE" if f.get("comm_issues") else "?"),
                                   "OK" if f.get("production_ok") else ("LOW" if f.get("production_low") else "?"),
                                   "YES" if f.get("has_fault") else "",
@@ -228,9 +228,9 @@ def write_txt(path, records):
         f.write(f"AlsoEnergy AI Site Summaries\n")
         f.write(f"Generated: {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}\n")
         f.write("=" * 70 + "\n\n")
-        for rec in sorted(records, key=lambda r: r["risk"], reverse=True):
+        for rec in sorted(records, key=lambda r: r["open_alerts"], reverse=True):
             f.write(f"{'=' * 70}\n")
-            f.write(f"SITE: {rec['site_name']} ({rec['site_key']})  |  Risk Score: {rec['risk']}\n")
+            f.write(f"SITE: {rec['site_name']} ({rec['site_key']})  |  Open Alerts: {rec['open_alerts']}\n")
             f.write(f"Generated: {rec['generated_at']}  |  Cached: {rec['cached']}\n")
             f.write(f"{'-' * 70}\n")
             f.write(rec["plain_text"] + "\n\n")
@@ -242,14 +242,14 @@ if __name__ == "__main__":
 
     session = build_session()
 
-    # Load risk scores from master (or defaults)
-    risk_map = {}
+    # Load real open-alert counts from master (missing → 0, meaning none recorded)
+    alert_map = {}
     try:
-        mdf = pd.read_excel("ae_master.xlsx", sheet_name="Risk Matrix")
+        mdf = pd.read_excel("ae_master.xlsx", sheet_name="Portfolio Overview")
         for _, row in mdf.iterrows():
             sk = str(row.get("site_key", ""))
-            rs = float(row.get("risk_score", 0) or 0)
-            risk_map[sk] = int(rs)
+            oa = float(row.get("open_alerts", 0) or 0)
+            alert_map[sk] = int(oa)
     except Exception:
         pass
 
@@ -263,14 +263,14 @@ if __name__ == "__main__":
     records = []
     for i, site in enumerate(sites):
         sk, sn = site["key"], site.get("name", "")
-        risk = risk_map.get(sk, 50)
-        print(f"  [{i+1:2}/{len(sites)}] {sk} {sn}  (risk={risk})")
+        open_alerts = alert_map.get(sk, 0)
+        print(f"  [{i+1:2}/{len(sites)}] {sk} {sn}  (open_alerts={open_alerts})")
         text, cached, generated_at = fetch_full_summary(session, sk)
         plain = clean(text)
         records.append({
             "site_key":     sk,
             "site_name":    sn,
-            "risk":         risk,
+            "open_alerts":  open_alerts,
             "cached":       cached,
             "generated_at": generated_at[:16] if generated_at else "",
             "raw_text":     text,

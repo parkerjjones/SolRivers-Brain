@@ -1,0 +1,26 @@
+field_name,unit,source,meaning,common_problem,ai_usage
+site_id,,asset database,Unique site identifier,Mismatch across systems,Join key for all context
+site_name,,asset database,Common site name,Name variants,Display and search
+timestamp_utc,datetime,SCADA/DAS,Reading timestamp,Timezone mismatch or stale data,Freshness and event timing
+ac_capacity_kw,kW,asset database,AC nameplate capacity,Wrong AC/DC capacity used,"Capacity %, expected generation checks"
+dc_capacity_kw,kW,asset database,DC nameplate capacity,Missing or outdated,DC/AC ratio and clipping context
+current_power_kw,kW,SCADA/DAS,Instantaneous AC power,"Nighttime zeros, stale flatline",Current operating status
+meter_energy_kwh,kWh,Revenue meter,Revenue-grade energy,"Backfill, scaling, negative values",Financial impact and settlement
+scada_energy_kwh,kWh,SCADA/DAS,SCADA-calculated energy,Meter mismatch,Operational trend
+expected_energy_kwh,kWh,Model/DAS,Expected energy for period,"Stale model, bad irradiance input",PI and lost energy
+poa_irradiance_wm2,W/m2,Weather station,Plane-of-array irradiance,"Sensor soiled, failed, shaded",Weather-normalized diagnosis
+ghi_irradiance_wm2,W/m2,Weather feed/station,Global horizontal irradiance,Missing or poor location match,Expected model validation
+ambient_temp_c,C,Weather station/feed,Ambient temperature,Bad sensor,Performance modeling
+module_temp_c,C,Weather station,Module temperature,Sensor detached,Thermal derate analysis
+inverter_status,code/text,Inverter,Run/fault/offline/standby state,Vendor-specific codes,Outage/RCA evidence
+inverter_fault_code,code/text,Inverter,Fault or alarm code,Unmapped code,Likely root cause
+inverter_ac_power_kw,kW,Inverter,Per-inverter AC power,"Missing channel, scaling",Identify partial outage
+breaker_status,open/closed/code,SCADA/relay,Breaker position,Code mapping unclear,POI/equipment outage diagnosis
+recloser_status,open/closed/code,Utility/relay,Recloser position,Unclear integer status,Grid/utility outage diagnosis
+tracker_angle_deg,degrees,Tracker controller,Actual tracker angle,Flatlined or stuck,Tracker fault diagnosis
+tracker_target_angle_deg,degrees,Tracker controller,Expected tracker angle,Missing target,Compare target vs actual
+wind_speed_ms,m/s,Weather station,Wind speed,Bad sensor or gust mismatch,Tracker stow context
+das_heartbeat,boolean/timestamp,DAS/SCADA,Communication heartbeat,Stale heartbeat,Data quality status
+curtailment_flag,boolean/code,EMS/SCADA/utility,Curtailment active,Missing flag,Separate controllable loss from approved curtailment
+grid_voltage_kv,kV,Meter/relay,POI/grid voltage,Scaling or phase mapping,Over/under-voltage events
+frequency_hz,Hz,Meter/relay,Grid frequency,Missing values,Grid event detection

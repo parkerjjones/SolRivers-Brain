@@ -30,6 +30,14 @@
   .metric { text-align: center; }
   .metric-val { font-size: 15px; font-weight: 700; color: #2E75B6; }
   .metric-label { font-size: 10px; color: #888; text-transform: uppercase; }
+  /* per-site 24h actual-vs-expected donut */
+  .donut-wrap { position: relative; width: 46px; height: 46px; margin: 0 auto; }
+  .donut { width: 46px; height: 46px; }
+  .donut-bg { fill: none; stroke: #eef1f5; stroke-width: 3.6; }
+  .donut-fg { fill: none; stroke-width: 3.6; stroke-linecap: round; }
+  .donut-label { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .donut-missing { width: 46px; height: 46px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #b0b7c3; font-size: 9px; line-height: 1.1; text-align: center; }
+  .donut-missing span:first-child { font-size: 14px; }
   .badge { display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }
   .badge-ok { background: #d4edda; color: #155724; }
   .badge-warn { background: #fff3cd; color: #856404; }
@@ -46,29 +54,29 @@
     <h1>SolRiver Capital — Portfolio KPI Dashboard</h1>
     <div style="font-size:13px;margin-top:2px;opacity:.8">C12941 &bull; 34 Active Sites</div>
   </div>
-  <div class="meta">Generated: 2026-06-24 21:31 UTC<br><a href="alerts.html" style="color:#ffd54f;font-weight:600">⚠ Operational Alerts</a></div>
+  <div class="meta">Generated: 2026-07-01 16:23 UTC<br><a href="alerts.html" style="color:#ffd54f;font-weight:600">⚠ Operational Alerts</a></div>
 </header>
 
 <div class="summary-grid">
   <div class="card">
     <div class="card-title">Total Current Power</div>
-    <div class="big-num">72.94 MW</div>
+    <div class="big-num">86.39 MW</div>
     <div class="sub-num">Capacity: 112.93 MW</div>
   </div>
   <div class="card">
     <div class="card-title">Portfolio Performance (24h)</div>
-    <div class="big-num">100.8%</div>
-    <div class="sub-num">918.73 MWh measured / 911.27 MWh expected</div>
+    <div class="big-num">104.1%</div>
+    <div class="sub-num">857.71 MWh measured / 824.17 MWh expected</div>
   </div>
   <div class="card">
     <div class="card-title">Active Alerts</div>
-    <div class="big-num" style="color:#28a745">0</div>
-    <div class="sub-num">Across 0 sites</div>
+    <div class="big-num" style="color:#dc3545">31</div>
+    <div class="sub-num">Across 12 sites</div>
   </div>
   <div class="card">
     <div class="card-title">Rule Tool Failures</div>
-    <div class="big-num" style="color:#e67e22">164</div>
-    <div class="sub-num">Config: 42 &bull; Comm: 33 &bull; Data: 37 &bull; Perf: 52</div>
+    <div class="big-num" style="color:#e67e22">171</div>
+    <div class="sub-num">Config: 42 &bull; Comm: 35 &bull; Data: 36 &bull; Perf: 58</div>
   </div>
 </div>
 
@@ -90,31 +98,45 @@
   </div>
   <div class="sites-grid" id="sitesGrid">
 
-    <a class="site-card alert" href="S64602_McLean.html">
-      <div class="site-name">McLean <span class="site-key">S64602</span></div>
+    <a class="site-card alert" href="S66930_Elk_Solar.html">
+      <div class="site-name">Elk Solar <span class="site-key">S66930</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.40 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">28.0%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">95.7%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">678.5 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">13.6%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 0 kWh actual vs 54,057 kWh expected (0%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="0.0 100.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">0%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">8</span>
-        Avail: <strong>100%</strong>
+        Alerts: <span class="badge badge-fail">15</span>
+        Rule fails: <span class="badge badge-fail">13</span>
+        Avail: <strong>26%</strong>
       </div>
     </a>
 
     <a class="site-card alert" href="S65918_C___B_Graham_Energy.html">
       <div class="site-name">C & B Graham Energy <span class="site-key">S65918</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.68 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">23.9%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">0%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">2.94 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">42.1%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-missing" title="No expected-energy data for the last 24h"><span>&#9888;</span><span>No&nbsp;data</span></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">14</span>
+        Alerts: <span class="badge badge-fail">3</span>
+        Rule fails: <span class="badge badge-fail">13</span>
         Avail: <strong>0%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S65788_Gray_Fox_Solar.html">
+      <div class="site-name">Gray Fox Solar <span class="site-key">S65788</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">4.91 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">98.3%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-missing" title="No expected-energy data for the last 24h"><span>&#9888;</span><span>No&nbsp;data</span></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-fail">3</span>
+        Rule fails: <span class="badge badge-fail">9</span>
+        Avail: <strong>100%</strong>
       </div>
     </a>
 
@@ -123,245 +145,63 @@
       <div class="site-metrics">
         <div class="metric"><div class="metric-val">0.0 kW</div><div class="metric-label">Now</div></div>
         <div class="metric"><div class="metric-val">0%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">0%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="donut-missing" title="No expected-energy data for the last 24h"><span>&#9888;</span><span>No&nbsp;data</span></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">6</span>
+        Alerts: <span class="badge badge-warn">1</span>
+        Rule fails: <span class="badge badge-fail">7</span>
         Avail: <strong>0%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S44485_RRH_1___2.html">
-      <div class="site-name">RRH 1 & 2 <span class="site-key">S44485</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.74 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">44.0%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">98.9%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">4</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card warn" href="S51958_WCPS_-_Westwood_Hills_Elementary_School.html">
-      <div class="site-name">WCPS - Westwood Hills Elementary School <span class="site-key">S51958</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">73.9 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">43.5%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">95.2%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">2</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card warn" href="S51959_WCPS_-_Waynesboro_High_School.html">
-      <div class="site-name">WCPS - Waynesboro High School <span class="site-key">S51959</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">94.1 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">85.6%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">76.4%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">3</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card warn" href="S51960_WCPS_-_Kate_Collins_Middle_School.html">
-      <div class="site-name">WCPS - Kate Collins Middle School <span class="site-key">S51960</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">195.6 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">64.5%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">88.9%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">3</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S54681_Eagle.html">
-      <div class="site-name">Eagle <span class="site-key">S54681</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.96 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">65.3%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">94.5%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">4</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S59656_Whitetail.html">
-      <div class="site-name">Whitetail <span class="site-key">S59656</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">9.80 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">98.0%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">91.2%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">9</span>
-        Avail: <strong>100%</strong>
       </div>
     </a>
 
     <a class="site-card alert" href="S63839_Richmond.html">
       <div class="site-name">Richmond <span class="site-key">S63839</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.66 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">88.8%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">92.3%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">2.90 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">96.8%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 21,600 kWh actual vs 21,550 kWh expected (100%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">100%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-warn">1</span>
+        Rule fails: <span class="badge badge-fail">5</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S64602_McLean.html">
+      <div class="site-name">McLean <span class="site-key">S64602</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">3.88 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">77.6%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 27,350 kWh actual vs 28,729 kWh expected (95%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="95.2 4.8" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">95%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">6</span>
-        Avail: <strong>100%</strong>
+        Rule fails: <span class="badge badge-fail">11</span>
+        Avail: <strong>0%</strong>
       </div>
     </a>
 
     <a class="site-card alert" href="S64603_Shorthorn.html">
       <div class="site-name">Shorthorn <span class="site-key">S64603</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">8.54 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">95.9%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">96.9%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">8.84 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">99.3%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 94,416 kWh actual vs 96,534 kWh expected (98%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="97.8 2.2" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">98%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
+        Alerts: <span class="badge badge-warn">1</span>
         Rule fails: <span class="badge badge-fail">6</span>
         Avail: <strong>100%</strong>
       </div>
     </a>
 
-    <a class="site-card alert" href="S65784_Washington_Solar.html">
-      <div class="site-name">Washington Solar <span class="site-key">S65784</span></div>
+    <a class="site-card alert" href="S44485_RRH_1___2.html">
+      <div class="site-name">RRH 1 & 2 <span class="site-key">S44485</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">4.96 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">99.2%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">115.6%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">7</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S65785_Harding_Solar.html">
-      <div class="site-name">Harding Solar <span class="site-key">S65785</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.47 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">82.2%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">95.0%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">6</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S40834_Green_Elementary.html">
-      <div class="site-name">Green Elementary <span class="site-key">S40834</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">44.5 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">14.5%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">83.4%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">8</span>
-        Avail: <strong>96%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S40835_Gallia_Academy.html">
-      <div class="site-name">Gallia Academy <span class="site-key">S40835</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">392.4 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">54.5%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">91.2%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">4</span>
-        Avail: <strong>94%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S40836_Rio_Grande_Elementary.html">
-      <div class="site-name">Rio Grande Elementary <span class="site-key">S40836</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">175.2 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">48.1%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">81.6%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">4</span>
-        Avail: <strong>98%</strong>
-      </div>
-    </a>
-
-    <a class="site-card warn" href="S44566_RIT.html">
-      <div class="site-name">RIT <span class="site-key">S44566</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">775.7 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">47.9%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">107.8%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">2</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S44882_Monroe_Landfill.html">
-      <div class="site-name">Monroe Landfill <span class="site-key">S44882</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">620.2 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">38.3%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">111.2%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">6</span>
-        Avail: <strong>95%</strong>
-      </div>
-    </a>
-
-    <a class="site-card warn" href="S54553_Butler_Maple.html">
-      <div class="site-name">Butler Maple <span class="site-key">S54553</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">3.38 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">84.4%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">93.6%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-warn">1</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S63837_Bulloch_1B.html">
-      <div class="site-name">Bulloch 1B <span class="site-key">S63837</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.93 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">64.2%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">76.0%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">3.72 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">93.9%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 26,088 kWh actual vs 26,145 kWh expected (100%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="99.8 0.2" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">100%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
@@ -370,26 +210,82 @@
       </div>
     </a>
 
-    <a class="site-card alert" href="S63838_Bulloch_1A.html">
-      <div class="site-name">Bulloch 1A <span class="site-key">S63838</span></div>
+    <a class="site-card alert" href="S44566_RIT.html">
+      <div class="site-name">RIT <span class="site-key">S44566</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.04 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">68.0%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">121.1%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">1.60 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">98.8%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 12,366 kWh actual vs 11,430 kWh expected (108%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">108%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">7</span>
+        Alerts: <span class="badge badge-warn">1</span>
+        Rule fails: <span class="badge badge-fail">3</span>
         Avail: <strong>100%</strong>
       </div>
     </a>
 
-    <a class="site-card warn" href="S63840_Upson.html">
-      <div class="site-name">Upson <span class="site-key">S63840</span></div>
+    <a class="site-card warn" href="S51958_WCPS_-_Westwood_Hills_Elementary_School.html">
+      <div class="site-name">WCPS - Westwood Hills Elementary School <span class="site-key">S51958</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.34 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">78.0%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">93.7%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">96.8 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">56.9%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 854 kWh actual vs 918 kWh expected (93%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="93.1 6.9" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">93%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">2</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S51959_WCPS_-_Waynesboro_High_School.html">
+      <div class="site-name">WCPS - Waynesboro High School <span class="site-key">S51959</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">72.7 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">66.1%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 669 kWh actual vs 852 kWh expected (79%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="78.5 21.5" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">79%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">4</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card warn" href="S51960_WCPS_-_Kate_Collins_Middle_School.html">
+      <div class="site-name">WCPS - Kate Collins Middle School <span class="site-key">S51960</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">239.2 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">78.9%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 1,851 kWh actual vs 2,148 kWh expected (86%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="86.2 13.8" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">86%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">2</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S54553_Butler_Maple.html">
+      <div class="site-name">Butler Maple <span class="site-key">S54553</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">866.1 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">21.7%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 19,123 kWh actual vs 16,723 kWh expected (114%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">114%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-warn">1</span>
+        Rule fails: <span class="badge badge-fail">2</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card warn" href="S54681_Eagle.html">
+      <div class="site-name">Eagle <span class="site-key">S54681</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">2.87 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">95.8%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 20,834 kWh actual vs 23,360 kWh expected (89%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="89.2 10.8" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">89%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
@@ -398,40 +294,12 @@
       </div>
     </a>
 
-    <a class="site-card warn" href="S65786_Whitehall_Solar.html">
-      <div class="site-name">Whitehall Solar <span class="site-key">S65786</span></div>
+    <a class="site-card alert" href="S59656_Whitetail.html">
+      <div class="site-name">Whitetail <span class="site-key">S59656</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">993.9 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">49.7%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">90.4%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">2</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S65787_Sunflower_Solar.html">
-      <div class="site-name">Sunflower Solar <span class="site-key">S65787</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.27 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">12.7%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">171.7%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">8</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card alert" href="S65788_Gray_Fox_Solar.html">
-      <div class="site-name">Gray Fox Solar <span class="site-key">S65788</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">3.28 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">65.8%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">151.1%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">9.57 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">95.7%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 99,082 kWh actual vs 105,099 kWh expected (94%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="94.3 5.7" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">94%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
@@ -440,54 +308,208 @@
       </div>
     </a>
 
-    <a class="site-card alert" href="S66930_Elk_Solar.html">
-      <div class="site-name">Elk Solar <span class="site-key">S66930</span></div>
+    <a class="site-card alert" href="S65784_Washington_Solar.html">
+      <div class="site-name">Washington Solar <span class="site-key">S65784</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">810.7 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">16.2%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">0.0%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">4.63 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">92.5%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 47,705 kWh actual vs 41,265 kWh expected (116%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">116%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">13</span>
-        Avail: <strong>22%</strong>
+        Rule fails: <span class="badge badge-fail">9</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S65785_Harding_Solar.html">
+      <div class="site-name">Harding Solar <span class="site-key">S65785</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">2.85 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">94.9%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 27,260 kWh actual vs 31,456 kWh expected (87%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="86.7 13.3" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">87%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">6</span>
+        Avail: <strong>96%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S65786_Whitehall_Solar.html">
+      <div class="site-name">Whitehall Solar <span class="site-key">S65786</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">1.98 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">99.1%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 20,003 kWh actual vs 21,310 kWh expected (94%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="93.9 6.1" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">94%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-warn">1</span>
+        Rule fails: <span class="badge badge-fail">7</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S66001_Sheridan_Solar.html">
+      <div class="site-name">Sheridan Solar <span class="site-key">S66001</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">834.6 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">27.8%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 17,131 kWh actual vs 17,045 kWh expected (101%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">101%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-fail">2</span>
+        Rule fails: <span class="badge badge-fail">2</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S40834_Green_Elementary.html">
+      <div class="site-name">Green Elementary <span class="site-key">S40834</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">259.1 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">84.1%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 1,816 kWh actual vs 2,211 kWh expected (82%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="82.1 17.9" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">82%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">5</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card warn" href="S40835_Gallia_Academy.html">
+      <div class="site-name">Gallia Academy <span class="site-key">S40835</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">612.6 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">85.1%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 4,393 kWh actual vs 4,842 kWh expected (91%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="90.7 9.3" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">91%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">3</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S40836_Rio_Grande_Elementary.html">
+      <div class="site-name">Rio Grande Elementary <span class="site-key">S40836</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">317.8 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">87.3%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 2,042 kWh actual vs 2,340 kWh expected (87%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="87.2 12.8" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">87%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">4</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S44882_Monroe_Landfill.html">
+      <div class="site-name">Monroe Landfill <span class="site-key">S44882</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">1.37 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">84.9%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 9,661 kWh actual vs 8,404 kWh expected (115%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">115%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">6</span>
+        Avail: <strong>96%</strong>
       </div>
     </a>
 
     <a class="site-card alert" href="S51957_WCPS_-_William_Perry_Elementary_School.html">
       <div class="site-name">WCPS - William Perry Elementary School <span class="site-key">S51957</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">102.9 kW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">56.5%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">31.9%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">119.5 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">65.7%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 1,182 kWh actual vs 2,456 kWh expected (48%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="48.1 51.9" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">48%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">6</span>
-        Avail: <strong>67%</strong>
+        Alerts: <span class="badge badge-warn">1</span>
+        Rule fails: <span class="badge badge-fail">4</span>
+        Avail: <strong>100%</strong>
       </div>
     </a>
 
-    <a class="site-card warn" href="S54613_Warbler.html">
+    <a class="site-card alert" href="S54613_Warbler.html">
       <div class="site-name">Warbler <span class="site-key">S54613</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.58 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">39.4%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">85.3%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">3.71 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">92.7%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 23,800 kWh actual vs 28,603 kWh expected (83%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="83.2 16.8" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">83%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-warn">1</span>
+        Rule fails: <span class="badge badge-fail">2</span>
+        Avail: <strong>98%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S63837_Bulloch_1B.html">
+      <div class="site-name">Bulloch 1B <span class="site-key">S63837</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">2.98 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">99.4%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 23,400 kWh actual vs 25,850 kWh expected (91%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="90.5 9.5" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">91%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">2</span>
-        Avail: <strong>92%</strong>
+        Rule fails: <span class="badge badge-fail">4</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S63838_Bulloch_1A.html">
+      <div class="site-name">Bulloch 1A <span class="site-key">S63838</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">1.04 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">34.6%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 24,000 kWh actual vs 24,714 kWh expected (97%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="97.1 2.9" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">97%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">4</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S63840_Upson.html">
+      <div class="site-name">Upson <span class="site-key">S63840</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">2.88 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">96.0%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 25,200 kWh actual vs 26,381 kWh expected (96%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="95.5 4.5" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">96%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">4</span>
+        Avail: <strong>100%</strong>
+      </div>
+    </a>
+
+    <a class="site-card alert" href="S65787_Sunflower_Solar.html">
+      <div class="site-name">Sunflower Solar <span class="site-key">S65787</span></div>
+      <div class="site-metrics">
+        <div class="metric"><div class="metric-val">9.91 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">99.1%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 104,113 kWh actual vs 59,227 kWh expected (176%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">176%</div></div><div class="metric-label">24h vs Exp</div></div>
+      </div>
+      <div style="margin-top:8px;font-size:12px">
+        Alerts: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-fail">7</span>
+        Avail: <strong>100%</strong>
       </div>
     </a>
 
     <a class="site-card good" href="S65216_Green_Solar.html">
       <div class="site-name">Green Solar <span class="site-key">S65216</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">1.89 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">65.7%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">97.2%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">2.82 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">97.9%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 34,125 kWh actual vs 35,786 kWh expected (95%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="95.4 4.6" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">95%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
@@ -499,27 +521,13 @@
     <a class="site-card warn" href="S66000_Auburn_Solar.html">
       <div class="site-name">Auburn Solar <span class="site-key">S66000</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.26 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">76.2%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">105.4%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">415.2 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">14.0%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 8,151 kWh actual vs 7,300 kWh expected (112%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">112%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-fail">2</span>
-        Avail: <strong>100%</strong>
-      </div>
-    </a>
-
-    <a class="site-card good" href="S66001_Sheridan_Solar.html">
-      <div class="site-name">Sheridan Solar <span class="site-key">S66001</span></div>
-      <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.94 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">97.9%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">96.7%</div><div class="metric-label">Perf 24h</div></div>
-      </div>
-      <div style="margin-top:8px;font-size:12px">
-        Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-ok">0</span>
+        Rule fails: <span class="badge badge-warn">1</span>
         Avail: <strong>100%</strong>
       </div>
     </a>
@@ -527,9 +535,9 @@
     <a class="site-card warn" href="S68112_Wallace_Solar.html">
       <div class="site-name">Wallace Solar <span class="site-key">S68112</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.92 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">98.2%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">104.4%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">1.03 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">34.7%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 24,476 kWh actual vs 23,763 kWh expected (103%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">103%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
@@ -541,9 +549,9 @@
     <a class="site-card warn" href="S68113_Marble_Solar.html">
       <div class="site-name">Marble Solar <span class="site-key">S68113</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">2.84 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">98.8%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">97.7%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">565.9 kW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">19.7%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 19,463 kWh actual vs 19,305 kWh expected (101%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#2e9e5b" stroke-dasharray="100.0 0.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#2e9e5b">101%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
@@ -552,22 +560,22 @@
       </div>
     </a>
 
-    <a class="site-card warn" href="S70645_Williams_Solar__LLC.html">
+    <a class="site-card alert" href="S70645_Williams_Solar__LLC.html">
       <div class="site-name">Williams Solar, LLC <span class="site-key">S70645</span></div>
       <div class="site-metrics">
-        <div class="metric"><div class="metric-val">4.81 MW</div><div class="metric-label">Now</div></div>
-        <div class="metric"><div class="metric-val">96.2%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">95.8%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric"><div class="metric-val">4.88 MW</div><div class="metric-label">Now</div></div>
+        <div class="metric"><div class="metric-val">97.7%</div><div class="metric-label">Capacity</div></div>
+        <div class="metric"><div class="donut-wrap" title="Past 24h: 32,069 kWh actual vs 54,363 kWh expected (59%)"><svg viewBox="0 0 36 36" class="donut"><circle class="donut-bg" cx="18" cy="18" r="15.9"/><circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="#e08a00" stroke-dasharray="59.0 41.0" transform="rotate(-90 18 18)"/></svg><div class="donut-label" style="color:#e08a00">59%</div></div><div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: <span class="badge badge-ok">0</span>
-        Rule fails: <span class="badge badge-warn">1</span>
-        Avail: <strong>100%</strong>
+        Rule fails: <span class="badge badge-fail">6</span>
+        Avail: <strong>67%</strong>
       </div>
     </a>
   </div>
 </div>
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-06-24 21:31 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
 <script>
 function filterSites() {
   const q = document.getElementById('search').value.toLowerCase();
@@ -582,8 +590,8 @@ new Chart(scatter, {
   data: {
     datasets: [{
       label: 'Sites',
-      data: [{"x": 2220.6, "y": 1851.5}, {"x": 4903.2, "y": 4471.3}, {"x": 2502.6, "y": 2043.0}, {"x": 31155.6, "y": 30806.8}, {"x": 12290.2, "y": 13251.4}, {"x": 9043.9, "y": 10060.6}, {"x": 2484.6, "y": 793.4}, {"x": 1088.1, "y": 1035.5}, {"x": 952.1, "y": 727.0}, {"x": 2354.1, "y": 2092.7}, {"x": 45470.5, "y": 42545.0}, {"x": 30231.5, "y": 25800.0}, {"x": 28318.8, "y": 26759.0}, {"x": 80916.4, "y": 73823.0}, {"x": 29987.2, "y": 22800.0}, {"x": 23787.6, "y": 28800.0}, {"x": 29908.4, "y": 27600.0}, {"x": 32022.8, "y": 30000.0}, {"x": 40706.9, "y": 38950.0}, {"x": 80197.3, "y": 77716.0}, {"x": 30819.0, "y": 29970.3}, {"x": 47387.6, "y": 54783.0}, {"x": 28125.6, "y": 26714.0}, {"x": 21603.3, "y": 19523.0}, {"x": 54507.9, "y": 93596.0}, {"x": 20633.5, "y": 31170.0}, {"x": 0.0, "y": 34916.0}, {"x": 22252.6, "y": 23463.2}, {"x": 34902.5, "y": 33764.4}, {"x": 50022.5, "y": 0.0}, {"x": 28547.8, "y": 29811.5}, {"x": 31582.3, "y": 30841.5}, {"x": 0, "y": 0.0}, {"x": 50343.5, "y": 48252.0}],
-      backgroundColor: ["#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#ffc107", "#ffc107", "#ffc107", "#ffc107", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#2E75B6", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#2E75B6", "#dc3545", "#ffc107", "#ffc107", "#dc3545", "#ffc107"],
+      data: [{"x": 2211.3, "y": 1815.9}, {"x": 4841.8, "y": 4393.3}, {"x": 2340.3, "y": 2041.8}, {"x": 26145.2, "y": 26088.0}, {"x": 11429.8, "y": 12365.8}, {"x": 8403.9, "y": 9660.6}, {"x": 2455.9, "y": 1181.7}, {"x": 918.1, "y": 854.5}, {"x": 851.5, "y": 668.6}, {"x": 2148.1, "y": 1851.0}, {"x": 16722.8, "y": 19123.1}, {"x": 28603.5, "y": 23800.0}, {"x": 23360.1, "y": 20834.4}, {"x": 105098.7, "y": 99082.0}, {"x": 25849.6, "y": 23400.0}, {"x": 24713.5, "y": 24000.0}, {"x": 21550.0, "y": 21600.0}, {"x": 26381.1, "y": 25200.0}, {"x": 28728.9, "y": 27350.0}, {"x": 96533.7, "y": 94416.0}, {"x": 35786.4, "y": 34124.9}, {"x": 41264.8, "y": 47705.0}, {"x": 31456.0, "y": 27260.0}, {"x": 21310.2, "y": 20003.0}, {"x": 59227.2, "y": 104113.0}, {"x": 0.0, "y": 50582.0}, {"x": 0.0, "y": 32905.0}, {"x": 7300.3, "y": 8151.4}, {"x": 17044.5, "y": 17131.5}, {"x": 54056.8, "y": 0.0}, {"x": 23763.2, "y": 24475.6}, {"x": 19305.3, "y": 19462.7}, {"x": 0, "y": 0.0}, {"x": 54363.2, "y": 32069.0}],
+      backgroundColor: ["#dc3545", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#2E75B6", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#ffc107", "#ffc107", "#dc3545", "#dc3545"],
       pointRadius: 8,
       pointHoverRadius: 10,
     }]
@@ -614,8 +622,8 @@ new Chart(avail, {
   data: {
     datasets: [{
       label: 'Sites',
-      data: [{"x": 83.4, "y": 95.9, "r": 8}, {"x": 91.2, "y": 94.3, "r": 8}, {"x": 81.6, "y": 97.7, "r": 8}, {"x": 98.9, "y": 100.0, "r": 8}, {"x": 107.8, "y": 100.0, "r": 8}, {"x": 111.2, "y": 95.2, "r": 8}, {"x": 31.9, "y": 66.7, "r": 8}, {"x": 95.2, "y": 100.0, "r": 8}, {"x": 76.4, "y": 100.0, "r": 8}, {"x": 88.9, "y": 100.0, "r": 8}, {"x": 93.6, "y": 100.0, "r": 8}, {"x": 85.3, "y": 92.0, "r": 8}, {"x": 94.5, "y": 100.0, "r": 8}, {"x": 91.2, "y": 99.9, "r": 8}, {"x": 76.0, "y": 100.0, "r": 8}, {"x": 121.1, "y": 100.0, "r": 8}, {"x": 92.3, "y": 100.0, "r": 8}, {"x": 93.7, "y": 100.0, "r": 8}, {"x": 95.7, "y": 100.0, "r": 8}, {"x": 96.9, "y": 100.0, "r": 8}, {"x": 97.2, "y": 100.0, "r": 8}, {"x": 115.6, "y": 100.0, "r": 8}, {"x": 95.0, "y": 100.0, "r": 8}, {"x": 90.4, "y": 100.0, "r": 8}, {"x": 171.7, "y": 100.0, "r": 8}, {"x": 151.1, "y": 100.0, "r": 8}, {"x": 0, "y": 0, "r": 8}, {"x": 105.4, "y": 100.0, "r": 8}, {"x": 96.7, "y": 100.0, "r": 8}, {"x": 0.0, "y": 21.8, "r": 8}, {"x": 104.4, "y": 100.0, "r": 8}, {"x": 97.7, "y": 100.0, "r": 8}, {"x": 0, "y": 0, "r": 8}, {"x": 95.8, "y": 100.0, "r": 8}],
-      backgroundColor: ["#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#ffc107", "#ffc107", "#ffc107", "#ffc107", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#2E75B6", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#2E75B6", "#dc3545", "#ffc107", "#ffc107", "#dc3545", "#ffc107"],
+      data: [{"x": 82.1, "y": 100.0, "r": 8}, {"x": 90.7, "y": 100.0, "r": 8}, {"x": 87.2, "y": 100.0, "r": 8}, {"x": 99.8, "y": 100.0, "r": 8}, {"x": 108.2, "y": 100.0, "r": 8}, {"x": 115.0, "y": 96.3, "r": 8}, {"x": 48.1, "y": 100.0, "r": 8}, {"x": 93.1, "y": 100.0, "r": 8}, {"x": 78.5, "y": 100.0, "r": 8}, {"x": 86.2, "y": 100.0, "r": 8}, {"x": 114.4, "y": 100.0, "r": 8}, {"x": 83.2, "y": 97.9, "r": 8}, {"x": 89.2, "y": 100.0, "r": 8}, {"x": 94.3, "y": 99.7, "r": 8}, {"x": 90.5, "y": 100.0, "r": 8}, {"x": 97.1, "y": 100.0, "r": 8}, {"x": 100.2, "y": 100.0, "r": 8}, {"x": 95.5, "y": 100.0, "r": 8}, {"x": 95.2, "y": 0, "r": 8}, {"x": 97.8, "y": 100.0, "r": 8}, {"x": 95.4, "y": 100.0, "r": 8}, {"x": 115.6, "y": 100.0, "r": 8}, {"x": 86.7, "y": 96.5, "r": 8}, {"x": 93.9, "y": 100.0, "r": 8}, {"x": 175.8, "y": 100.0, "r": 8}, {"x": 0, "y": 100.0, "r": 8}, {"x": 0, "y": 0, "r": 8}, {"x": 111.7, "y": 100.0, "r": 8}, {"x": 100.5, "y": 100.0, "r": 8}, {"x": 0.0, "y": 26.5, "r": 8}, {"x": 103.0, "y": 100.0, "r": 8}, {"x": 100.8, "y": 100.0, "r": 8}, {"x": 0, "y": 0, "r": 8}, {"x": 59.0, "y": 67.1, "r": 8}],
+      backgroundColor: ["#dc3545", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#2E75B6", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#dc3545", "#ffc107", "#dc3545", "#dc3545", "#ffc107", "#ffc107", "#dc3545", "#dc3545"],
     }]
   },
   options: {

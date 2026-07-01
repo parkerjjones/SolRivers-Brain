@@ -47,7 +47,8 @@ API_BASE            = "https://apps.alsoenergy.com/api"
 PORTFOLIO_KEYS      = ["C12941", "C47197"]
 TZ_OFFSET_MIN       = 360
 SLEEP               = 0.5
-REVENUE_RATE_PER_MWH = 40.0   # $/MWh — typical Ohio commercial solar PPA/SREC blended rate
+# NOTE: revenue/$-loss figures were removed pending real per-site PPA rates. Do not
+# reintroduce a blanket $/MWh or capacity-factor constant — feed real contract rates.
 HERE           = Path(__file__).parent
 CHARTJS_FILE   = HERE / "assets" / "chart.umd.min.js"
 HW_XLSX        = HERE / "ae_hardware.xlsx"
@@ -489,34 +490,114 @@ function filterComms(q) {{
 </script>"""
 
 
-def compute_site_impact(alerts, hw):
-    """Per-site capacity impact from open INVERTER_FAULT alerts.
+def load_site_caps():
+    """Real per-site capacity dicts {ac, dc, daily}.
 
-    Returns {site: {mw_offline, total_mw, pct_offline, n_open_faults}}
+    Prefers ae_site_capacity.json (AlsoEnergy `systemSize`, complete for every
+    site — written by ae_kpi_dashboard.py), falling back to ae_sites.xlsx for
+    anything missing. `daily` (daily-estimate proxy) comes from ae_sites.xlsx.
     """
+    import openpyxl
+    caps = {"ac": {}, "dc": {}, "daily": {}}
+
+    cap_json = HERE / "ae_site_capacity.json"
+    if cap_json.exists():
+        try:
+            for sn, c in json.loads(cap_json.read_text(encoding="utf-8")).items():
+                if c.get("ac_kw"):
+                    caps["ac"][sn] = c["ac_kw"]
+                if c.get("dc_kw"):
+                    caps["dc"][sn] = c["dc_kw"]
+        except Exception as e:
+            print(f"  [warn] capacity cache load failed: {e}")
+
+    if SITES_XLSX.exists():
+        it = openpyxl.load_workbook(SITES_XLSX, read_only=True)["Sites Overview"].values
+        hdr = {h: i for i, h in enumerate(next(it))}
+        def num(r, col):
+            i = hdr.get(col)
+            try:
+                return float(r[i] or 0) if i is not None else 0.0
+            except (ValueError, TypeError):
+                return 0.0
+        for r in it:
+            sn = r[hdr["Site Name"]]
+            if not caps["ac"].get(sn):                 # fill only if cache lacked it
+                caps["ac"][sn] = num(r, "Capacity AC (kW)")
+            if not caps["dc"].get(sn):
+                caps["dc"][sn] = num(r, "Capacity DC (kW)")
+            caps["daily"][sn] = num(r, "Daily Est (kWh)")
+    return caps
+
+
+def _site_capacity_kw(site, hwd, caps):
+    """Best REAL capacity estimate + provenance. Never a guessed constant:
+    site AC nameplate → inverter nameplates (from model in name) → DC → daily-est."""
+    ac = caps["ac"].get(site, 0)
+    if ac > 0:
+        return ac, "AC nameplate"
+    guessed = sum(hwd.get("inv_cap", {}).values())
+    if guessed > 0:
+        return guessed, "inverter nameplates"
+    dc = caps["dc"].get(site, 0)
+    if dc > 0:
+        return dc, "DC nameplate"
+    daily = caps["daily"].get(site, 0)
+    if daily > 0:
+        return daily / 5.0, "daily-estimate proxy"
+    return 0, "unknown"
+
+
+def compute_site_impact(alerts, hw, caps, prod_by_site):
+    """Per-site offline capacity, from REAL data only.
+
+    total_mw   : real site capacity (see _site_capacity_kw)
+    offline set: inverters producing <10% of peer output over the last day
+                 (production = ground truth); falls back to open hard-fault
+                 alerts only where production data is unavailable.
+    mw_offline : offline count x (site capacity / inverter count)
+    Returns {site: {mw_offline, total_mw, pct_offline, n_offline,
+                    n_open_faults, cap_source}}
+    """
+    import statistics
     result = {}
     for site, hwd in hw.items():
         inv_names = hwd.get("inverters", [])
-        inv_cap = hwd.get("inv_cap", {})
-        known_caps = [c for c in (inv_cap.get(n, 0) for n in inv_names) if c > 0]
-        total_kw = sum(known_caps)
-        avg_kw = total_kw / len(known_caps) if known_caps else 0
+        n_inv = len(inv_names)
+        total_kw, cap_src = _site_capacity_kw(site, hwd, caps)
+        per_inv = (total_kw / n_inv) if n_inv else 0
 
-        # Count both INVERTER_FAULT and persistent INVERTER_COMM (>1h) as offline
-        open_faults = {a["hardware_name"] for a in alerts
-                       if a["site_name"] == site
-                       and not a["is_resolved"]
-                       and (a["category"] == "INVERTER_FAULT"
-                            or (a["category"] == "INVERTER_COMM"
-                                and a.get("duration_h", 0) >= 1))}
-        offline_kw = sum(inv_cap.get(n, 0) or avg_kw for n in open_faults)
+        # open hard-fault / persistent comm alerts (reported regardless)
+        fault_offline = {a["hardware_name"] for a in alerts
+                         if a["site_name"] == site and not a["is_resolved"]
+                         and a["hardware_name"]
+                         and (a["category"] == "INVERTER_FAULT"
+                              or (a["category"] == "INVERTER_COMM"
+                                  and a.get("duration_h", 0) >= 1))}
 
+        # production ground truth: inverters at <10% of peer median over last day
+        prod_offline, have_prod = set(), False
+        invs = prod_by_site.get(site, {})
+        if len(invs) >= 4:
+            tr = {n: sum(v for v in b[-BINS_PER_DAY:]
+                         if isinstance(v, (int, float)) and v > 0)
+                  for n, b in invs.items()}
+            pr = statistics.median([t for t in tr.values() if t > 0]) if any(tr.values()) else 0
+            if pr > 0:
+                have_prod = True
+                prod_offline = {n for n, t in tr.items() if t < 0.10 * pr}
+
+        offline = prod_offline if have_prod else fault_offline
+        n_offline = len(offline)
+        offline_kw = n_offline * per_inv
         pct = round(offline_kw / total_kw * 100) if total_kw > 0 else 0
         result[site] = {
             "mw_offline": round(offline_kw / 1000, 2),
             "total_mw": round(total_kw / 1000, 2),
             "pct_offline": min(pct, 100),
-            "n_open_faults": len(open_faults),
+            "n_offline": n_offline,
+            "n_open_faults": len(fault_offline),
+            "cap_source": cap_src,
         }
     return result
 
@@ -536,21 +617,19 @@ def _build_action_queue(site_impact, diags, filtered):
         if d["site"] != "PORTFOLIO" and d["site"] not in diag_by_site:
             diag_by_site[d["site"]] = d
 
+    # Rank by real quantities: MW offline first, then longest open fault.
     scored = []
     for site, imp in site_impact.items():
         mw = imp.get("mw_offline", 0)
         pct = imp.get("pct_offline", 0)
         fh = site_fault_h.get(site, 0)
-        score = mw * 200 + pct * 2 + fh * 0.5
-        if score > 0:
-            scored.append((score, site, imp, fh))
+        if mw > 0 or fh > 0:
+            scored.append((mw, fh, site, imp))
     scored.sort(reverse=True)
 
     actions = []
-    for score, site, imp, fh in scored[:4]:
-        mw = imp.get("mw_offline", 0)
+    for mw, fh, site, imp in scored[:4]:
         pct = imp.get("pct_offline", 0)
-        cost_day = mw * 6 * REVENUE_RATE_PER_MWH
         diag = diag_by_site.get(site, {})
         diag_actions = diag.get("actions", []) if isinstance(diag.get("actions"), list) else []
         if diag_actions:
@@ -568,8 +647,6 @@ def _build_action_queue(site_impact, diags, filtered):
         parts = []
         if mw > 0:
             parts.append(f"{mw:.1f} MW offline ({pct}%)")
-        if cost_day >= 1:
-            parts.append(f"${cost_day:,.0f}/day")
         if fh > 0:
             parts.append(f"{fh:.0f}h open")
         actions.append({"urgency": urgency, "cls": cls,
@@ -600,11 +677,6 @@ def compute_portfolio_stats(filtered, site_impact, diags):
                      if not a["is_resolved"] and a["category"] in crit_cats)
     top_diag = next((d for d in diags if d["site"] != "PORTFOLIO"), None)
 
-    # Revenue impact
-    mwh_loss_day = total_mw_offline * 6   # ~25% CF → 6 MWh/MW/day
-    usd_per_day  = int(round(mwh_loss_day * REVENUE_RATE_PER_MWH))
-    usd_7day     = usd_per_day * 7
-
     # Root-cause breakdown of open alerts
     _cat_map = {
         "INVERTER_FAULT": "Equipment", "TRACKER_FAULT": "Equipment",
@@ -615,37 +687,24 @@ def compute_portfolio_stats(filtered, site_impact, diags):
     open_alerts = [a for a in filtered if not a.get("is_resolved")]
     cause_counts = Counter(_cat_map.get(a["category"], "Other") for a in open_alerts)
 
-    # Portfolio health score (0–100)
-    pct_mw_offline = (total_mw_offline / total_mw * 100) if total_mw > 0 else 0
-    health = max(0, min(100, round(
-        100 - pct_mw_offline * 2.5 - len(sites_with_issues) * 1.5 - n_critical * 0.4)))
-
     # Action queue
     actions = _build_action_queue(site_impact, diags, filtered)
 
     return {
         "n_sites": len(sites_with_issues),
         "mw_offline": round(total_mw_offline, 1),
-        "est_daily_loss": int(round(mwh_loss_day)),
-        "usd_per_day": usd_per_day,
-        "usd_7day": usd_7day,
+        "n_open_alerts": len(open_alerts),
         "n_critical": n_critical,
         "top_site": top_diag["site"] if top_diag else "",
         "top_title": (top_diag["title"][:55] if top_diag else ""),
         "cause_counts": dict(cause_counts),
-        "health_score": health,
         "actions": actions,
     }
 
 
 def render_portfolio_summary(stats):
-    """Dark KPI bar + action queue panel."""
-    health = stats["health_score"]
-    health_cls = "ps-green" if health >= 85 else ("ps-orange" if health >= 65 else "ps-red")
-
-    usd_day = f"${stats['usd_per_day']:,}"
-    usd_7d  = f"${stats['usd_7day']:,}"
-
+    """Dark KPI bar + action queue panel. All figures are direct counts/capacities
+    from AlsoEnergy data — no revenue/CF assumptions."""
     top_html = ""
     if stats["top_site"]:
         top_html = (f"<div class='ps-item'><div class='ps-label'>Top Issue Site</div>"
@@ -668,13 +727,12 @@ def render_portfolio_summary(stats):
                       f"<div class='ps-label'>Open Alert Causes</div>"
                       f"<div style='margin-top:4px'>{pills}</div></div>")
 
-    n_cols = 6 if top_html else 5
+    n_cols = 5 if top_html else 4
     kpi_bar = f"""<div class="portfolio-summary" style="grid-template-columns:repeat({n_cols},1fr)">
-  <div class="ps-item"><div class="ps-label">Health Score</div><div class="ps-value {health_cls}">{health}/100</div></div>
   <div class="ps-item"><div class="ps-label">Sites w/ Issues</div><div class="ps-value ps-red">{stats['n_sites']}</div></div>
   <div class="ps-item"><div class="ps-label">MW Offline</div><div class="ps-value ps-red">{stats['mw_offline']:.1f}</div></div>
-  <div class="ps-item"><div class="ps-label">$/Day Lost</div><div class="ps-value ps-orange">{usd_day}</div></div>
-  <div class="ps-item"><div class="ps-label">7-Day Risk</div><div class="ps-value ps-orange">{usd_7d}</div></div>
+  <div class="ps-item"><div class="ps-label">Open Alerts</div><div class="ps-value ps-orange">{stats['n_open_alerts']}</div></div>
+  <div class="ps-item"><div class="ps-label">Critical Alerts</div><div class="ps-value ps-red">{stats['n_critical']}</div></div>
   {top_html}
   {cause_html}
 </div>"""
@@ -723,6 +781,131 @@ def render_patterns_html(diags):
       <div class="card-title">Cross-Site Patterns</div>
       {''.join(items)}
     </div>"""
+
+
+# ── notifications (peer-relative inverter underperformance) ─────────────────
+
+BINS_PER_DAY = 96   # 15-min bins
+
+def compute_notifications(prod_by_site):
+    """Detect notable inverter events from REAL per-inverter production only.
+
+    For each site we compare every inverter against the site's peer median,
+    over the full window (baseline) and over the most recent day. An inverter
+    that was healthy but recently fell far below its peers is an *emerging*
+    event (what you'd notice by eye); one chronically below peers is *sustained*.
+    Chronic zeros are skipped (they read as no-data / long-known outage, not a
+    new event). Every number shown is a measured peer-relative ratio — no
+    revenue, capacity-factor, or invented constants.
+    """
+    import statistics
+
+    def totals(invs, seg=None):
+        out = {}
+        for n, bins in invs.items():
+            vals = bins[-seg:] if seg else bins
+            out[n] = sum(v for v in vals if isinstance(v, (int, float)) and v > 0)
+        return out
+
+    events = []
+    for site, invs in prod_by_site.items():
+        if len(invs) < 4:                     # need peers to compare against
+            continue
+        tf, tr = totals(invs), totals(invs, BINS_PER_DAY)
+        pf = statistics.median([t for t in tf.values() if t > 0]) if any(tf.values()) else 0
+        pr = statistics.median([t for t in tr.values() if t > 0]) if any(tr.values()) else 0
+        if pf <= 0 or pr <= 0:                # site not producing / no data
+            continue
+
+        emerging, sustained = [], []
+        for n in invs:
+            if tf[n] == 0:                    # chronic zero → data/offline, not new
+                continue
+            rf, rr = tf[n] / pf, tr[n] / pr
+            if rf >= 0.8 and rr < 0.5:
+                emerging.append((n, rf, rr, "critical"))
+            elif rf >= 0.8 and rr < 0.75:
+                emerging.append((n, rf, rr, "warning"))
+            elif rf < 0.7:
+                sustained.append((n, rf, rr))
+
+        # group a same-site cluster of sharp drops into one event (likely one cause)
+        crit = [e for e in emerging if e[3] == "critical"]
+        if len(crit) >= 3:
+            worst = min(crit, key=lambda e: e[2])
+            events.append({
+                "severity": "critical", "site": site,
+                "title": f"{len(crit)} inverters at {site} dropped sharply vs peers",
+                "detail": (f"e.g. {worst[0]} at {worst[2]*100:.0f}% of peer output "
+                           f"(baseline {worst[1]*100:.0f}%). Likely a site-level or "
+                           f"comms event — check the heatmap."),
+                "sortk": (0, -len(crit))})
+            emerging = [e for e in emerging if e[3] != "critical"]
+
+        for n, rf, rr, sev in emerging:
+            events.append({
+                "severity": sev, "site": site,
+                "title": f"{n} at {site} underperforming",
+                "detail": (f"Producing {rr*100:.0f}% of peer output over the last day "
+                           f"(baseline {rf*100:.0f}% across the window)."),
+                "sortk": (0 if sev == "critical" else 1, rr)})
+
+        for n, rf, rr in sorted(sustained, key=lambda x: x[1])[:2]:
+            events.append({
+                "severity": "warning", "site": site,
+                "title": f"{n} at {site} persistently low",
+                "detail": f"Averaging {rf*100:.0f}% of peer output across the window.",
+                "sortk": (2, rf)})
+
+    rank = {"critical": 0, "warning": 1, "info": 2}
+    events.sort(key=lambda e: (rank[e["severity"]], e.get("sortk", (9, 0))))
+    return events
+
+
+def render_notifications(notifs, limit=12):
+    """Sliding notification bar + collapsible panel. Empty string if nothing."""
+    if not notifs:
+        return ""
+    n_crit = sum(1 for n in notifs if n["severity"] == "critical")
+    n_warn = sum(1 for n in notifs if n["severity"] == "warning")
+    bar_sev = "critical" if n_crit else "warning"
+
+    counts = []
+    if n_crit:
+        counts.append(f"{n_crit} critical")
+    if n_warn:
+        counts.append(f"{n_warn} warning")
+    count_txt = " · ".join(counts)
+
+    lead = notifs[0]
+    lead_txt = f"{lead['title']} — {lead['detail']}"
+
+    shown = notifs[:limit]
+    extra = len(notifs) - len(shown)
+    items = []
+    for n in shown:
+        items.append(
+            f"<div class='notif-item notif-{n['severity']}'>"
+            f"<span class='notif-dot'></span>"
+            f"<div class='notif-text'><b>{esc(n['title'])}</b>"
+            f"<span class='notif-detail'>{esc(n['detail'])}</span></div></div>")
+    more = (f"<div class='notif-more'>+{extra} more — open the Inverter Heatmaps tab "
+            f"for the full picture</div>") if extra > 0 else ""
+
+    return f"""<div id="notifBar" class="notif-bar notif-bar-{bar_sev}">
+  <div class="notif-headline" onclick="toggleNotif()">
+    <span class="notif-bell">&#128276;</span>
+    <span class="notif-badge">{esc(count_txt)}</span>
+    <span class="notif-lead">{esc(lead_txt)}</span>
+    <span class="notif-chevron" id="notifChevron">&#9662;</span>
+    <span class="notif-dismiss" onclick="dismissNotif(event)" title="Dismiss">&times;</span>
+  </div>
+  <div class="notif-panel" id="notifPanel">
+    {''.join(items)}
+    {more}
+    <div class="notif-src">Detected from per-inverter production vs site peer median (AlsoEnergy 15-min data).</div>
+  </div>
+</div>"""
 
 
 SUMMARIES_XLSX = HERE / "ae_ai_summaries.xlsx"
@@ -1265,6 +1448,7 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
     total_mw = impact.get("total_mw", 0)
     pct_offline = impact.get("pct_offline", 0)
     n_open_faults = impact.get("n_open_faults", 0)
+    n_offline = impact.get("n_offline", 0)
 
     # Status — fault_h + comm_h both count; comm alerts often mean inverter is offline
     if pct_offline >= 20 or fault_h >= 24 or comm_h >= 24:
@@ -1290,17 +1474,12 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
 
     # Quick stats block for degraded/critical sites
     stats_html = ""
-    if mw_offline > 0 or fault_h > 2 or n_open_faults > 0:
-        est_mwh = round(mw_offline * 6, 1)
-        est_usd = int(round(mw_offline * 6 * REVENUE_RATE_PER_MWH))
-        usd_7d  = est_usd * 7
-        usd_str = f"${est_usd:,}/day" if est_usd > 0 else "—"
-        risk_str = f"${usd_7d:,}" if usd_7d > 0 else "—"
+    if mw_offline > 0 or fault_h > 2 or n_offline > 0 or n_open_faults > 0:
         stats_html = f"""<div class="site-quick-stats">
           <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">{mw_offline:.1f}</div></div>
-          <div class="qs-item"><div class="qs-label">$/Day Lost</div><div class="qs-val qs-orange">{usd_str}</div></div>
-          <div class="qs-item"><div class="qs-label">7-Day Risk</div><div class="qs-val qs-orange">{risk_str}</div></div>
-          <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">{n_open_faults}</div></div>
+          <div class="qs-item"><div class="qs-label">% Offline</div><div class="qs-val qs-orange">{pct_offline}%</div></div>
+          <div class="qs-item"><div class="qs-label">Total MW</div><div class="qs-val">{total_mw:.1f}</div></div>
+          <div class="qs-item"><div class="qs-label">Inverters Offline</div><div class="qs-val qs-red">{n_offline}</div></div>
           <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">{fault_h:.0f}h</div></div>
         </div>"""
 
@@ -1319,8 +1498,8 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
                  or any(d.get("open") for d in site_diags) or site_emails else "")
 
     inv_label = f"{n_inv} inverters"
-    if n_open_faults:
-        inv_label = f"{n_inv} inv · {n_open_faults} offline"
+    if n_offline:
+        inv_label = f"{n_inv} inv · {n_offline} offline"
 
     if irrad_data:
         # Downsample irradiance to match strip bin resolution
@@ -1654,9 +1833,36 @@ PAGE = """<!DOCTYPE html>
   .aq-high {{ background:#fff0db;color:#b35900; }}
   .aq-medium {{ background:#e8f5e8;color:#1a6b1a; }}
   .aq-pattern {{ background:#e8eef8;color:#1a3a8a; }}
+  /* ── sliding notification bar ── */
+  .notif-bar {{ overflow: hidden; color:#fff; animation: notifSlide .45s ease-out; }}
+  @keyframes notifSlide {{ from {{ transform: translateY(-100%); opacity:0; }} to {{ transform: translateY(0); opacity:1; }} }}
+  .notif-bar-critical {{ background:#c62828; }}
+  .notif-bar-warning {{ background:#b35900; }}
+  .notif-headline {{ display:flex; align-items:center; gap:10px; padding:9px 24px; cursor:pointer; font-size:13px; }}
+  .notif-headline:hover {{ filter:brightness(1.06); }}
+  .notif-bell {{ font-size:15px; }}
+  .notif-badge {{ background:rgba(255,255,255,.25); border-radius:11px; padding:2px 10px; font-weight:700; font-size:12px; white-space:nowrap; }}
+  .notif-lead {{ flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; opacity:.95; }}
+  .notif-chevron {{ transition: transform .2s; font-size:14px; }}
+  .notif-bar.open .notif-chevron {{ transform: rotate(180deg); }}
+  .notif-dismiss {{ font-size:20px; line-height:1; opacity:.8; padding:0 4px; }}
+  .notif-dismiss:hover {{ opacity:1; }}
+  .notif-panel {{ display:none; background:#fff; color:#333; border-top:1px solid rgba(255,255,255,.3); max-height:340px; overflow-y:auto; }}
+  .notif-bar.open .notif-panel {{ display:block; }}
+  .notif-item {{ display:flex; align-items:flex-start; gap:10px; padding:9px 24px; border-bottom:1px solid #eef1f5; }}
+  .notif-item:hover {{ background:#f8fafc; }}
+  .notif-dot {{ width:9px; height:9px; border-radius:50%; margin-top:5px; flex:0 0 auto; }}
+  .notif-critical .notif-dot {{ background:#c62828; }}
+  .notif-warning .notif-dot {{ background:#e08a00; }}
+  .notif-text {{ font-size:12.5px; line-height:1.4; }}
+  .notif-text b {{ display:block; color:#1F4E79; }}
+  .notif-detail {{ color:#555; }}
+  .notif-more {{ padding:8px 24px; font-size:12px; color:#666; font-style:italic; }}
+  .notif-src {{ padding:7px 24px; font-size:10.5px; color:#98a2b3; background:#fafbfc; }}
 </style>
 </head>
 <body>
+{notification_bar}
 <header>
   <div>
     <h1>Operational Alerts</h1>
@@ -1733,6 +1939,14 @@ PAGE = """<!DOCTYPE html>
 </div>
 
 <script>
+function toggleNotif() {{
+  document.getElementById('notifBar').classList.toggle('open');
+}}
+function dismissNotif(e) {{
+  if (e) e.stopPropagation();
+  const b = document.getElementById('notifBar');
+  if (b) b.style.display = 'none';
+}}
 function switchTab(id, el) {{
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.tab-link').forEach(a => a.classList.remove('active'));
@@ -2215,9 +2429,6 @@ def main():
                         e["body"] = tbody
                         break
 
-    # ── site impact (MW offline per site) ────────────────────────────
-    site_impact = compute_site_impact(filtered, hw)
-
     # ── diagnosis + recommender ───────────────────────────────────────
     try:
         from ae_diagnosis import diagnose_portfolio
@@ -2233,10 +2444,6 @@ def main():
         render_diag_card(d, i + 1, emails=site_emails.get(d["site"], []))
         for i, d in enumerate(diags[:10])) or \
         "<div class='card muted'>No diagnoses generated for this window.</div>"
-
-    # ── portfolio summary bar ─────────────────────────────────────────
-    port_stats = compute_portfolio_stats(filtered, site_impact, diags)
-    portfolio_summary_html = render_portfolio_summary(port_stats)
     patterns_html = render_patterns_html(diags)
 
     # ── AI summaries ───────────────────────────────────────────────────
@@ -2282,6 +2489,18 @@ def main():
             prod_bins_by_site = cached_bins
             if not irrad_by_site:
                 irrad_by_site = cached_irrad
+
+    # ── notifications: peer-relative inverter underperformance ────────
+    notifs = compute_notifications(prod_by_site)
+    notification_html = render_notifications(notifs)
+    print(f"  notifications: {len(notifs)} "
+          f"({sum(1 for n in notifs if n['severity']=='critical')} critical)")
+
+    # ── site impact + portfolio summary (need real capacity + production) ─
+    site_caps = load_site_caps()
+    site_impact = compute_site_impact(filtered, hw, site_caps, prod_by_site)
+    port_stats = compute_portfolio_stats(filtered, site_impact, diags)
+    portfolio_summary_html = render_portfolio_summary(port_stats)
 
     # ── per-site strip heatmaps for EVERY site ────────────────────────
     alerts_by_site = defaultdict(list)
@@ -2343,6 +2562,7 @@ def main():
     comms_html = render_comms_html(transcript_threads, site_emails)
 
     html = PAGE.format(
+        notification_bar=notification_html,
         portfolio_summary=portfolio_summary_html,
         patterns=patterns_html,
         chartjs=chartjs,

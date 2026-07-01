@@ -1,0 +1,53 @@
+{
+  "units": {
+    "power": "kW or MW instantaneous AC unless otherwise stated",
+    "energy": "kWh or MWh over a defined period",
+    "availability": "percent of expected operating interval available",
+    "performance_index": "actual energy divided by expected energy"
+  },
+  "kpis": {
+    "performance_index_pct": {
+      "formula": "actual_energy_kwh / expected_energy_kwh * 100",
+      "notes": "Use only when expected_energy_kwh is valid and greater than zero."
+    },
+    "lost_energy_kwh": {
+      "formula": "max(expected_energy_kwh - actual_energy_kwh, 0)",
+      "notes": "Do not count as operational loss until data quality and curtailment checks are complete."
+    },
+    "lost_revenue_usd": {
+      "formula": "lost_energy_mwh * ppa_price_usd_per_mwh",
+      "notes": "If PPA rate is unknown, use estimated market/PPA placeholder and label as estimate."
+    },
+    "capacity_factor_pct": {
+      "formula": "actual_energy_kwh / (ac_capacity_kw * hours_in_period) * 100",
+      "notes": "Can be misleading across different irradiance/weather periods."
+    },
+    "current_capacity_pct": {
+      "formula": "current_power_kw / ac_capacity_kw * 100",
+      "notes": "Only meaningful during daylight and valid irradiance."
+    },
+    "availability_pct": {
+      "formula": "available_intervals / expected_operating_intervals * 100",
+      "notes": "Should exclude nighttime and approved curtailment if contractually allowed."
+    },
+    "data_freshness_minutes": {
+      "formula": "now_timestamp - last_valid_timestamp",
+      "notes": "High values indicate stale data or communication issue."
+    },
+    "meter_scada_delta_pct": {
+      "formula": "abs(revenue_meter_energy_kwh - scada_energy_kwh) / revenue_meter_energy_kwh * 100",
+      "notes": "Use to identify scaling, meter, or DAS errors."
+    }
+  },
+  "suggested_thresholds": {
+    "performance_index_low_warning_pct": 90,
+    "performance_index_low_critical_pct": 75,
+    "performance_index_high_suspicious_pct": 125,
+    "availability_warning_pct": 98,
+    "availability_critical_pct": 90,
+    "data_stale_warning_minutes": 30,
+    "data_stale_critical_minutes": 120,
+    "meter_scada_delta_warning_pct": 2,
+    "meter_scada_delta_critical_pct": 5
+  }
+}

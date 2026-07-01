@@ -1,0 +1,68 @@
+{
+  "rules": [
+    {
+      "rule_id": "DQ001",
+      "name": "Stale site data",
+      "condition": "now - last_valid_timestamp > 30 minutes during daylight",
+      "severity": "warning",
+      "classification": "data_quality",
+      "recommended_action": "Check DAS heartbeat and compare with revenue meter or utility portal."
+    },
+    {
+      "rule_id": "DQ002",
+      "name": "Critical stale data",
+      "condition": "now - last_valid_timestamp > 120 minutes during daylight",
+      "severity": "high",
+      "classification": "data_quality",
+      "recommended_action": "Escalate to DAS/SCADA provider and mark operational state unknown."
+    },
+    {
+      "rule_id": "DQ003",
+      "name": "Impossible negative production",
+      "condition": "current_power_kw < -0.02 * ac_capacity_kw",
+      "severity": "medium",
+      "classification": "data_quality_or_metering",
+      "recommended_action": "Check meter sign convention, CT orientation, and net load/backfeed rules."
+    },
+    {
+      "rule_id": "DQ004",
+      "name": "PI suspiciously high",
+      "condition": "performance_index_pct > 125",
+      "severity": "medium",
+      "classification": "model_or_meter_validation",
+      "recommended_action": "Validate expected model, irradiance inputs, capacity, and meter scaling."
+    },
+    {
+      "rule_id": "DQ005",
+      "name": "Expected energy missing",
+      "condition": "expected_energy_kwh is null or expected_energy_kwh == 0 during daylight with irradiance > 200 W/m2",
+      "severity": "medium",
+      "classification": "expected_model_issue",
+      "recommended_action": "Check expected model generation and weather feed."
+    },
+    {
+      "rule_id": "DQ006",
+      "name": "Irradiance sensor likely failed",
+      "condition": "poa_irradiance_wm2 is flat, null, negative, or inconsistent with nearby weather/site production",
+      "severity": "medium",
+      "classification": "weather_sensor_issue",
+      "recommended_action": "Compare POA to GHI/weather feed and nearby sites."
+    },
+    {
+      "rule_id": "DQ007",
+      "name": "Meter and SCADA mismatch",
+      "condition": "meter_scada_delta_pct > 5 for daily energy",
+      "severity": "high",
+      "classification": "metering_or_scaling",
+      "recommended_action": "Reconcile meter and SCADA interval data; check CT/PT ratios and multipliers."
+    },
+    {
+      "rule_id": "DQ008",
+      "name": "Nighttime false outage",
+      "condition": "current_power_kw == 0 and sun_elevation_deg <= 0",
+      "severity": "low",
+      "classification": "not_an_issue",
+      "recommended_action": "Suppress outage classification during nighttime."
+    }
+  ]
+}

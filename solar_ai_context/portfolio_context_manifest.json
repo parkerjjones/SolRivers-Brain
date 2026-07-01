@@ -1,0 +1,30 @@
+{
+  "context_pack_name": "solar_ai_context_pack",
+  "created_for": "Solar asset management dashboard AI",
+  "recommended_runtime_inputs": [
+    "site current power",
+    "site expected energy",
+    "actual energy from revenue meter",
+    "SCADA energy",
+    "POA/GHI irradiance",
+    "inverter status and power",
+    "tracker status and angle",
+    "breaker/recloser status",
+    "curtailment flag",
+    "open O&M tickets",
+    "recent emails or notes",
+    "site metadata",
+    "contract and PPA metadata",
+    "known exceptions"
+  ],
+  "recommended_ai_tasks": [
+    "classify issue",
+    "separate real loss from data issue",
+    "estimate lost energy and revenue",
+    "assign owner",
+    "recommend next action",
+    "flag escalation",
+    "produce RCA summary",
+    "prepare O&M email draft"
+  ]
+}

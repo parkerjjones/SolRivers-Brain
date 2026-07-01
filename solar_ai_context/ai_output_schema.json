@@ -1,0 +1,151 @@
+{
+  "type": "object",
+  "required": [
+    "site_id",
+    "site_name",
+    "severity",
+    "confidence",
+    "issue_category",
+    "executive_summary",
+    "evidence",
+    "data_quality_status",
+    "estimated_impact",
+    "owner",
+    "next_action",
+    "escalation"
+  ],
+  "properties": {
+    "site_id": {
+      "type": "string"
+    },
+    "site_name": {
+      "type": "string"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "confidence": {
+      "type": "string",
+      "enum": [
+        "High",
+        "Medium",
+        "Low"
+      ]
+    },
+    "issue_category": {
+      "type": "string"
+    },
+    "executive_summary": {
+      "type": "string"
+    },
+    "likely_root_causes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "field",
+          "value",
+          "interpretation"
+        ],
+        "properties": {
+          "field": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
+          },
+          "interpretation": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "checks_still_needed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "data_quality_status": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "valid",
+            "questionable",
+            "invalid",
+            "unknown"
+          ]
+        },
+        "issues": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "estimated_impact": {
+      "type": "object",
+      "properties": {
+        "lost_energy_kwh": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "lost_revenue_usd": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "availability_impact_pct": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "calculation_notes": {
+          "type": "string"
+        }
+      }
+    },
+    "owner": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "due_date_or_urgency": {
+      "type": "string"
+    },
+    "escalation": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "boolean"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "escalate_to": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

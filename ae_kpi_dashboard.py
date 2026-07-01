@@ -34,8 +34,36 @@ DEPLOY_STATUS = {0: "Not In Service", 1: "Awaiting Approval", 2: "AlsoEnergy App
 DEPLOY_COLOR  = {0: "#aaa", 1: "#f0ad4e", 2: "#5bc0de", 3: "#5cb85c"}
 
 
+HERE = Path(__file__).parent
+
+
 def slug(name: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_-]", "_", name)
+
+
+def load_active_alerts():
+    """Real active-alert counts per site from ae_alerts.xlsx (is_resolved == False).
+
+    The KPI API's `activeAlerts` field comes back 0, so we count unresolved
+    alerts from the alert history instead — same source the alerts dashboard uses.
+    Returns {site_name: unresolved_count}.
+    """
+    from collections import Counter
+    f = HERE / "ae_alerts.xlsx"
+    if not f.exists():
+        return {}
+    import openpyxl
+    ws = openpyxl.load_workbook(f, read_only=True)["Alerts"]
+    it = ws.values
+    hdr = {h: i for i, h in enumerate(next(it))}
+    si, ri = hdr.get("site_name"), hdr.get("is_resolved")
+    if si is None or ri is None:
+        return {}
+    counts = Counter()
+    for r in it:
+        if r[ri] is False:                    # unresolved / active
+            counts[r[si]] += 1
+    return dict(counts)
 
 
 def get_session():
@@ -328,6 +356,14 @@ INDEX_HTML_HEAD = """\
   .metric {{ text-align: center; }}
   .metric-val {{ font-size: 15px; font-weight: 700; color: #2E75B6; }}
   .metric-label {{ font-size: 10px; color: #888; text-transform: uppercase; }}
+  /* per-site 24h actual-vs-expected donut */
+  .donut-wrap {{ position: relative; width: 46px; height: 46px; margin: 0 auto; }}
+  .donut {{ width: 46px; height: 46px; }}
+  .donut-bg {{ fill: none; stroke: #eef1f5; stroke-width: 3.6; }}
+  .donut-fg {{ fill: none; stroke-width: 3.6; stroke-linecap: round; }}
+  .donut-label {{ position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }}
+  .donut-missing {{ width: 46px; height: 46px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #b0b7c3; font-size: 9px; line-height: 1.1; text-align: center; }}
+  .donut-missing span:first-child {{ font-size: 14px; }}
   .badge {{ display: inline-block; padding: 1px 6px; border-radius: 3px; font-size: 11px; font-weight: 600; }}
   .badge-ok {{ background: #d4edda; color: #155724; }}
   .badge-warn {{ background: #fff3cd; color: #856404; }}
@@ -528,7 +564,7 @@ def build_site_html(s, all_sites, generated_at):
     avail = safe(d, "availability", 0)
     avail_class = "pct-good" if avail >= 95 else ("pct-bad" if avail < 80 else "")
     inv_avail = safe(d, "calculatedInverterAvailability", 0)
-    active_alerts = int(safe(d, "activeAlerts"))
+    active_alerts = int(s.get("active_alerts", 0))
     inv_total = int(safe(d, "totalInverters"))
     inv_faults = int(safe(d, "inverterFaults"))
     inv_ok = inv_total - inv_faults
@@ -571,6 +607,28 @@ def build_site_html(s, all_sites, generated_at):
     )
 
 
+def donut_24h(meas, exp):
+    """Small SVG donut: past-24h actual vs expected energy (real KPI data).
+
+    Filled fraction = actual/expected (capped at 100% for the ring). Green when
+    on-target (90–115%), amber otherwise (under- or over-performing/suspect).
+    'No data' when expected energy is unavailable — never a fabricated value.
+    """
+    if not exp or exp <= 0:
+        return ('<div class="donut-missing" title="No expected-energy data for the last 24h">'
+                '<span>&#9888;</span><span>No&nbsp;data</span></div>')
+    ratio = meas / exp * 100
+    frac = max(0.0, min(ratio, 100.0))
+    color = "#2e9e5b" if 90 <= ratio <= 115 else "#e08a00"
+    return (f'<div class="donut-wrap" title="Past 24h: {meas:,.0f} kWh actual vs '
+            f'{exp:,.0f} kWh expected ({ratio:.0f}%)">'
+            f'<svg viewBox="0 0 36 36" class="donut">'
+            f'<circle class="donut-bg" cx="18" cy="18" r="15.9"/>'
+            f'<circle class="donut-fg" cx="18" cy="18" r="15.9" stroke="{color}" '
+            f'stroke-dasharray="{frac:.1f} {100 - frac:.1f}" transform="rotate(-90 18 18)"/>'
+            f'</svg><div class="donut-label" style="color:{color}">{ratio:.0f}%</div></div>')
+
+
 def build_site_card(s):
     d = s["data"]
     key = s["key"]
@@ -578,8 +636,8 @@ def build_site_card(s):
     now  = safe(d, "now")
     cap  = safe(d, "systemSize", 1)
     pct  = round(min(100, (now / cap) * 100), 1) if cap else 0
-    meas_pct = round(safe(d, "measKWhPct", 0), 1)
-    alerts = int(safe(d, "activeAlerts"))
+    meas = safe(d, "measKWh"); exp = safe(d, "expKWh")
+    alerts = int(s.get("active_alerts", 0))
     rc = int(safe(d, "ruleToolConfiguration")) + int(safe(d, "ruleToolCommunication")) + \
          int(safe(d, "ruleToolData")) + int(safe(d, "ruleToolPerformance"))
     card_class = "alert" if alerts > 0 or rc > 3 else ("warn" if rc > 0 else "good")
@@ -591,7 +649,7 @@ def build_site_card(s):
       <div class="site-metrics">
         <div class="metric"><div class="metric-val">{fmt_kw(now)}</div><div class="metric-label">Now</div></div>
         <div class="metric"><div class="metric-val">{pct}%</div><div class="metric-label">Capacity</div></div>
-        <div class="metric"><div class="metric-val">{meas_pct}%</div><div class="metric-label">Perf 24h</div></div>
+        <div class="metric">{donut_24h(meas, exp)}<div class="metric-label">24h vs Exp</div></div>
       </div>
       <div style="margin-top:8px;font-size:12px">
         Alerts: {rule_badge(alerts)}
@@ -607,8 +665,8 @@ def build_index_html(sites, generated_at):
     total_meas = sum(safe(s["data"], "measKWh") for s in sites)
     total_exp  = sum(safe(s["data"], "expKWh") for s in sites)
     port_pct   = round((total_meas / total_exp * 100) if total_exp else 0, 1)
-    total_alerts = int(sum(safe(s["data"], "activeAlerts") for s in sites))
-    alert_sites  = sum(1 for s in sites if safe(s["data"], "activeAlerts") > 0)
+    total_alerts = int(sum(s.get("active_alerts", 0) for s in sites))
+    alert_sites  = sum(1 for s in sites if s.get("active_alerts", 0) > 0)
     rf_config = int(sum(safe(s["data"], "ruleToolConfiguration") for s in sites))
     rf_comm   = int(sum(safe(s["data"], "ruleToolCommunication") for s in sites))
     rf_data   = int(sum(safe(s["data"], "ruleToolData") for s in sites))
@@ -628,14 +686,14 @@ def build_index_html(sites, generated_at):
         avail = safe(d, "availability", 0); pi = safe(d, "measKWhPct", 0)
         rc = int(safe(d, "ruleToolConfiguration")) + int(safe(d, "ruleToolCommunication")) + \
              int(safe(d, "ruleToolData")) + int(safe(d, "ruleToolPerformance"))
-        alerts = safe(d, "activeAlerts")
+        alerts = s.get("active_alerts", 0)
         col = "#dc3545" if alerts > 0 or rc > 3 else ("#ffc107" if rc > 0 else "#2E75B6")
         scatter_pts.append({"x": round(exp, 1), "y": round(meas, 1)})
         bubble_pts.append({"x": round(pi, 1), "y": round(avail, 1), "r": 8})
         names.append(s["name"])
         colors.append(col)
 
-    site_cards = "\n".join(build_site_card(s) for s in sorted(sites, key=lambda s: safe(s["data"], "activeAlerts", 0) + safe(s["data"], "ruleToolConfiguration", 0), reverse=True))
+    site_cards = "\n".join(build_site_card(s) for s in sorted(sites, key=lambda s: s.get("active_alerts", 0) + safe(s["data"], "ruleToolConfiguration", 0), reverse=True))
 
     head = INDEX_HTML_HEAD.format(
         site_count=len(sites), generated_at=generated_at,
@@ -669,6 +727,22 @@ if __name__ == "__main__":
     print("Fetching KPI data...")
     sites = fetch_kpi(session, [PORTFOLIO, PORTFOLIO2])
     print(f"  {len(sites)} sites loaded")
+
+    # Attach real active-alert counts (KPI API activeAlerts field returns 0)
+    amap = load_active_alerts()
+    for s in sites:
+        s["active_alerts"] = amap.get(s["name"], 0)
+    print(f"  active alerts: {sum(s['active_alerts'] for s in sites)} "
+          f"across {sum(1 for s in sites if s['active_alerts'] > 0)} sites")
+
+    # Export real per-site capacity (systemSize = AC nameplate) for other dashboards
+    cap_cache = {s["name"]: {"key": s["key"],
+                             "ac_kw": round(safe(s["data"], "systemSize"), 1),
+                             "dc_kw": round(safe(s["data"], "dCsize"), 1)}
+                 for s in sites}
+    (HERE / "ae_site_capacity.json").write_text(json.dumps(cap_cache), encoding="utf-8")
+    print(f"  capacity cache saved ({len(cap_cache)} sites, "
+          f"{sum(c['ac_kw'] for c in cap_cache.values())/1000:.1f} MW AC total)")
 
     if args.site:
         sites = [s for s in sites if s["key"] == args.site]

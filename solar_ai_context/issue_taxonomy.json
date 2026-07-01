@@ -1,0 +1,59 @@
+{
+  "severity_levels": {
+    "critical": "Large production/revenue impact, safety risk, compliance risk, or full-site outage.",
+    "high": "Material underperformance, recurring equipment issue, major data outage, or SLA risk.",
+    "medium": "Moderate loss, partial derate, localized equipment issue, or trend needing review.",
+    "low": "Minor issue, informational alert, or early warning with limited impact."
+  },
+  "issue_categories": {
+    "site_outage": {
+      "description": "Site producing zero or near-zero during expected daylight operation.",
+      "primary_owner": "O&M",
+      "secondary_owner": "Utility or DAS/SCADA Provider depending on evidence"
+    },
+    "inverter_offline_or_derated": {
+      "description": "One or more inverters offline, faulted, derated, or not following expected output.",
+      "primary_owner": "O&M"
+    },
+    "tracker_fault_or_stow": {
+      "description": "Tracker angle abnormal, tracker controller fault, wind stow, or rows stuck.",
+      "primary_owner": "O&M"
+    },
+    "das_or_communications": {
+      "description": "Data stale, missing, flatlined, or inconsistent across devices.",
+      "primary_owner": "DAS/SCADA Provider"
+    },
+    "metering_or_scaling": {
+      "description": "Revenue meter and SCADA mismatch, impossible energy values, sign inversion, or unit scaling issue.",
+      "primary_owner": "DAS/SCADA Provider",
+      "secondary_owner": "Asset Management"
+    },
+    "utility_outage_or_grid_event": {
+      "description": "POI breaker/recloser open, utility outage, voltage/frequency event, grid curtailment, or feeder issue.",
+      "primary_owner": "Utility",
+      "secondary_owner": "O&M"
+    },
+    "curtailment": {
+      "description": "Intentional reduction due to utility, ISO, interconnection, PPA, or site control instruction.",
+      "primary_owner": "Asset Management"
+    },
+    "soiling_or_vegetation": {
+      "description": "Clear-day underperformance not explained by equipment status, often gradual or seasonal.",
+      "primary_owner": "O&M"
+    },
+    "weather_sensor_or_expected_model": {
+      "description": "Expected production baseline appears stale, irradiance sensor bad, weather feed missing, or model assumptions wrong.",
+      "primary_owner": "Asset Management",
+      "secondary_owner": "DAS/SCADA Provider"
+    },
+    "warranty_or_epc_defect": {
+      "description": "Recurring equipment/design issue potentially covered by warranty or EPC obligation.",
+      "primary_owner": "Asset Management",
+      "secondary_owner": "Legal/Compliance"
+    },
+    "commercial_contractual": {
+      "description": "PPA, REC, landowner, tax, insurance, reporting, or compliance issue.",
+      "primary_owner": "Asset Management"
+    }
+  }
+}

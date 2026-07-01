@@ -50,7 +50,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S51958 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-06-24 21:31 UTC<br>
+    Generated: 2026-07-01 16:23 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -67,8 +67,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="82.0 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">73.9 kW</text>
+              stroke-dasharray="107.3 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">96.8 kW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 170.0 kW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">170</text>
@@ -76,7 +76,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="">43.5% capacity</span>
+      <span class="">56.9% capacity</span>
     </div>
   </div>
 
@@ -84,12 +84,12 @@
   <div class="card">
     <div class="card-title">Losses Past 24hr</div>
     
-    <div class="big-num" style="font-size:22px;color:#721c24">51.9 kWh Loss</div>
+    <div class="big-num" style="font-size:22px;color:#721c24">21.7 kWh Loss</div>
     <div style="margin-top:8px">
       <div class="loss-row"><span class="loss-label">Downtime Loss</span><span class="loss-val">0.0 kWh</span></div>
-      <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">9.0 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">7.5 kWh</span></div>
       <div class="loss-row"><span class="loss-label">Snow Loss</span><span class="loss-val">0.0 kWh</span></div>
-      <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">42.9 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">14.2 kWh</span></div>
     </div>
   </div>
 
@@ -137,9 +137,9 @@
       <canvas id="prodChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Measured: <strong>1.04 MWh</strong></span>
-      <span>Expected: <strong>1.09 MWh</strong></span>
-      <span class="pct-good">95.2% performance</span>
+      <span>Measured: <strong>854.5 kWh</strong></span>
+      <span>Expected: <strong>918.1 kWh</strong></span>
+      <span class="pct-good">93.1% performance</span>
     </div>
   </div>
 
@@ -150,13 +150,13 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>1.02 MWh</strong> (97.9%)</span>
-      <span>Yesterday: <strong>559.9 kWh</strong> (53.7%)</span>
+      <span>Today: <strong>167.9 kWh</strong> (16.6%)</span>
+      <span>Yesterday: <strong>840.1 kWh</strong> (82.7%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-06-24 21:31 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -166,7 +166,7 @@ new Chart(prodCtx, {
     labels: ['Measured', 'Expected'],
     datasets: [{
       label: 'kWh (24h)',
-      data: [1035.5, 1088.1],
+      data: [854.5, 918.1],
       backgroundColor: ['#2E75B6', '#e9ecef'],
       borderColor: ['#1F4E79', '#ccc'],
       borderWidth: 1,
@@ -189,7 +189,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [1016.8, 1038.8, 559.9, 1042.6, 22431.4, 105037.9],
+      data: [167.9, 1012.3, 840.1, 1016.0, 167.9, 109666.9],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

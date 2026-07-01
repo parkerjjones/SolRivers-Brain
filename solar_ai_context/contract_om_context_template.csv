@@ -1,0 +1,2 @@
+site_id,ppa_offtaker,ppa_rate_usd_per_mwh,rec_contract,om_provider,om_sla_response_hours_critical,om_sla_response_hours_high,warranty_end_date_inverters,warranty_end_date_modules,warranty_end_date_epc,curtailment_treatment,availability_guarantee_pct,reporting_deadline,insurance_deductible_usd,notes
+SAMPLE001,Offtaker name,55,REC contract name or N/A,O&M provider name,4,24,2034-01-15,2049-01-15,2026-01-15,Excused or non-excused,98,Monthly by business day 10,25000,Use this for financial/commercial context

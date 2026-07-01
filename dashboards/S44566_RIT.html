@@ -50,7 +50,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S44566 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-06-24 21:31 UTC<br>
+    Generated: 2026-07-01 16:23 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -67,8 +67,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="90.3 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">775.7 kW</text>
+              stroke-dasharray="186.3 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">1.60 MW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 1.62 MW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">1620</text>
@@ -76,7 +76,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="">47.9% capacity</span>
+      <span class="pct-good">98.8% capacity</span>
     </div>
   </div>
 
@@ -98,7 +98,7 @@
     <div class="card-title">Rule Tool Summary</div>
     <table class="rule-table">
       <tr><th>Category</th><th>Warnings</th></tr>
-      <tr><td>Configuration</td><td><span class="badge badge-warn">1</span></td></tr><tr><td>Communication</td><td><span class="badge badge-ok">0</span></td></tr><tr><td>Data</td><td><span class="badge badge-ok">0</span></td></tr><tr><td>Performance</td><td><span class="badge badge-warn">1</span></td></tr>
+      <tr><td>Configuration</td><td><span class="badge badge-warn">1</span></td></tr><tr><td>Communication</td><td><span class="badge badge-ok">0</span></td></tr><tr><td>Data</td><td><span class="badge badge-ok">0</span></td></tr><tr><td>Performance</td><td><span class="badge badge-fail">2</span></td></tr>
     </table>
   </div>
 
@@ -112,7 +112,7 @@
         <div class="progress-fill" style="width:100%;background:#5cb85c"></div>
       </div>
       <div class="pct-row">
-        <span>Active Alerts: <strong>0</strong></span>
+        <span>Active Alerts: <strong>1</strong></span>
         <span>Inverters: <strong>27/27</strong></span>
       </div>
     </div>
@@ -137,9 +137,9 @@
       <canvas id="prodChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Measured: <strong>13.25 MWh</strong></span>
-      <span>Expected: <strong>12.29 MWh</strong></span>
-      <span class="pct-good">107.8% performance</span>
+      <span>Measured: <strong>12.37 MWh</strong></span>
+      <span>Expected: <strong>11.43 MWh</strong></span>
+      <span class="pct-good">108.2% performance</span>
     </div>
   </div>
 
@@ -150,13 +150,13 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>11.89 MWh</strong> (102.0%)</span>
-      <span>Yesterday: <strong>12.58 MWh</strong> (107.9%)</span>
+      <span>Today: <strong>4.75 MWh</strong> (40.8%)</span>
+      <span>Yesterday: <strong>11.06 MWh</strong> (95.0%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-06-24 21:31 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -166,7 +166,7 @@ new Chart(prodCtx, {
     labels: ['Measured', 'Expected'],
     datasets: [{
       label: 'kWh (24h)',
-      data: [13251.4, 12290.2],
+      data: [12365.8, 11429.8],
       backgroundColor: ['#2E75B6', '#e9ecef'],
       borderColor: ['#1F4E79', '#ccc'],
       borderWidth: 1,
@@ -189,7 +189,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [11886.0, 11657.6, 12580.0, 11659.9, 274242.0, 1127851.0],
+      data: [4754.0, 11641.8, 11062.0, 11644.0, 4754.0, 1197585.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

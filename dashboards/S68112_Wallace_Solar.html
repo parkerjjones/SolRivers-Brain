@@ -50,7 +50,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S68112 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-06-24 21:31 UTC<br>
+    Generated: 2026-07-01 16:23 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -67,8 +67,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="185.1 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">2.92 MW</text>
+              stroke-dasharray="65.3 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">1.03 MW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 2.97 MW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">2970</text>
@@ -76,7 +76,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="pct-good">98.2% capacity</span>
+      <span class="">34.7% capacity</span>
     </div>
   </div>
 
@@ -84,10 +84,10 @@
   <div class="card">
     <div class="card-title">Losses Past 24hr</div>
     
-    <div class="big-num" style="font-size:22px;color:#721c24">173.4 kWh Loss</div>
+    <div class="big-num" style="font-size:22px;color:#155724">0.0 kWh Loss</div>
     <div style="margin-top:8px">
       <div class="loss-row"><span class="loss-label">Downtime Loss</span><span class="loss-val">0.0 kWh</span></div>
-      <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">173.4 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">0.0 kWh</span></div>
       <div class="loss-row"><span class="loss-label">Snow Loss</span><span class="loss-val">0.0 kWh</span></div>
       <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">0.0 kWh</span></div>
     </div>
@@ -137,9 +137,9 @@
       <canvas id="prodChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Measured: <strong>29.81 MWh</strong></span>
-      <span>Expected: <strong>28.55 MWh</strong></span>
-      <span class="pct-good">104.4% performance</span>
+      <span>Measured: <strong>24.48 MWh</strong></span>
+      <span>Expected: <strong>23.76 MWh</strong></span>
+      <span class="pct-good">103.0% performance</span>
     </div>
   </div>
 
@@ -150,13 +150,13 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>19.20 MWh</strong> (62.9%)</span>
-      <span>Yesterday: <strong>29.88 MWh</strong> (98.2%)</span>
+      <span>Today: <strong>2.07 MWh</strong> (6.6%)</span>
+      <span>Yesterday: <strong>24.15 MWh</strong> (77.4%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-06-24 21:31 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -166,7 +166,7 @@ new Chart(prodCtx, {
     labels: ['Measured', 'Expected'],
     datasets: [{
       label: 'kWh (24h)',
-      data: [29811.5, 28547.8],
+      data: [24475.6, 23763.2],
       backgroundColor: ['#2E75B6', '#e9ecef'],
       borderColor: ['#1F4E79', '#ccc'],
       borderWidth: 1,
@@ -189,7 +189,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [19196.0, 30538.6, 29877.0, 30426.2, 660340.0, 2795715.0],
+      data: [2071.0, 31321.8, 24147.0, 31213.0, 2071.0, 2923452.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

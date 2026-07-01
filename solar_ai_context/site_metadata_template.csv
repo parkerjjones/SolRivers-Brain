@@ -1,0 +1,2 @@
+site_id,site_name,state,utility,interconnection_voltage_kv,ac_capacity_kw,dc_capacity_kw,cod_date,technology,module_model,inverter_oem,inverter_model,tracker_oem,das_provider,revenue_meter_source,timezone,asset_manager,om_provider,notes
+SAMPLE001,Example Solar,NC,Duke Energy,12.47,5000,6500,2024-01-15,Fixed Tilt or Tracker,Module model,Inverter OEM,Inverter model,Tracker OEM or N/A,AlsoEnergy/PowerTrack,Utility meter or RGM,America/New_York,Asset manager name,O&M provider name,Known design/site notes
