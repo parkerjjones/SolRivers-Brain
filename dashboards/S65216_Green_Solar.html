@@ -40,6 +40,35 @@
   .pct-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #777; }
   .pct-good { color: #155724; font-weight: 600; }
   .pct-bad { color: #721c24; font-weight: 600; }
+  .full { padding: 0 24px 16px; }
+  .full .card { padding: 16px; }
+  /* inverter heatmap strip (identical to alerts dashboard) */
+  .strip-wrap { display: flex; gap: 8px; margin: 8px 0 6px; }
+  .strip-labels { display: flex; flex-direction: column; }
+  .strip-labels div { height: 14px; line-height: 14px; font-size: 10px; color: #555;
+                      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                      max-width: 200px; min-width: 140px; }
+  .strip-labels div.avg { font-weight: 700; color: #1F4E79; }
+  .strip-canvas { width: 100%; display: block; }
+  .strip-legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .scale-ruler { display: inline-flex; flex-direction: column; }
+  .scalebar { width: 200px; height: 12px; border-radius: 2px;
+    background: linear-gradient(90deg,#00007f,#0000ff,#007fff,#00ffff,#7fff7f,#ffff00,#ff7f00,#ff0000,#7f0000); }
+  .scale-ticks { display: flex; justify-content: space-between; width: 200px; }
+  .scale-ticks span { font-size: 9px; color: #888; }
+  .strip-legendlbl { font-size: 11px; color: #666; }
+  .hm-tip { position: fixed; background: rgba(20,30,40,.95); color: #fff; font-size: 11px;
+            padding: 6px 9px; border-radius: 4px; pointer-events: none; z-index: 99;
+            max-width: 340px; display: none; line-height: 1.5; }
+  .hm-empty { color: #888; font-size: 12px; padding: 8px 0; }
+  /* per-site alerts */
+  .al-summary { font-size: 12px; color: #666; margin-bottom: 8px; }
+  .al-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .al-table th { text-align: left; font-size: 10px; color: #888; text-transform: uppercase; padding: 4px 8px; border-bottom: 1px solid #eee; }
+  .al-table td { padding: 6px 8px; border-bottom: 1px solid #f5f5f5; vertical-align: top; }
+  .al-desc { color: #999; font-size: 11px; }
+  .al-open { color: #c62828; font-weight: 700; }
+  .al-res { color: #2e9e5b; }
   footer { text-align: center; font-size: 11px; color: #aaa; padding: 12px; }
 </style>
 </head>
@@ -50,7 +79,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S65216 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-07-01 16:23 UTC<br>
+    Generated: 2026-07-01 16:43 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -150,13 +179,104 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>7.05 MWh</strong> (23.3%)</span>
+      <span>Today: <strong>7.99 MWh</strong> (26.4%)</span>
       <span>Yesterday: <strong>34.84 MWh</strong> (115.1%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
+<div class="full">
+  <div class="card">
+    <div class="card-title">Inverter Heatmap — hourly capacity factor</div>
+    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["INVERTER 1"], "bins": 336, "binMin": 60, "start": "2026-06-18 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 4.2, 31.3, 48.5, 76.6, 78.7, 90.1, 87.5, 83.2, 70.3, 51.8, 49.0, 40.3, 21.6, 39.8, 23.0, 2.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 19.1, 80.8, 95.2, 95.2, 95.2, 95.2, 95.2, 93.7, 79.2, 67.5, 36.0, 24.4, 51.3, 25.2, 2.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 29.8, 42.4, 79.7, 93.8, 95.2, 93.5, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 77.5, 28.6, 2.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 34.8, 83.5, 93.1, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 76.8, 27.8, 2.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.7, 28.4, 70.0, 95.2, 95.1, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 94.3, 74.8, 27.2, 3.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 31.0, 76.8, 95.1, 92.6, 94.5, 90.6, 94.3, 84.3, 76.0, 55.7, 79.9, 77.1, 57.2, 26.6, 2.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 32.4, 74.9, 93.0, 95.2, 90.5, 95.2, 95.2, 81.3, 59.2, 66.4, 26.6, 15.7, 11.3, 11.9, 2.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2, 31.4, 75.3, 94.5, 88.2, 89.2, 84.0, 84.8, 55.8, 28.4, 16.4, 13.7, 6.0, 4.1, 2.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 7.3, 55.0, 69.5, 64.4, 63.7, 87.2, 72.3, 75.1, 76.9, 87.5, 85.4, 69.6, 39.5, 12.5, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 7.8, 31.6, 46.5, 59.3, 57.7, 73.0, 89.2, 71.7, 75.1, 88.3, 59.0, 75.6, 28.8, 12.6, 2.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 22.8, 66.5, 93.9, 95.2, 93.0, 69.0, 78.3, 69.3, 64.5, 70.1, 74.5, 44.9, 33.0, 29.5, 3.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 3.0, 7.5, 16.3, 55.5, 76.8, 90.8, 95.2, 95.2, 92.8, 94.1, 80.6, 64.2, 47.2, 12.7, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.4, 32.5, 80.7, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 79.3, 29.5, 3.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.4, 32.6, 79.5, 95.2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.1, 124.4, 936.7, 1450.5, 2292.5, 2354.4, 2696.4, 2619.2, 2488.7, 2104.2, 1549.7, 1464.3, 1205.6, 646.1, 1190.6, 687.1, 69.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 84.0, 572.1, 2419.0, 2848.1, 2847.8, 2847.4, 2848.1, 2847.5, 2801.4, 2369.5, 2020.9, 1077.3, 729.0, 1533.9, 753.4, 86.3, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 57.4, 892.4, 1266.8, 2385.9, 2808.2, 2848.1, 2799.0, 2847.8, 2848.0, 2847.3, 2847.8, 2847.8, 2847.9, 2317.5, 854.4, 88.1, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 73.5, 1041.4, 2498.3, 2786.5, 2848.3, 2848.4, 2848.4, 2848.0, 2847.7, 2847.8, 2847.7, 2847.7, 2847.9, 2297.9, 830.8, 88.2, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 80.1, 848.3, 2093.9, 2847.4, 2846.2, 2847.8, 2846.8, 2847.8, 2848.5, 2847.4, 2847.8, 2847.8, 2821.0, 2237.0, 814.0, 91.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 72.7, 928.4, 2298.5, 2846.6, 2770.7, 2827.8, 2711.1, 2820.8, 2522.2, 2272.6, 1666.9, 2391.6, 2308.1, 1710.0, 795.7, 86.7, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 72.5, 968.1, 2240.9, 2782.0, 2847.5, 2705.6, 2847.7, 2848.2, 2433.5, 1773.7, 1986.7, 794.7, 470.9, 337.6, 354.1, 78.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 67.2, 938.6, 2253.9, 2826.9, 2637.8, 2669.3, 2513.1, 2538.9, 1667.8, 849.9, 491.1, 410.9, 178.6, 121.9, 65.7, 22.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.1, 219.8, 1646.0, 2078.6, 1926.8, 1905.5, 2608.8, 2162.8, 2245.9, 2299.6, 2619.2, 2554.7, 2081.8, 1180.2, 373.5, 34.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 41.5, 232.2, 945.1, 1389.7, 1774.7, 1726.8, 2183.1, 2669.2, 2146.6, 2246.9, 2643.2, 1765.7, 2262.8, 861.5, 376.6, 66.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 25.1, 683.5, 1988.7, 2809.2, 2847.9, 2783.1, 2064.2, 2343.4, 2073.3, 1930.0, 2098.5, 2231.2, 1344.0, 989.1, 882.5, 115.2, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.1, 92.4, 222.8, 488.0, 1660.3, 2299.0, 2716.4, 2848.4, 2847.8, 2778.1, 2815.1, 2411.9, 1921.6, 1412.5, 379.1, 119.1, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 71.5, 974.1, 2413.2, 2848.7, 2848.4, 2847.8, 2847.8, 2848.2, 2847.4, 2848.6, 2848.5, 2848.2, 2848.2, 2371.4, 880.6, 91.9, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 71.2, 977.2, 2378.6, 2848.8, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "caps": [2992.0], "alerts": [[]]}</script>
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
+    <div class="card-title">Alerts — this site</div>
+    <div class='al-summary'>0 open · 8 total in window</div><table class='al-table'><tr><th>Start</th><th>Event</th><th>Device</th><th>Status</th></tr><tr><td>2026-06-30 00:52</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-27 07:58</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-23 18:05</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-23 13:31</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-23 03:51</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-22 13:45</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-19 07:08</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-19 04:58</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr></table>
+  </div>
+</div>
+
+<div class="hm-tip" id="hmTip"></div>
+<script>
+const ROW_H=14, GAP=1, AVG_H=16, AXIS_H=36;
+function jet(v){
+  const r=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-3)))));
+  const g=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-2)))));
+  const b=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-1)))));
+  return [r,g,b];
+}
+function drawStrip(sid){
+  const dEl=document.getElementById('d'+sid), cv=document.getElementById('hm'+sid);
+  if(!dEl||!cv) return;
+  const data=JSON.parse(dEl.textContent);
+  const nInv=data.invs.length; if(!nInv) return;
+  const bm=data.binMin||60, binsPerHour=60/bm;
+  const totalH=AVG_H+nInv*ROW_H+AXIS_H;
+  const wCss=Math.max(cv.parentElement.clientWidth,500);
+  const dpr=window.devicePixelRatio||1;
+  cv.width=wCss*dpr; cv.height=totalH*dpr; cv.style.height=totalH+'px';
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  const bw=wCss/data.bins;
+  const t0=new Date(data.start.replace(' ','T'));
+  function isNight(b){ const hr=(t0.getHours()+b/binsPerHour)%24; return hr<5.5||hr>=20.5; }
+  const nightPat=(()=>{ const pc=document.createElement('canvas'); pc.width=4;pc.height=4;
+    const p=pc.getContext('2d'); p.fillStyle='#fff';p.fillRect(0,0,4,4);
+    p.strokeStyle='#d0d0d0';p.lineWidth=.5; p.beginPath();p.moveTo(0,4);p.lineTo(4,0);p.stroke();
+    return ctx.createPattern(pc,'repeat'); })();
+  const rows=data.vals;
+  const avg=[]; for(let b=0;b<data.bins;b++){ let s=0,n=0;
+    for(let i=0;i<rows.length;i++){ const v=rows[i][b]; if(v!==null&&v!==undefined&&v>=0){s+=v;n++;} }
+    avg.push(n?s/n:null); }
+  function paintRow(rv,y,h){ for(let b=0;b<data.bins;b++){ const v=rv[b]; const night=isNight(b);
+    if(v===null||v===undefined){ctx.fillStyle=night?nightPat:'#e8e8e8';}
+    else if(night&&v<1){ctx.fillStyle=nightPat;}
+    else { const c=jet(Math.min(v/100,1)); ctx.fillStyle='rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+    ctx.fillRect(b*bw,y,Math.ceil(bw)+0.5,h-GAP); } }
+  let y=0;
+  paintRow(avg,y,AVG_H); y+=AVG_H;
+  for(let i=0;i<nInv;i++){ paintRow(rows[i],y+i*ROW_H,ROW_H); }
+  const gridTop=AVG_H+nInv*ROW_H;
+  const tickHours=[5,8,12,16,20], tickLabels=['5a','8a','12p','4p','8p'];
+  ctx.font='11px Segoe UI, Arial';
+  for(let b=0;b<data.bins;b++){ const dt=new Date(t0.getTime()+b*bm*60000);
+    const hr=dt.getHours(),mn=dt.getMinutes();
+    if(hr===0&&mn===0){ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(b*bw,0,1,gridTop);}
+    const ti=tickHours.indexOf(hr);
+    if(ti>=0&&mn===0){ctx.fillStyle='#777';ctx.textAlign='center';ctx.fillText(tickLabels[ti],b*bw,gridTop+14);} }
+  ctx.fillStyle='#444';ctx.font='bold 12px Segoe UI, Arial';ctx.textAlign='center';
+  for(let b=0;b<data.bins;b+=binsPerHour*24){ const d=new Date(t0.getTime()+b*bm*60000);
+    ctx.fillText((d.getMonth()+1)+'/'+d.getDate(),(b+binsPerHour*12)*bw,gridTop+30); }
+  const lb=document.getElementById('lb'+sid);
+  let h='<div class="avg" style="height:'+AVG_H+'px;line-height:'+AVG_H+'px">Average</div>';
+  h+=data.invs.map(n=>'<div title="'+n+'">'+n+'</div>').join('');
+  lb.innerHTML=h;
+  const tip=document.getElementById('hmTip');
+  cv.onmousemove=e=>{ const rect=cv.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top; const b=Math.floor(mx/bw);
+    if(b<0||b>=data.bins){tip.style.display='none';return;}
+    const tS=new Date(t0.getTime()+b*bm*60000);
+    const fmtT=d=>{let h=d.getHours(),m=d.getMinutes(),ap='am';if(h>=12){ap='pm';if(h>12)h-=12;}if(h===0)h=12;return h+':'+(m<10?'0':'')+m+ap;};
+    const timeStr=fmtT(tS)+' '+((tS.getMonth()+1)+'/'+tS.getDate());
+    let html;
+    if(my<AVG_H){const v=avg[b];html='<b>Average of all inverters</b><br>'+timeStr+'<br>'+(v===null?'No data':'<b>CF: '+v.toFixed(1)+'%</b>');}
+    else { const ri=Math.floor((my-AVG_H)/ROW_H); if(ri<0||ri>=nInv){tip.style.display='none';return;}
+      const cf=data.vals[ri]?data.vals[ri][b]:null; const kw=data.kw&&data.kw[ri]?data.kw[ri][b]:null;
+      const cap=data.caps?data.caps[ri]:0;
+      html='<b>'+data.invs[ri]+'</b><br>'+timeStr+'<br>';
+      if(cf===null&&kw===null){html+='<span style="color:#bbb">No data</span>';}
+      else{if(cf!==null)html+='<b>CF: '+cf.toFixed(1)+'%</b><br>';if(kw!==null)html+=kw.toFixed(1)+' kW';if(cap>0)html+=' / '+Math.round(cap)+' kW';} }
+    tip.innerHTML=html;tip.style.display='block';
+    tip.style.left=Math.min(e.clientX+14,window.innerWidth-360)+'px';tip.style.top=(e.clientY+14)+'px'; };
+  cv.onmouseleave=()=>tip.style.display='none';
+}
+window.addEventListener('DOMContentLoaded',()=>{try{drawStrip('S');}catch(e){}});
+let _hmRt; window.addEventListener('resize',()=>{clearTimeout(_hmRt);_hmRt=setTimeout(()=>{try{drawStrip('S');}catch(e){}},200);});
+</script>
+
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:43 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -189,7 +309,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [7049.0, 30305.3, 34835.0, 30255.0, 7049.0, 3453743.0],
+      data: [7986.0, 30305.3, 34835.0, 30255.0, 7986.0, 3454680.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

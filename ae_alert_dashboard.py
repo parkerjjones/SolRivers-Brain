@@ -1654,7 +1654,7 @@ PAGE = """<!DOCTYPE html>
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{ font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #333; }}
   header {{ background: #1F4E79; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; }}
-  header h1 {{ font-size: 20px; }}
+  header h1 {{ font-size: 20px; font-weight: 600; }}
   header .meta {{ font-size: 12px; opacity: .75; text-align: right; }}
   .nav {{ background: #2E75B6; padding: 0 24px; display: flex; align-items: stretch; gap: 0; }}
   .nav a {{ color: #cde; text-decoration: none; font-size: 13px; padding: 10px 16px; }}

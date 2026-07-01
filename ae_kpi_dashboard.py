@@ -25,6 +25,11 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Reuse the alert dashboard's proven inverter-heatmap data builder so the per-site
+# strip is IDENTICAL to the one on the alerts dashboard (same CF, same handling of
+# missing data). Import is side-effect-free (its main() is guarded).
+import ae_alert_dashboard as aad
+
 API_BASE  = "https://apps.alsoenergy.com/api"
 PORTFOLIO = "C12941"
 PORTFOLIO2 = "C47197"
@@ -64,6 +69,172 @@ def load_active_alerts():
         if r[ri] is False:                    # unresolved / active
             counts[r[si]] += 1
     return dict(counts)
+
+
+def load_production():
+    """Per-inverter 15-min production from ae_production_cache.json (written by
+    ae_alert_dashboard.py). Returns (prod, prod_bins, d_from, d_to)."""
+    from datetime import date
+    f = HERE / "ae_production_cache.json"
+    if not f.exists():
+        return {}, {}, None, None
+    try:
+        c = json.loads(f.read_text(encoding="utf-8"))
+        return (c.get("prod", {}), c.get("bins", {}),
+                date.fromisoformat(c["d_from"]), date.fromisoformat(c["d_to"]))
+    except Exception as e:
+        print(f"  [warn] production cache load failed: {e}")
+        return {}, {}, None, None
+
+
+def load_site_alerts():
+    """All alerts per site from ae_alerts.xlsx → {site_name: [row dicts]}."""
+    from collections import defaultdict
+    f = HERE / "ae_alerts.xlsx"
+    if not f.exists():
+        return {}
+    import openpyxl
+    it = openpyxl.load_workbook(f, read_only=True)["Alerts"].values
+    hdr = {h: i for i, h in enumerate(next(it))}
+
+    def g(r, col):
+        i = hdr.get(col)
+        return r[i] if i is not None else None
+
+    out = defaultdict(list)
+    for r in it:
+        out[g(r, "site_name")].append({
+            "start": str(g(r, "alert_start") or "")[:16],
+            "event": g(r, "event_type_name") or "",
+            "device": g(r, "hardware_name") or "",
+            "severity": g(r, "severity") or "",
+            "resolved": bool(g(r, "is_resolved")),
+            "desc": (g(r, "description") or "")[:120],
+        })
+    for rows in out.values():
+        rows.sort(key=lambda a: a["start"], reverse=True)
+    return dict(out)
+
+
+def build_heatmap_html(site, hw, prod, prod_bins, d_from, d_to):
+    """Inverter heatmap identical to the alerts dashboard: per-inverter hourly
+    capacity-factor strip (jet colormap), grey where there's no data. Reuses the
+    alert dashboard's build_strip_data so the two never drift."""
+    if not d_from or site not in prod:
+        return ('<div class="hm-empty">No per-inverter production data cached for this '
+                'site (run the alerts dashboard to populate it).</div>')
+    strip = aad.build_strip_data(site, hw, d_from, d_to,
+                                 production=prod.get(site),
+                                 n_bins_api=prod_bins.get(site, 0))
+    if not strip.get("invs"):
+        return '<div class="hm-empty">No inverters found for this site.</div>'
+    return (
+        '<div class="strip-wrap"><div class="strip-labels" id="lbS"></div>'
+        '<div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div>'
+        '<div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span>'
+        '<span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span>'
+        '<span>60%</span><span>80%</span><span>100%</span></span></span>'
+        '<span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div>'
+        f'<script type="application/json" id="dS">{json.dumps(strip)}</script>')
+
+
+# Focused CF-only strip renderer (same jet colormap + missing-data handling as the
+# alerts dashboard). Passed into SITE_HTML as a .format value, so braces stay single.
+STRIP_JS = r"""
+const ROW_H=14, GAP=1, AVG_H=16, AXIS_H=36;
+function jet(v){
+  const r=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-3)))));
+  const g=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-2)))));
+  const b=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-1)))));
+  return [r,g,b];
+}
+function drawStrip(sid){
+  const dEl=document.getElementById('d'+sid), cv=document.getElementById('hm'+sid);
+  if(!dEl||!cv) return;
+  const data=JSON.parse(dEl.textContent);
+  const nInv=data.invs.length; if(!nInv) return;
+  const bm=data.binMin||60, binsPerHour=60/bm;
+  const totalH=AVG_H+nInv*ROW_H+AXIS_H;
+  const wCss=Math.max(cv.parentElement.clientWidth,500);
+  const dpr=window.devicePixelRatio||1;
+  cv.width=wCss*dpr; cv.height=totalH*dpr; cv.style.height=totalH+'px';
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  const bw=wCss/data.bins;
+  const t0=new Date(data.start.replace(' ','T'));
+  function isNight(b){ const hr=(t0.getHours()+b/binsPerHour)%24; return hr<5.5||hr>=20.5; }
+  const nightPat=(()=>{ const pc=document.createElement('canvas'); pc.width=4;pc.height=4;
+    const p=pc.getContext('2d'); p.fillStyle='#fff';p.fillRect(0,0,4,4);
+    p.strokeStyle='#d0d0d0';p.lineWidth=.5; p.beginPath();p.moveTo(0,4);p.lineTo(4,0);p.stroke();
+    return ctx.createPattern(pc,'repeat'); })();
+  const rows=data.vals;
+  const avg=[]; for(let b=0;b<data.bins;b++){ let s=0,n=0;
+    for(let i=0;i<rows.length;i++){ const v=rows[i][b]; if(v!==null&&v!==undefined&&v>=0){s+=v;n++;} }
+    avg.push(n?s/n:null); }
+  function paintRow(rv,y,h){ for(let b=0;b<data.bins;b++){ const v=rv[b]; const night=isNight(b);
+    if(v===null||v===undefined){ctx.fillStyle=night?nightPat:'#e8e8e8';}
+    else if(night&&v<1){ctx.fillStyle=nightPat;}
+    else { const c=jet(Math.min(v/100,1)); ctx.fillStyle='rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+    ctx.fillRect(b*bw,y,Math.ceil(bw)+0.5,h-GAP); } }
+  let y=0;
+  paintRow(avg,y,AVG_H); y+=AVG_H;
+  for(let i=0;i<nInv;i++){ paintRow(rows[i],y+i*ROW_H,ROW_H); }
+  const gridTop=AVG_H+nInv*ROW_H;
+  const tickHours=[5,8,12,16,20], tickLabels=['5a','8a','12p','4p','8p'];
+  ctx.font='11px Segoe UI, Arial';
+  for(let b=0;b<data.bins;b++){ const dt=new Date(t0.getTime()+b*bm*60000);
+    const hr=dt.getHours(),mn=dt.getMinutes();
+    if(hr===0&&mn===0){ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(b*bw,0,1,gridTop);}
+    const ti=tickHours.indexOf(hr);
+    if(ti>=0&&mn===0){ctx.fillStyle='#777';ctx.textAlign='center';ctx.fillText(tickLabels[ti],b*bw,gridTop+14);} }
+  ctx.fillStyle='#444';ctx.font='bold 12px Segoe UI, Arial';ctx.textAlign='center';
+  for(let b=0;b<data.bins;b+=binsPerHour*24){ const d=new Date(t0.getTime()+b*bm*60000);
+    ctx.fillText((d.getMonth()+1)+'/'+d.getDate(),(b+binsPerHour*12)*bw,gridTop+30); }
+  const lb=document.getElementById('lb'+sid);
+  let h='<div class="avg" style="height:'+AVG_H+'px;line-height:'+AVG_H+'px">Average</div>';
+  h+=data.invs.map(n=>'<div title="'+n+'">'+n+'</div>').join('');
+  lb.innerHTML=h;
+  const tip=document.getElementById('hmTip');
+  cv.onmousemove=e=>{ const rect=cv.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top; const b=Math.floor(mx/bw);
+    if(b<0||b>=data.bins){tip.style.display='none';return;}
+    const tS=new Date(t0.getTime()+b*bm*60000);
+    const fmtT=d=>{let h=d.getHours(),m=d.getMinutes(),ap='am';if(h>=12){ap='pm';if(h>12)h-=12;}if(h===0)h=12;return h+':'+(m<10?'0':'')+m+ap;};
+    const timeStr=fmtT(tS)+' '+((tS.getMonth()+1)+'/'+tS.getDate());
+    let html;
+    if(my<AVG_H){const v=avg[b];html='<b>Average of all inverters</b><br>'+timeStr+'<br>'+(v===null?'No data':'<b>CF: '+v.toFixed(1)+'%</b>');}
+    else { const ri=Math.floor((my-AVG_H)/ROW_H); if(ri<0||ri>=nInv){tip.style.display='none';return;}
+      const cf=data.vals[ri]?data.vals[ri][b]:null; const kw=data.kw&&data.kw[ri]?data.kw[ri][b]:null;
+      const cap=data.caps?data.caps[ri]:0;
+      html='<b>'+data.invs[ri]+'</b><br>'+timeStr+'<br>';
+      if(cf===null&&kw===null){html+='<span style="color:#bbb">No data</span>';}
+      else{if(cf!==null)html+='<b>CF: '+cf.toFixed(1)+'%</b><br>';if(kw!==null)html+=kw.toFixed(1)+' kW';if(cap>0)html+=' / '+Math.round(cap)+' kW';} }
+    tip.innerHTML=html;tip.style.display='block';
+    tip.style.left=Math.min(e.clientX+14,window.innerWidth-360)+'px';tip.style.top=(e.clientY+14)+'px'; };
+  cv.onmouseleave=()=>tip.style.display='none';
+}
+window.addEventListener('DOMContentLoaded',()=>{try{drawStrip('S');}catch(e){}});
+let _hmRt; window.addEventListener('resize',()=>{clearTimeout(_hmRt);_hmRt=setTimeout(()=>{try{drawStrip('S');}catch(e){}},200);});
+"""
+
+
+def build_site_alerts_html(site, site_alerts):
+    """Alert table for a single site."""
+    rows = site_alerts.get(site, [])
+    if not rows:
+        return '<div class="hm-empty">No alerts recorded for this site in the window.</div>'
+    n_open = sum(1 for a in rows if not a["resolved"])
+    trs = []
+    for a in rows[:40]:
+        status = ('<span class="al-open">OPEN</span>' if not a["resolved"]
+                  else '<span class="al-res">resolved</span>')
+        trs.append(f"<tr><td>{a['start']}</td><td><b>{a['event']}</b>"
+                   f"<div class='al-desc'>{a['desc']}</div></td>"
+                   f"<td>{a['device']}</td><td>{status}</td></tr>")
+    more = (f"<div class='hm-empty'>Showing 40 of {len(rows)}.</div>"
+            if len(rows) > 40 else "")
+    return (f"<div class='al-summary'>{n_open} open · {len(rows)} total in window</div>"
+            f"<table class='al-table'><tr><th>Start</th><th>Event</th>"
+            f"<th>Device</th><th>Status</th></tr>{''.join(trs)}</table>{more}")
 
 
 def get_session():
@@ -161,6 +332,35 @@ SITE_HTML = """\
   .pct-row {{ display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #777; }}
   .pct-good {{ color: #155724; font-weight: 600; }}
   .pct-bad {{ color: #721c24; font-weight: 600; }}
+  .full {{ padding: 0 24px 16px; }}
+  .full .card {{ padding: 16px; }}
+  /* inverter heatmap strip (identical to alerts dashboard) */
+  .strip-wrap {{ display: flex; gap: 8px; margin: 8px 0 6px; }}
+  .strip-labels {{ display: flex; flex-direction: column; }}
+  .strip-labels div {{ height: 14px; line-height: 14px; font-size: 10px; color: #555;
+                      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                      max-width: 200px; min-width: 140px; }}
+  .strip-labels div.avg {{ font-weight: 700; color: #1F4E79; }}
+  .strip-canvas {{ width: 100%; display: block; }}
+  .strip-legend {{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }}
+  .scale-ruler {{ display: inline-flex; flex-direction: column; }}
+  .scalebar {{ width: 200px; height: 12px; border-radius: 2px;
+    background: linear-gradient(90deg,#00007f,#0000ff,#007fff,#00ffff,#7fff7f,#ffff00,#ff7f00,#ff0000,#7f0000); }}
+  .scale-ticks {{ display: flex; justify-content: space-between; width: 200px; }}
+  .scale-ticks span {{ font-size: 9px; color: #888; }}
+  .strip-legendlbl {{ font-size: 11px; color: #666; }}
+  .hm-tip {{ position: fixed; background: rgba(20,30,40,.95); color: #fff; font-size: 11px;
+            padding: 6px 9px; border-radius: 4px; pointer-events: none; z-index: 99;
+            max-width: 340px; display: none; line-height: 1.5; }}
+  .hm-empty {{ color: #888; font-size: 12px; padding: 8px 0; }}
+  /* per-site alerts */
+  .al-summary {{ font-size: 12px; color: #666; margin-bottom: 8px; }}
+  .al-table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
+  .al-table th {{ text-align: left; font-size: 10px; color: #888; text-transform: uppercase; padding: 4px 8px; border-bottom: 1px solid #eee; }}
+  .al-table td {{ padding: 6px 8px; border-bottom: 1px solid #f5f5f5; vertical-align: top; }}
+  .al-desc {{ color: #999; font-size: 11px; }}
+  .al-open {{ color: #c62828; font-weight: 700; }}
+  .al-res {{ color: #2e9e5b; }}
   footer {{ text-align: center; font-size: 11px; color: #aaa; padding: 12px; }}
 </style>
 </head>
@@ -270,6 +470,23 @@ SITE_HTML = """\
   </div>
 </div>
 
+<div class="full">
+  <div class="card">
+    <div class="card-title">Inverter Heatmap — hourly capacity factor</div>
+    {heatmap_html}
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
+    <div class="card-title">Alerts — this site</div>
+    {site_alerts_html}
+  </div>
+</div>
+
+<div class="hm-tip" id="hmTip"></div>
+<script>{strip_js}</script>
+
 <footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated {generated_at}</footer>
 
 <script>
@@ -335,7 +552,7 @@ INDEX_HTML_HEAD = """\
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{ font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #333; }}
   header {{ background: #1F4E79; color: #fff; padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; }}
-  header h1 {{ font-size: 22px; font-weight: 600; }}
+  header h1 {{ font-size: 20px; font-weight: 600; }}
   header .meta {{ font-size: 12px; opacity: 0.75; text-align: right; }}
   .summary-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; padding: 20px 24px 0; }}
   .card {{ background: #fff; border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.12); padding: 16px; }}
@@ -513,7 +730,8 @@ def rule_badge(v):
     return f'<span class="badge badge-fail">{v}</span>'
 
 
-def build_site_html(s, all_sites, generated_at):
+def build_site_html(s, all_sites, generated_at, hw=None, prod=None, prod_bins=None,
+                    site_alerts=None, d_from=None, d_to=None):
     d = s["data"]
     name = s["name"]
     key  = s["key"]
@@ -583,8 +801,14 @@ def build_site_html(s, all_sites, generated_at):
     pwr_pct = round(pct, 1)
     pwr_class = "pct-good" if pct >= 70 else ("pct-bad" if pct < 30 else "")
 
+    heatmap_html = build_heatmap_html(name, hw or {}, prod or {}, prod_bins or {},
+                                      d_from, d_to)
+    site_alerts_html = build_site_alerts_html(name, site_alerts or {})
+
     return SITE_HTML.format(
         site_name=name, site_key=key, generated_at=generated_at,
+        heatmap_html=heatmap_html, site_alerts_html=site_alerts_html,
+        strip_js=STRIP_JS,
         gauge_dash=f"{gauge_dash:.1f}",
         now_kw=fmt_kw(now), cap_kw=fmt_kw(cap), cap_raw=round(cap),
         sites_count=1, sites_s="",
@@ -758,13 +982,21 @@ if __name__ == "__main__":
                 pass
     out_dir.mkdir(parents=True, exist_ok=True)
 
+    # Per-site inverter heatmaps + alerts for the site detail pages
+    prod, prod_bins, d_from, d_to = load_production()
+    hw = aad.load_hardware()
+    site_alerts = load_site_alerts()
+    print(f"  production cache: {len(prod)} sites ({d_from}..{d_to}) | "
+          f"hardware: {len(hw)} sites | alert history: {len(site_alerts)} sites")
+
     # Generate per-site HTML
     for s in sites:
         key  = s["key"]
         name = s["name"]
         fname = f"{key}_{slug(name)}.html"
         path  = out_dir / fname
-        html  = build_site_html(s, sites, generated_at)
+        html  = build_site_html(s, sites, generated_at, hw, prod, prod_bins,
+                                site_alerts, d_from, d_to)
         path.write_text(html, encoding="utf-8")
         now_kw = safe(s["data"], "now")
         perf   = round(safe(s["data"], "measKWhPct", 0), 1)

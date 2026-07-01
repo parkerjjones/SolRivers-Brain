@@ -40,6 +40,35 @@
   .pct-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #777; }
   .pct-good { color: #155724; font-weight: 600; }
   .pct-bad { color: #721c24; font-weight: 600; }
+  .full { padding: 0 24px 16px; }
+  .full .card { padding: 16px; }
+  /* inverter heatmap strip (identical to alerts dashboard) */
+  .strip-wrap { display: flex; gap: 8px; margin: 8px 0 6px; }
+  .strip-labels { display: flex; flex-direction: column; }
+  .strip-labels div { height: 14px; line-height: 14px; font-size: 10px; color: #555;
+                      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                      max-width: 200px; min-width: 140px; }
+  .strip-labels div.avg { font-weight: 700; color: #1F4E79; }
+  .strip-canvas { width: 100%; display: block; }
+  .strip-legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .scale-ruler { display: inline-flex; flex-direction: column; }
+  .scalebar { width: 200px; height: 12px; border-radius: 2px;
+    background: linear-gradient(90deg,#00007f,#0000ff,#007fff,#00ffff,#7fff7f,#ffff00,#ff7f00,#ff0000,#7f0000); }
+  .scale-ticks { display: flex; justify-content: space-between; width: 200px; }
+  .scale-ticks span { font-size: 9px; color: #888; }
+  .strip-legendlbl { font-size: 11px; color: #666; }
+  .hm-tip { position: fixed; background: rgba(20,30,40,.95); color: #fff; font-size: 11px;
+            padding: 6px 9px; border-radius: 4px; pointer-events: none; z-index: 99;
+            max-width: 340px; display: none; line-height: 1.5; }
+  .hm-empty { color: #888; font-size: 12px; padding: 8px 0; }
+  /* per-site alerts */
+  .al-summary { font-size: 12px; color: #666; margin-bottom: 8px; }
+  .al-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .al-table th { text-align: left; font-size: 10px; color: #888; text-transform: uppercase; padding: 4px 8px; border-bottom: 1px solid #eee; }
+  .al-table td { padding: 6px 8px; border-bottom: 1px solid #f5f5f5; vertical-align: top; }
+  .al-desc { color: #999; font-size: 11px; }
+  .al-open { color: #c62828; font-weight: 700; }
+  .al-res { color: #2e9e5b; }
   footer { text-align: center; font-size: 11px; color: #aaa; padding: 12px; }
 </style>
 </head>
@@ -50,7 +79,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S66000 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-07-01 16:23 UTC<br>
+    Generated: 2026-07-01 16:43 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -67,8 +96,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="26.3 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">415.2 kW</text>
+              stroke-dasharray="39.5 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">622.3 kW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 2.97 MW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">2970</text>
@@ -76,7 +105,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="pct-bad">14.0% capacity</span>
+      <span class="pct-bad">21.0% capacity</span>
     </div>
   </div>
 
@@ -150,13 +179,104 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>554.0 kWh</strong> (3.0%)</span>
+      <span>Today: <strong>810.0 kWh</strong> (4.3%)</span>
       <span>Yesterday: <strong>8.03 MWh</strong> (43.3%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
+<div class="full">
+  <div class="card">
+    <div class="card-title">Inverter Heatmap — hourly capacity factor</div>
+    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["INVERTER 1"], "bins": 336, "binMin": 60, "start": "2026-06-18 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 1.2, 12.8, 46.7, 79.0, 87.5, 86.7, 84.8, 84.8, 53.9, 76.6, 58.3, 28.6, 19.9, 57.9, 30.0, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 12.5, 31.4, 47.2, 85.3, 85.5, 84.9, 85.0, 84.8, 83.8, 83.7, 80.7, 59.5, 52.9, 25.6, 7.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 2.0, 4.9, 9.6, 13.2, 20.9, 36.0, 48.6, 61.8, 63.9, 84.0, 88.0, 84.0, 71.4, 35.2, 4.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 10.3, 41.8, 28.6, 34.9, 64.7, 87.6, 88.0, 87.6, 87.8, 87.8, 86.2, 83.2, 70.8, 36.7, 5.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 11.8, 45.4, 76.1, 84.4, 86.3, 85.4, 81.3, 82.7, 82.8, 83.4, 82.0, 78.2, 67.8, 35.5, 5.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1, 11.2, 39.0, 63.7, 83.2, 78.9, 72.8, 75.6, 66.0, 56.5, 37.8, 57.9, 76.2, 65.5, 34.0, 4.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1, 8.2, 38.9, 73.1, 79.0, 82.6, 82.4, 68.6, 73.4, 65.0, 76.3, 80.2, 80.4, 60.9, 26.5, 6.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1, 10.2, 27.1, 43.6, 46.0, 47.8, 34.9, 23.9, 38.7, 49.9, 33.0, 28.6, 13.1, 8.4, 2.0, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 1.7, 4.8, 11.2, 8.9, 11.6, 12.1, 35.8, 38.8, 25.8, 65.5, 65.0, 81.0, 34.6, 30.7, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 2.1, 7.4, 13.8, 35.4, 20.0, 35.3, 47.1, 42.7, 29.2, 15.2, 63.2, 40.6, 24.9, 3.6, 0.7, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 1.4, 7.2, 16.6, 13.8, 16.2, 21.3, 34.1, 65.2, 46.1, 40.2, 13.4, 15.8, 6.8, 3.8, 4.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 3.6, 11.8, 13.3, 16.9, 16.8, 9.4, 24.6, 18.8, 35.2, 32.3, 25.4, 15.4, 9.6, 3.7, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 1.6, 5.1, 8.1, 14.0, 23.2, 46.6, 33.3, 30.2, 31.8, 23.7, 29.7, 13.3, 12.7, 6.5, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 3.6, 5.8, 10.1, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.0, 34.5, 369.9, 1348.4, 2282.9, 2525.6, 2503.5, 2447.9, 2448.8, 1556.3, 2212.8, 1683.4, 825.5, 573.6, 1672.5, 867.3, 85.3, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 23.3, 362.6, 907.0, 1364.8, 2463.7, 2469.1, 2452.3, 2455.9, 2447.9, 2418.9, 2417.0, 2329.5, 1720.1, 1527.7, 737.8, 211.7, 4.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 57.9, 140.8, 275.7, 379.6, 604.2, 1040.0, 1404.5, 1786.4, 1847.9, 2426.3, 2543.4, 2424.5, 2063.4, 1015.8, 118.0, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 22.4, 296.4, 1204.9, 825.6, 1007.3, 1869.2, 2531.5, 2540.3, 2530.7, 2537.3, 2535.9, 2489.0, 2403.8, 2045.2, 1061.0, 155.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 29.6, 339.3, 1310.3, 2198.1, 2438.1, 2493.4, 2467.3, 2349.5, 2388.5, 2392.2, 2408.2, 2368.4, 2257.1, 1958.0, 1026.3, 149.3, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 31.8, 323.2, 1126.6, 1840.3, 2404.8, 2278.9, 2104.2, 2184.9, 1904.4, 1633.4, 1093.1, 1672.2, 2200.8, 1893.9, 981.7, 140.0, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.4, 236.5, 1124.8, 2111.5, 2279.8, 2386.4, 2378.6, 1980.6, 2118.9, 1877.1, 2204.8, 2317.4, 2321.9, 1758.8, 767.0, 173.4, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 32.9, 293.6, 781.9, 1258.9, 1328.2, 1379.8, 1006.4, 690.4, 1117.2, 1441.5, 952.2, 827.7, 377.4, 242.8, 59.0, 12.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.1, 49.1, 138.6, 324.2, 257.6, 334.4, 350.9, 1033.6, 1119.6, 743.5, 1891.6, 1878.3, 2338.2, 999.2, 886.2, 115.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.1, 61.4, 213.2, 399.3, 1021.6, 577.8, 1020.1, 1361.0, 1233.1, 845.2, 441.1, 1826.4, 1174.8, 718.8, 104.3, 21.5, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.1, 42.3, 209.5, 478.8, 400.1, 469.9, 614.5, 986.1, 1883.4, 1332.5, 1163.1, 386.9, 455.0, 195.4, 109.9, 124.3, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.9, 103.5, 342.8, 385.5, 486.2, 483.6, 271.9, 711.9, 542.7, 1016.7, 931.8, 735.5, 443.8, 278.2, 106.5, 16.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2, 45.7, 147.8, 234.2, 405.0, 669.7, 1345.2, 962.7, 871.6, 918.5, 683.8, 857.8, 385.5, 367.1, 189.1, 44.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.2, 104.5, 168.2, 289.6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "caps": [2888.5], "alerts": [[]]}</script>
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
+    <div class="card-title">Alerts — this site</div>
+    <div class='al-summary'>0 open · 8 total in window</div><table class='al-table'><tr><th>Start</th><th>Event</th><th>Device</th><th>Status</th></tr><tr><td>2026-06-30 16:13</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: , Performance (2)	 Communication: All tests passed</div></td><td></td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-28 20:00</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: Performance (1)	 Communication: All tests passed</div></td><td></td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-26 02:55</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: , Performance (2)	 Communication: All tests passed</div></td><td></td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-25 04:53</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: Performance (2)	 Communication: All tests passed</div></td><td></td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-22 12:00</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: Performance (3)	 Communication: All tests passed</div></td><td></td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-19 01:16</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>INVERTER MODULE 1</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-18 23:03</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>INVERTER MODULE 1</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-18 18:46</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: Performance (3)	 Communication: All tests passed</div></td><td></td><td><span class="al-res">resolved</span></td></tr></table>
+  </div>
+</div>
+
+<div class="hm-tip" id="hmTip"></div>
+<script>
+const ROW_H=14, GAP=1, AVG_H=16, AXIS_H=36;
+function jet(v){
+  const r=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-3)))));
+  const g=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-2)))));
+  const b=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-1)))));
+  return [r,g,b];
+}
+function drawStrip(sid){
+  const dEl=document.getElementById('d'+sid), cv=document.getElementById('hm'+sid);
+  if(!dEl||!cv) return;
+  const data=JSON.parse(dEl.textContent);
+  const nInv=data.invs.length; if(!nInv) return;
+  const bm=data.binMin||60, binsPerHour=60/bm;
+  const totalH=AVG_H+nInv*ROW_H+AXIS_H;
+  const wCss=Math.max(cv.parentElement.clientWidth,500);
+  const dpr=window.devicePixelRatio||1;
+  cv.width=wCss*dpr; cv.height=totalH*dpr; cv.style.height=totalH+'px';
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  const bw=wCss/data.bins;
+  const t0=new Date(data.start.replace(' ','T'));
+  function isNight(b){ const hr=(t0.getHours()+b/binsPerHour)%24; return hr<5.5||hr>=20.5; }
+  const nightPat=(()=>{ const pc=document.createElement('canvas'); pc.width=4;pc.height=4;
+    const p=pc.getContext('2d'); p.fillStyle='#fff';p.fillRect(0,0,4,4);
+    p.strokeStyle='#d0d0d0';p.lineWidth=.5; p.beginPath();p.moveTo(0,4);p.lineTo(4,0);p.stroke();
+    return ctx.createPattern(pc,'repeat'); })();
+  const rows=data.vals;
+  const avg=[]; for(let b=0;b<data.bins;b++){ let s=0,n=0;
+    for(let i=0;i<rows.length;i++){ const v=rows[i][b]; if(v!==null&&v!==undefined&&v>=0){s+=v;n++;} }
+    avg.push(n?s/n:null); }
+  function paintRow(rv,y,h){ for(let b=0;b<data.bins;b++){ const v=rv[b]; const night=isNight(b);
+    if(v===null||v===undefined){ctx.fillStyle=night?nightPat:'#e8e8e8';}
+    else if(night&&v<1){ctx.fillStyle=nightPat;}
+    else { const c=jet(Math.min(v/100,1)); ctx.fillStyle='rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+    ctx.fillRect(b*bw,y,Math.ceil(bw)+0.5,h-GAP); } }
+  let y=0;
+  paintRow(avg,y,AVG_H); y+=AVG_H;
+  for(let i=0;i<nInv;i++){ paintRow(rows[i],y+i*ROW_H,ROW_H); }
+  const gridTop=AVG_H+nInv*ROW_H;
+  const tickHours=[5,8,12,16,20], tickLabels=['5a','8a','12p','4p','8p'];
+  ctx.font='11px Segoe UI, Arial';
+  for(let b=0;b<data.bins;b++){ const dt=new Date(t0.getTime()+b*bm*60000);
+    const hr=dt.getHours(),mn=dt.getMinutes();
+    if(hr===0&&mn===0){ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(b*bw,0,1,gridTop);}
+    const ti=tickHours.indexOf(hr);
+    if(ti>=0&&mn===0){ctx.fillStyle='#777';ctx.textAlign='center';ctx.fillText(tickLabels[ti],b*bw,gridTop+14);} }
+  ctx.fillStyle='#444';ctx.font='bold 12px Segoe UI, Arial';ctx.textAlign='center';
+  for(let b=0;b<data.bins;b+=binsPerHour*24){ const d=new Date(t0.getTime()+b*bm*60000);
+    ctx.fillText((d.getMonth()+1)+'/'+d.getDate(),(b+binsPerHour*12)*bw,gridTop+30); }
+  const lb=document.getElementById('lb'+sid);
+  let h='<div class="avg" style="height:'+AVG_H+'px;line-height:'+AVG_H+'px">Average</div>';
+  h+=data.invs.map(n=>'<div title="'+n+'">'+n+'</div>').join('');
+  lb.innerHTML=h;
+  const tip=document.getElementById('hmTip');
+  cv.onmousemove=e=>{ const rect=cv.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top; const b=Math.floor(mx/bw);
+    if(b<0||b>=data.bins){tip.style.display='none';return;}
+    const tS=new Date(t0.getTime()+b*bm*60000);
+    const fmtT=d=>{let h=d.getHours(),m=d.getMinutes(),ap='am';if(h>=12){ap='pm';if(h>12)h-=12;}if(h===0)h=12;return h+':'+(m<10?'0':'')+m+ap;};
+    const timeStr=fmtT(tS)+' '+((tS.getMonth()+1)+'/'+tS.getDate());
+    let html;
+    if(my<AVG_H){const v=avg[b];html='<b>Average of all inverters</b><br>'+timeStr+'<br>'+(v===null?'No data':'<b>CF: '+v.toFixed(1)+'%</b>');}
+    else { const ri=Math.floor((my-AVG_H)/ROW_H); if(ri<0||ri>=nInv){tip.style.display='none';return;}
+      const cf=data.vals[ri]?data.vals[ri][b]:null; const kw=data.kw&&data.kw[ri]?data.kw[ri][b]:null;
+      const cap=data.caps?data.caps[ri]:0;
+      html='<b>'+data.invs[ri]+'</b><br>'+timeStr+'<br>';
+      if(cf===null&&kw===null){html+='<span style="color:#bbb">No data</span>';}
+      else{if(cf!==null)html+='<b>CF: '+cf.toFixed(1)+'%</b><br>';if(kw!==null)html+=kw.toFixed(1)+' kW';if(cap>0)html+=' / '+Math.round(cap)+' kW';} }
+    tip.innerHTML=html;tip.style.display='block';
+    tip.style.left=Math.min(e.clientX+14,window.innerWidth-360)+'px';tip.style.top=(e.clientY+14)+'px'; };
+  cv.onmouseleave=()=>tip.style.display='none';
+}
+window.addEventListener('DOMContentLoaded',()=>{try{drawStrip('S');}catch(e){}});
+let _hmRt; window.addEventListener('resize',()=>{clearTimeout(_hmRt);_hmRt=setTimeout(()=>{try{drawStrip('S');}catch(e){}},200);});
+</script>
+
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:43 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -189,7 +309,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [554.0, 18659.2, 8028.0, 18527.0, 554.0, 2208386.0],
+      data: [810.0, 18659.2, 8028.0, 18527.0, 810.0, 2208642.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

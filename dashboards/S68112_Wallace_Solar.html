@@ -40,6 +40,35 @@
   .pct-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #777; }
   .pct-good { color: #155724; font-weight: 600; }
   .pct-bad { color: #721c24; font-weight: 600; }
+  .full { padding: 0 24px 16px; }
+  .full .card { padding: 16px; }
+  /* inverter heatmap strip (identical to alerts dashboard) */
+  .strip-wrap { display: flex; gap: 8px; margin: 8px 0 6px; }
+  .strip-labels { display: flex; flex-direction: column; }
+  .strip-labels div { height: 14px; line-height: 14px; font-size: 10px; color: #555;
+                      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                      max-width: 200px; min-width: 140px; }
+  .strip-labels div.avg { font-weight: 700; color: #1F4E79; }
+  .strip-canvas { width: 100%; display: block; }
+  .strip-legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .scale-ruler { display: inline-flex; flex-direction: column; }
+  .scalebar { width: 200px; height: 12px; border-radius: 2px;
+    background: linear-gradient(90deg,#00007f,#0000ff,#007fff,#00ffff,#7fff7f,#ffff00,#ff7f00,#ff0000,#7f0000); }
+  .scale-ticks { display: flex; justify-content: space-between; width: 200px; }
+  .scale-ticks span { font-size: 9px; color: #888; }
+  .strip-legendlbl { font-size: 11px; color: #666; }
+  .hm-tip { position: fixed; background: rgba(20,30,40,.95); color: #fff; font-size: 11px;
+            padding: 6px 9px; border-radius: 4px; pointer-events: none; z-index: 99;
+            max-width: 340px; display: none; line-height: 1.5; }
+  .hm-empty { color: #888; font-size: 12px; padding: 8px 0; }
+  /* per-site alerts */
+  .al-summary { font-size: 12px; color: #666; margin-bottom: 8px; }
+  .al-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .al-table th { text-align: left; font-size: 10px; color: #888; text-transform: uppercase; padding: 4px 8px; border-bottom: 1px solid #eee; }
+  .al-table td { padding: 6px 8px; border-bottom: 1px solid #f5f5f5; vertical-align: top; }
+  .al-desc { color: #999; font-size: 11px; }
+  .al-open { color: #c62828; font-weight: 700; }
+  .al-res { color: #2e9e5b; }
   footer { text-align: center; font-size: 11px; color: #aaa; padding: 12px; }
 </style>
 </head>
@@ -50,7 +79,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S68112 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-07-01 16:23 UTC<br>
+    Generated: 2026-07-01 16:43 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -67,8 +96,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="65.3 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">1.03 MW</text>
+              stroke-dasharray="46.8 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">737.3 kW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 2.97 MW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">2970</text>
@@ -76,7 +105,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="">34.7% capacity</span>
+      <span class="pct-bad">24.8% capacity</span>
     </div>
   </div>
 
@@ -150,13 +179,104 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>2.07 MWh</strong> (6.6%)</span>
+      <span>Today: <strong>2.36 MWh</strong> (7.5%)</span>
       <span>Yesterday: <strong>24.15 MWh</strong> (77.4%)</span>
     </div>
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
+<div class="full">
+  <div class="card">
+    <div class="card-title">Inverter Heatmap — hourly capacity factor</div>
+    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["INVERTER 1"], "bins": 336, "binMin": 60, "start": "2026-06-18 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 1.6, 17.6, 52.0, 86.4, 92.4, 89.7, 94.6, 94.6, 46.3, 41.0, 76.8, 69.5, 62.9, 50.5, 12.0, 3.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 10.2, 56.2, 86.5, 95.0, 95.0, 95.0, 95.0, 95.0, 95.0, 95.0, 95.0, 81.1, 67.7, 30.4, 6.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 2.7, 8.6, 20.8, 35.2, 44.3, 75.1, 79.6, 92.1, 95.2, 93.5, 95.2, 92.0, 65.2, 30.8, 5.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 8.6, 17.9, 43.0, 58.1, 52.4, 83.7, 95.0, 95.0, 95.0, 95.0, 95.0, 90.9, 63.8, 29.9, 5.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 18.9, 50.2, 86.0, 95.2, 95.1, 95.1, 95.1, 95.1, 95.1, 95.1, 95.1, 88.8, 61.7, 29.4, 4.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 18.7, 43.8, 84.9, 91.2, 83.1, 88.8, 85.7, 82.1, 45.9, 76.1, 95.0, 88.2, 61.2, 28.5, 4.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7, 14.8, 49.4, 81.1, 91.3, 90.5, 92.3, 85.5, 93.4, 95.2, 95.2, 94.9, 89.2, 63.2, 31.2, 4.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.9, 7.9, 23.2, 33.0, 25.4, 33.3, 49.3, 51.4, 39.6, 32.7, 24.6, 19.0, 12.0, 4.5, 1.6, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 11.5, 18.6, 15.1, 15.2, 28.2, 46.5, 58.2, 38.9, 53.8, 61.4, 85.6, 89.3, 68.7, 25.9, 1.8, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 4.2, 13.2, 20.3, 20.9, 23.0, 47.8, 56.5, 46.8, 67.1, 53.7, 62.5, 74.6, 63.6, 24.6, 3.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 8.2, 14.7, 33.1, 34.3, 33.8, 45.8, 63.6, 68.1, 78.5, 95.0, 95.1, 93.0, 68.7, 33.4, 5.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 4.2, 15.7, 37.8, 26.7, 42.7, 26.1, 46.3, 47.0, 49.2, 56.4, 35.8, 49.4, 69.4, 31.3, 4.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 6.5, 16.0, 19.1, 31.4, 42.3, 70.3, 81.7, 75.5, 64.7, 90.9, 95.0, 92.9, 66.0, 32.8, 5.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 6.1, 19.4, 36.0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.0, 50.7, 550.3, 1619.4, 2691.8, 2881.0, 2794.8, 2947.3, 2948.1, 1443.3, 1275.8, 2394.0, 2166.5, 1961.3, 1574.4, 373.8, 111.8, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 58.7, 316.6, 1750.3, 2693.6, 2961.1, 2960.7, 2960.8, 2961.8, 2962.1, 2961.7, 2962.0, 2961.4, 2528.9, 2109.4, 947.0, 215.7, 4.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.7, 84.5, 267.5, 646.8, 1098.2, 1379.6, 2341.0, 2480.9, 2870.7, 2966.8, 2913.1, 2966.6, 2865.9, 2032.9, 959.8, 159.2, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 24.2, 265.8, 557.3, 1340.7, 1811.2, 1633.3, 2607.7, 2959.4, 2959.4, 2959.2, 2959.3, 2959.2, 2832.7, 1988.0, 934.0, 158.0, 1.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 32.6, 589.1, 1563.3, 2679.6, 2965.4, 2963.7, 2963.0, 2964.6, 2964.3, 2964.6, 2964.1, 2964.1, 2769.2, 1922.8, 916.0, 151.4, 1.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 46.6, 581.7, 1363.4, 2644.8, 2841.4, 2588.4, 2768.8, 2671.8, 2559.6, 1429.4, 2372.7, 2961.9, 2746.4, 1906.8, 889.5, 146.4, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 22.3, 460.4, 1538.9, 2527.8, 2847.3, 2819.2, 2878.5, 2664.9, 2909.6, 2965.6, 2966.4, 2958.3, 2781.4, 1970.6, 973.6, 152.7, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 28.7, 245.3, 721.9, 1029.0, 790.0, 1037.5, 1537.1, 1600.7, 1234.9, 1018.3, 767.0, 592.0, 374.4, 140.4, 51.3, 7.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 9.5, 357.1, 581.7, 471.0, 472.6, 877.4, 1448.2, 1814.7, 1213.9, 1674.9, 1912.9, 2667.3, 2783.8, 2142.2, 807.4, 54.9, 1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.8, 130.3, 412.2, 633.0, 651.3, 716.0, 1488.3, 1762.3, 1458.3, 2090.5, 1674.8, 1948.1, 2325.4, 1981.0, 767.9, 113.6, 1.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 16.4, 254.4, 457.3, 1032.6, 1068.7, 1051.5, 1427.8, 1981.9, 2121.2, 2447.2, 2962.2, 2963.1, 2898.7, 2140.8, 1038.6, 167.3, 2.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.6, 129.9, 490.9, 1178.0, 830.8, 1330.2, 814.2, 1443.2, 1466.5, 1534.6, 1757.2, 1116.4, 1538.9, 2163.4, 975.4, 127.4, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 9.4, 202.9, 498.9, 594.3, 980.0, 1317.3, 2190.9, 2545.6, 2351.1, 2016.4, 2832.4, 2961.7, 2894.9, 2055.8, 1020.9, 163.3, 1.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 14.2, 190.1, 604.2, 1123.2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "caps": [3116.5], "alerts": [[]]}</script>
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
+    <div class="card-title">Alerts — this site</div>
+    <div class='al-summary'>0 open · 9 total in window</div><table class='al-table'><tr><th>Start</th><th>Event</th><th>Device</th><th>Status</th></tr><tr><td>2026-06-30 08:37</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-30 07:07</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-28 05:50</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-27 15:47</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-22 22:03</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-19 06:10</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-18 18:10</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-18 06:30</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-18 06:20</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr></table>
+  </div>
+</div>
+
+<div class="hm-tip" id="hmTip"></div>
+<script>
+const ROW_H=14, GAP=1, AVG_H=16, AXIS_H=36;
+function jet(v){
+  const r=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-3)))));
+  const g=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-2)))));
+  const b=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-1)))));
+  return [r,g,b];
+}
+function drawStrip(sid){
+  const dEl=document.getElementById('d'+sid), cv=document.getElementById('hm'+sid);
+  if(!dEl||!cv) return;
+  const data=JSON.parse(dEl.textContent);
+  const nInv=data.invs.length; if(!nInv) return;
+  const bm=data.binMin||60, binsPerHour=60/bm;
+  const totalH=AVG_H+nInv*ROW_H+AXIS_H;
+  const wCss=Math.max(cv.parentElement.clientWidth,500);
+  const dpr=window.devicePixelRatio||1;
+  cv.width=wCss*dpr; cv.height=totalH*dpr; cv.style.height=totalH+'px';
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  const bw=wCss/data.bins;
+  const t0=new Date(data.start.replace(' ','T'));
+  function isNight(b){ const hr=(t0.getHours()+b/binsPerHour)%24; return hr<5.5||hr>=20.5; }
+  const nightPat=(()=>{ const pc=document.createElement('canvas'); pc.width=4;pc.height=4;
+    const p=pc.getContext('2d'); p.fillStyle='#fff';p.fillRect(0,0,4,4);
+    p.strokeStyle='#d0d0d0';p.lineWidth=.5; p.beginPath();p.moveTo(0,4);p.lineTo(4,0);p.stroke();
+    return ctx.createPattern(pc,'repeat'); })();
+  const rows=data.vals;
+  const avg=[]; for(let b=0;b<data.bins;b++){ let s=0,n=0;
+    for(let i=0;i<rows.length;i++){ const v=rows[i][b]; if(v!==null&&v!==undefined&&v>=0){s+=v;n++;} }
+    avg.push(n?s/n:null); }
+  function paintRow(rv,y,h){ for(let b=0;b<data.bins;b++){ const v=rv[b]; const night=isNight(b);
+    if(v===null||v===undefined){ctx.fillStyle=night?nightPat:'#e8e8e8';}
+    else if(night&&v<1){ctx.fillStyle=nightPat;}
+    else { const c=jet(Math.min(v/100,1)); ctx.fillStyle='rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+    ctx.fillRect(b*bw,y,Math.ceil(bw)+0.5,h-GAP); } }
+  let y=0;
+  paintRow(avg,y,AVG_H); y+=AVG_H;
+  for(let i=0;i<nInv;i++){ paintRow(rows[i],y+i*ROW_H,ROW_H); }
+  const gridTop=AVG_H+nInv*ROW_H;
+  const tickHours=[5,8,12,16,20], tickLabels=['5a','8a','12p','4p','8p'];
+  ctx.font='11px Segoe UI, Arial';
+  for(let b=0;b<data.bins;b++){ const dt=new Date(t0.getTime()+b*bm*60000);
+    const hr=dt.getHours(),mn=dt.getMinutes();
+    if(hr===0&&mn===0){ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(b*bw,0,1,gridTop);}
+    const ti=tickHours.indexOf(hr);
+    if(ti>=0&&mn===0){ctx.fillStyle='#777';ctx.textAlign='center';ctx.fillText(tickLabels[ti],b*bw,gridTop+14);} }
+  ctx.fillStyle='#444';ctx.font='bold 12px Segoe UI, Arial';ctx.textAlign='center';
+  for(let b=0;b<data.bins;b+=binsPerHour*24){ const d=new Date(t0.getTime()+b*bm*60000);
+    ctx.fillText((d.getMonth()+1)+'/'+d.getDate(),(b+binsPerHour*12)*bw,gridTop+30); }
+  const lb=document.getElementById('lb'+sid);
+  let h='<div class="avg" style="height:'+AVG_H+'px;line-height:'+AVG_H+'px">Average</div>';
+  h+=data.invs.map(n=>'<div title="'+n+'">'+n+'</div>').join('');
+  lb.innerHTML=h;
+  const tip=document.getElementById('hmTip');
+  cv.onmousemove=e=>{ const rect=cv.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top; const b=Math.floor(mx/bw);
+    if(b<0||b>=data.bins){tip.style.display='none';return;}
+    const tS=new Date(t0.getTime()+b*bm*60000);
+    const fmtT=d=>{let h=d.getHours(),m=d.getMinutes(),ap='am';if(h>=12){ap='pm';if(h>12)h-=12;}if(h===0)h=12;return h+':'+(m<10?'0':'')+m+ap;};
+    const timeStr=fmtT(tS)+' '+((tS.getMonth()+1)+'/'+tS.getDate());
+    let html;
+    if(my<AVG_H){const v=avg[b];html='<b>Average of all inverters</b><br>'+timeStr+'<br>'+(v===null?'No data':'<b>CF: '+v.toFixed(1)+'%</b>');}
+    else { const ri=Math.floor((my-AVG_H)/ROW_H); if(ri<0||ri>=nInv){tip.style.display='none';return;}
+      const cf=data.vals[ri]?data.vals[ri][b]:null; const kw=data.kw&&data.kw[ri]?data.kw[ri][b]:null;
+      const cap=data.caps?data.caps[ri]:0;
+      html='<b>'+data.invs[ri]+'</b><br>'+timeStr+'<br>';
+      if(cf===null&&kw===null){html+='<span style="color:#bbb">No data</span>';}
+      else{if(cf!==null)html+='<b>CF: '+cf.toFixed(1)+'%</b><br>';if(kw!==null)html+=kw.toFixed(1)+' kW';if(cap>0)html+=' / '+Math.round(cap)+' kW';} }
+    tip.innerHTML=html;tip.style.display='block';
+    tip.style.left=Math.min(e.clientX+14,window.innerWidth-360)+'px';tip.style.top=(e.clientY+14)+'px'; };
+  cv.onmouseleave=()=>tip.style.display='none';
+}
+window.addEventListener('DOMContentLoaded',()=>{try{drawStrip('S');}catch(e){}});
+let _hmRt; window.addEventListener('resize',()=>{clearTimeout(_hmRt);_hmRt=setTimeout(()=>{try{drawStrip('S');}catch(e){}},200);});
+</script>
+
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:43 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -189,7 +309,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [2071.0, 31321.8, 24147.0, 31213.0, 2071.0, 2923452.0],
+      data: [2361.0, 31321.8, 24147.0, 31213.0, 2361.0, 2923742.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

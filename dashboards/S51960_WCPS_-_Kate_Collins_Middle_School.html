@@ -40,6 +40,35 @@
   .pct-row { display: flex; justify-content: space-between; margin-top: 8px; font-size: 12px; color: #777; }
   .pct-good { color: #155724; font-weight: 600; }
   .pct-bad { color: #721c24; font-weight: 600; }
+  .full { padding: 0 24px 16px; }
+  .full .card { padding: 16px; }
+  /* inverter heatmap strip (identical to alerts dashboard) */
+  .strip-wrap { display: flex; gap: 8px; margin: 8px 0 6px; }
+  .strip-labels { display: flex; flex-direction: column; }
+  .strip-labels div { height: 14px; line-height: 14px; font-size: 10px; color: #555;
+                      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                      max-width: 200px; min-width: 140px; }
+  .strip-labels div.avg { font-weight: 700; color: #1F4E79; }
+  .strip-canvas { width: 100%; display: block; }
+  .strip-legend { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+  .scale-ruler { display: inline-flex; flex-direction: column; }
+  .scalebar { width: 200px; height: 12px; border-radius: 2px;
+    background: linear-gradient(90deg,#00007f,#0000ff,#007fff,#00ffff,#7fff7f,#ffff00,#ff7f00,#ff0000,#7f0000); }
+  .scale-ticks { display: flex; justify-content: space-between; width: 200px; }
+  .scale-ticks span { font-size: 9px; color: #888; }
+  .strip-legendlbl { font-size: 11px; color: #666; }
+  .hm-tip { position: fixed; background: rgba(20,30,40,.95); color: #fff; font-size: 11px;
+            padding: 6px 9px; border-radius: 4px; pointer-events: none; z-index: 99;
+            max-width: 340px; display: none; line-height: 1.5; }
+  .hm-empty { color: #888; font-size: 12px; padding: 8px 0; }
+  /* per-site alerts */
+  .al-summary { font-size: 12px; color: #666; margin-bottom: 8px; }
+  .al-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  .al-table th { text-align: left; font-size: 10px; color: #888; text-transform: uppercase; padding: 4px 8px; border-bottom: 1px solid #eee; }
+  .al-table td { padding: 6px 8px; border-bottom: 1px solid #f5f5f5; vertical-align: top; }
+  .al-desc { color: #999; font-size: 11px; }
+  .al-open { color: #c62828; font-weight: 700; }
+  .al-res { color: #2e9e5b; }
   footer { text-align: center; font-size: 11px; color: #aaa; padding: 12px; }
 </style>
 </head>
@@ -50,7 +79,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S51960 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-07-01 16:23 UTC<br>
+    Generated: 2026-07-01 16:43 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -156,7 +185,98 @@
   </div>
 </div>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:23 UTC</footer>
+<div class="full">
+  <div class="card">
+    <div class="card-title">Inverter Heatmap — hourly capacity factor</div>
+    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["CPS SCA60KTL Inverter - 1", "CPS SCA60KTL Inverter - 2", "CPS SCA60KTL Inverter - 3", "CPS SCA60KTL Inverter - 4", "CPS SCA60KTL Inverter - 5"], "bins": 336, "binMin": 60, "start": "2026-06-18 00:00", "vals": [[null, null, null, null, null, null, 3.3, 8.7, 9.6, 21.9, 30.6, 59.0, 45.9, 46.9, 46.1, 72.1, 50.5, 39.0, 16.9, 6.5, 0.9, null, null, null, null, null, null, null, null, null, 1.3, 6.6, 14.7, 36.4, 48.3, 64.5, 86.9, 98.9, 79.8, 79.6, 64.4, 44.0, 15.8, 5.2, 1.1, null, null, null, null, null, null, null, null, 0.8, 4.7, 14.6, 27.0, 42.1, 57.6, 45.0, 91.3, 78.9, 73.4, 71.0, 60.2, 36.5, 18.6, 6.8, 1.1, null, null, null, null, null, null, null, null, null, 1.5, 11.4, 38.8, 55.6, 66.5, 82.0, 90.7, 77.7, 80.5, 68.1, 61.4, 39.4, 20.8, 6.2, 1.5, 0.0, null, null, null, null, null, null, null, null, 2.9, 16.0, 35.6, 44.2, 69.4, 84.2, 88.5, 73.8, 73.1, 37.6, 4.8, 13.6, 16.2, 5.1, 0.8, 0.0, null, null, null, null, null, null, null, 0.0, 1.4, 4.0, 9.3, 22.6, 16.6, 34.4, 28.7, 37.1, 44.9, 70.8, 37.8, 39.8, 16.9, 5.1, 1.2, null, null, null, null, null, null, null, null, 0.9, 2.2, 15.6, 44.8, 64.2, 80.5, 85.0, 87.1, 79.0, 83.2, 76.5, 61.2, 39.5, 21.9, 5.4, 0.9, 0.0, null, null, null, null, null, null, null, null, 3.8, 14.5, 24.4, 55.2, 75.7, 84.7, 90.8, 92.0, 69.7, 61.1, 32.2, 20.4, 16.7, 7.3, 1.1, 0.0, null, null, null, null, null, null, null, null, 3.5, 13.4, 23.1, 43.0, 62.1, 89.4, 71.9, 88.4, 75.4, 47.8, 40.6, 24.9, 21.5, 3.3, 0.9, null, null, null, null, null, null, null, null, 0.1, 1.4, 3.8, 6.5, 13.1, 19.6, 24.9, 37.1, 24.3, 24.1, 22.8, 26.0, 16.8, 11.8, 5.9, 1.9, 0.0, null, null, null, null, null, null, null, 0.1, 3.6, 15.6, 17.1, 23.2, 29.9, 45.6, 39.8, 40.0, 36.0, 26.2, 32.4, 24.5, 22.0, 5.4, 0.8, null, null, null, null, null, null, null, null, null, 1.5, 4.3, 14.2, 33.7, 11.4, 11.1, 34.7, 59.8, 80.9, 61.6, 41.1, 28.7, 14.6, 6.5, 1.4, 0.0, null, null, null, null, null, null, null, null, 2.9, 15.8, 24.2, 41.9, 54.8, 54.1, 70.0, 86.5, 80.1, 69.5, 55.5, 38.2, 16.9, 7.9, 1.9, 0.0, null, null, null, null, null, null, null, 0.6, 2.8, 13.5, 38.5, 57.1, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, 0.0, 3.4, 8.9, 9.8, 22.4, 31.0, 59.0, 46.8, 48.0, 47.2, 75.0, 50.4, 39.6, 16.9, 6.6, 0.9, null, null, null, null, null, null, null, null, null, 1.3, 6.8, 14.8, 36.6, 49.7, 64.4, 87.9, 99.5, 80.0, 82.0, 65.0, 44.6, 14.8, 5.0, 1.0, 0.0, null, null, null, null, null, null, null, 0.7, 5.2, 15.2, 27.5, 41.6, 58.8, 45.9, 93.6, 83.5, 76.8, 72.0, 60.9, 35.6, 18.6, 6.7, 1.1, null, null, null, null, null, null, null, null, null, 1.4, 11.4, 38.6, 55.4, 67.1, 81.7, 91.2, 79.3, 82.7, 68.7, 62.6, 40.2, 20.8, 6.1, 1.5, 0.0, null, null, null, null, null, null, null, null, 3.8, 17.3, 35.5, 44.1, 69.9, 85.4, 89.4, 74.6, 74.8, 39.2, 5.0, 13.7, 16.3, 5.1, 0.8, null, null, null, null, null, null, null, null, 0.0, 1.5, 4.0, 9.5, 22.9, 16.9, 34.9, 29.2, 37.4, 45.7, 70.5, 38.2, 40.4, 16.6, 5.0, 1.2, null, null, null, null, null, null, null, null, 0.8, 3.9, 21.4, 43.8, 64.0, 80.4, 85.8, 86.6, 79.6, 84.5, 77.3, 61.3, 36.1, 21.8, 5.2, 0.9, null, null, null, null, null, null, null, null, 0.1, 3.8, 15.0, 25.0, 56.4, 75.8, 85.5, 92.2, 93.6, 70.5, 67.6, 32.8, 20.8, 16.9, 7.4, 1.1, 0.0, null, null, null, null, null, null, null, null, 3.5, 14.1, 23.7, 43.6, 62.6, 90.5, 70.0, 87.9, 77.1, 48.8, 41.3, 25.4, 21.4, 3.3, 0.9, null, null, null, null, null, null, null, null, null, 1.1, 3.8, 6.5, 13.2, 19.9, 25.3, 37.8, 24.6, 24.4, 23.1, 26.4, 17.1, 11.9, 6.0, 1.8, null, null, null, null, null, null, null, null, 0.1, 3.8, 17.5, 17.6, 23.7, 30.4, 46.4, 40.2, 40.6, 36.4, 26.9, 34.3, 25.4, 21.9, 5.3, 0.8, null, null, null, null, null, null, null, null, null, 1.1, 4.3, 14.5, 34.1, 11.5, 11.4, 35.2, 61.1, 77.7, 62.8, 39.2, 30.3, 14.5, 6.4, 1.4, 0.0, null, null, null, null, null, null, null, 0.1, 3.2, 18.0, 24.7, 41.8, 57.0, 54.0, 69.2, 88.2, 81.2, 70.9, 57.5, 39.1, 17.1, 7.9, 1.9, 0.0, null, null, null, null, null, null, null, 0.4, 3.7, 18.0, 38.1, 57.5, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, null, 3.5, 8.8, 9.8, 22.2, 30.7, 59.0, 46.9, 47.2, 47.3, 75.2, 51.2, 40.4, 17.1, 6.6, 0.9, null, null, null, null, null, null, null, null, null, 1.4, 6.7, 14.8, 36.6, 49.7, 64.0, 87.2, 99.7, 81.5, 82.3, 66.0, 46.0, 15.6, 5.5, 1.0, 0.0, null, null, null, null, null, null, null, 0.9, 5.0, 15.1, 27.4, 40.9, 57.5, 45.6, 92.6, 83.5, 77.0, 72.4, 61.9, 36.0, 18.6, 7.2, 1.1, null, null, null, null, null, null, null, null, 0.3, 1.4, 11.2, 38.6, 55.8, 67.3, 81.7, 91.1, 77.5, 83.1, 68.5, 63.4, 41.5, 22.1, 6.4, 1.5, null, null, null, null, null, null, null, null, null, 3.8, 17.3, 35.5, 44.5, 70.0, 84.7, 88.3, 72.4, 74.9, 39.2, 5.0, 13.7, 16.6, 5.2, 0.8, 0.0, null, null, null, null, null, null, null, 0.0, 1.5, 4.2, 9.5, 22.9, 17.0, 34.9, 29.2, 37.5, 46.1, 71.5, 38.5, 41.4, 17.4, 5.3, 1.2, 0.0, null, null, null, null, null, null, null, 0.8, 3.1, 20.0, 43.9, 64.5, 80.8, 85.8, 86.5, 80.0, 84.3, 77.1, 62.1, 36.0, 23.3, 5.8, 0.9, 0.0, null, null, null, null, null, null, null, 0.1, 3.8, 15.0, 25.0, 56.8, 76.2, 85.2, 91.4, 93.0, 70.9, 68.2, 33.4, 20.9, 17.4, 7.6, 1.1, 0.0, null, null, null, null, null, null, null, 0.1, 3.5, 13.9, 23.7, 43.8, 62.6, 90.2, 69.8, 88.2, 76.8, 49.0, 41.5, 25.5, 22.0, 3.4, 1.0, 0.0, null, null, null, null, null, null, null, null, 1.1, 3.9, 6.5, 13.3, 19.9, 25.2, 37.6, 24.7, 24.4, 23.1, 26.4, 17.1, 11.9, 6.0, 1.9, 0.0, null, null, null, null, null, null, null, null, 3.8, 17.3, 17.6, 23.6, 30.4, 46.3, 40.3, 40.5, 36.4, 26.7, 34.8, 25.9, 23.3, 5.7, 0.8, null, null, null, null, null, null, null, null, null, 1.2, 4.4, 14.5, 33.8, 11.6, 11.4, 36.0, 61.5, 78.2, 62.0, 39.8, 31.0, 14.7, 6.7, 1.4, 0.0, null, null, null, null, null, null, null, null, 3.9, 17.6, 24.6, 42.3, 58.7, 54.4, 69.2, 88.0, 81.8, 71.6, 58.3, 40.1, 17.8, 8.2, 1.9, 0.0, null, null, null, null, null, null, null, 0.4, 3.3, 16.8, 38.2, 57.9, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, null, 2.5, 7.8, 8.7, 21.1, 29.3, 59.1, 44.9, 45.1, 45.7, 72.2, 48.4, 38.4, 15.6, 5.6, 0.5, null, null, null, null, null, null, null, null, null, 0.5, 5.7, 13.5, 35.5, 48.6, 62.1, 85.0, 97.5, 75.1, 79.5, 63.6, 43.2, 12.4, 3.1, 0.3, null, null, null, null, null, null, null, null, 0.1, 3.9, 13.2, 25.8, 39.4, 57.6, 43.4, 90.0, 81.0, 72.9, 70.1, 59.7, 34.0, 16.5, 4.8, 0.4, null, null, null, null, null, null, null, null, 0.0, 0.5, 9.4, 36.8, 54.2, 65.8, 80.0, 89.4, 70.2, 81.0, 67.5, 61.0, 39.9, 18.3, 4.6, 0.9, 0.0, null, null, null, null, null, null, null, null, 2.1, 14.1, 33.7, 43.6, 68.7, 84.4, 86.4, 68.9, 71.5, 37.7, 4.0, 12.7, 15.2, 4.2, 0.3, 0.0, null, null, null, null, null, null, null, 0.0, 0.7, 3.1, 8.4, 21.6, 15.7, 33.3, 27.8, 36.2, 43.4, 67.9, 36.9, 38.9, 14.8, 3.5, 0.5, 0.0, null, null, null, null, null, null, null, null, 1.9, 14.1, 42.9, 63.2, 79.5, 83.8, 85.2, 79.6, 82.7, 72.6, 60.0, 34.6, 19.3, 3.5, 0.4, 0.0, null, null, null, null, null, null, null, 0.0, 2.8, 13.2, 23.4, 55.3, 74.9, 83.8, 89.7, 90.9, 66.9, 63.3, 33.0, 19.5, 15.4, 6.3, 0.5, null, null, null, null, null, null, null, null, 0.0, 2.5, 12.3, 22.1, 41.9, 61.1, 88.4, 65.9, 85.0, 73.8, 47.2, 39.9, 24.1, 19.9, 2.3, 0.4, null, null, null, null, null, null, null, null, null, 0.7, 2.9, 5.5, 12.1, 18.7, 23.9, 36.1, 23.4, 23.0, 21.8, 25.0, 15.8, 10.8, 5.0, 1.2, 0.0, null, null, null, null, null, null, null, null, 2.7, 14.2, 16.1, 22.2, 28.9, 44.7, 38.6, 39.2, 34.6, 25.4, 33.9, 23.4, 19.3, 3.6, 0.2, null, null, null, null, null, null, null, null, null, 0.5, 3.5, 13.5, 32.0, 10.7, 10.2, 36.0, 60.4, 78.9, 58.6, 38.1, 29.4, 12.6, 5.2, 0.8, null, null, null, null, null, null, null, null, null, 2.1, 14.0, 22.3, 40.6, 60.5, 53.0, 66.8, 84.0, 78.2, 70.2, 55.8, 37.5, 15.5, 6.8, 1.1, 0.0, null, null, null, null, null, null, null, 0.0, 2.1, 12.2, 36.8, 56.4, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, null, 3.0, 7.7, 8.4, 19.2, 26.6, 54.3, 40.4, 40.3, 41.4, 64.5, 44.1, 34.0, 14.5, 5.7, 0.9, null, null, null, null, null, null, null, null, null, 1.1, 5.8, 12.7, 31.1, 42.9, 55.8, 76.6, 87.8, 68.3, 70.0, 57.5, 37.2, 11.7, 4.2, 0.9, null, null, null, null, null, null, null, null, null, 4.1, 12.2, 22.7, 34.4, 50.4, 38.8, 80.9, 71.1, 67.3, 63.1, 53.8, 29.6, 15.5, 5.5, 1.0, null, null, null, null, null, null, null, null, 0.2, 1.2, 8.9, 31.9, 46.9, 58.9, 72.2, 80.6, 63.0, 70.8, 60.7, 54.9, 34.7, 17.1, 5.2, 1.3, 0.0, null, null, null, null, null, null, null, null, 2.6, 13.3, 29.7, 37.9, 61.2, 75.5, 77.9, 64.1, 64.2, 34.0, 4.3, 11.9, 14.2, 4.5, 0.8, 0.0, null, null, null, null, null, null, null, 0.0, 1.3, 3.6, 8.2, 19.5, 14.6, 30.0, 25.3, 33.8, 39.1, 60.3, 33.8, 33.9, 14.1, 4.2, 1.1, null, null, null, null, null, null, null, null, 0.6, 2.1, 13.5, 36.5, 54.6, 71.6, 75.6, 77.3, 72.2, 74.7, 65.1, 54.2, 31.9, 17.9, 4.4, 0.8, 0.0, null, null, null, null, null, null, null, null, 3.9, 12.1, 20.7, 47.7, 67.5, 75.3, 80.5, 81.7, 60.0, 56.2, 31.2, 17.9, 14.3, 6.4, 1.0, null, null, null, null, null, null, null, null, 0.1, 3.0, 11.2, 19.5, 36.5, 54.7, 79.4, 62.3, 76.7, 65.6, 42.4, 35.9, 21.9, 18.4, 2.9, 0.8, null, null, null, null, null, null, null, null, null, 0.9, 3.3, 5.7, 11.4, 17.2, 21.8, 32.6, 21.3, 20.9, 19.9, 22.8, 14.7, 10.2, 5.2, 1.7, 0.0, null, null, null, null, null, null, null, null, 3.1, 13.4, 14.9, 20.2, 26.2, 40.1, 34.7, 35.5, 31.1, 22.7, 30.2, 20.7, 18.0, 4.4, 0.7, null, null, null, null, null, null, null, null, null, 1.3, 3.8, 12.6, 28.2, 10.4, 9.8, 32.9, 53.6, 69.9, 54.5, 35.8, 25.8, 12.0, 5.5, 1.2, 0.0, null, null, null, null, null, null, null, null, 2.6, 13.3, 19.9, 35.7, 52.7, 48.5, 62.1, 75.8, 71.8, 63.2, 50.5, 32.9, 14.5, 6.8, 1.6, 0.0, null, null, null, null, null, null, null, 0.3, 2.5, 11.9, 31.6, 48.6, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "kw": [[null, null, null, null, null, null, 2.0, 5.2, 5.8, 13.2, 18.4, 35.4, 27.5, 28.1, 27.6, 43.2, 30.3, 23.4, 10.1, 3.9, 0.5, null, null, null, null, null, null, null, null, null, 0.8, 4.0, 8.8, 21.8, 28.9, 38.7, 52.1, 59.3, 47.9, 47.8, 38.6, 26.4, 9.4, 3.1, 0.7, null, null, null, null, null, null, null, null, 0.5, 2.8, 8.7, 16.2, 25.2, 34.6, 27.0, 54.8, 47.3, 44.0, 42.6, 36.1, 21.9, 11.2, 4.1, 0.7, null, null, null, null, null, null, null, null, null, 0.9, 6.8, 23.2, 33.3, 39.9, 49.2, 54.4, 46.6, 48.3, 40.9, 36.9, 23.6, 12.4, 3.8, 0.9, 0.0, null, null, null, null, null, null, null, null, 1.8, 9.6, 21.4, 26.5, 41.6, 50.5, 53.1, 44.3, 43.9, 22.6, 2.9, 8.2, 9.8, 3.1, 0.5, 0.0, null, null, null, null, null, null, null, 0.0, 0.8, 2.4, 5.6, 13.6, 10.0, 20.6, 17.2, 22.2, 27.0, 42.5, 22.7, 23.9, 10.2, 3.0, 0.7, null, null, null, null, null, null, null, null, 0.5, 1.3, 9.3, 26.9, 38.5, 48.3, 51.0, 52.2, 47.4, 49.9, 45.9, 36.7, 23.7, 13.1, 3.2, 0.5, 0.0, null, null, null, null, null, null, null, null, 2.2, 8.7, 14.7, 33.1, 45.4, 50.8, 54.5, 55.2, 41.8, 36.6, 19.3, 12.2, 10.0, 4.4, 0.7, 0.0, null, null, null, null, null, null, null, null, 2.1, 8.1, 13.9, 25.8, 37.3, 53.6, 43.1, 53.0, 45.2, 28.7, 24.4, 15.0, 12.9, 2.0, 0.6, null, null, null, null, null, null, null, null, 0.1, 0.8, 2.2, 3.9, 7.8, 11.8, 14.9, 22.2, 14.6, 14.5, 13.6, 15.6, 10.1, 7.0, 3.5, 1.1, 0.0, null, null, null, null, null, null, null, 0.1, 2.1, 9.3, 10.3, 13.9, 17.9, 27.4, 23.9, 24.0, 21.6, 15.7, 19.4, 14.7, 13.2, 3.2, 0.4, null, null, null, null, null, null, null, null, null, 0.9, 2.6, 8.6, 20.2, 6.9, 6.7, 20.8, 35.9, 48.6, 37.0, 24.7, 17.2, 8.7, 3.9, 0.8, 0.0, null, null, null, null, null, null, null, null, 1.8, 9.5, 14.5, 25.1, 32.9, 32.4, 42.0, 51.9, 48.1, 41.6, 33.3, 22.9, 10.1, 4.8, 1.1, 0.0, null, null, null, null, null, null, null, 0.4, 1.7, 8.1, 23.1, 34.3, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, 0.0, 2.0, 5.3, 5.9, 13.4, 18.6, 35.4, 28.0, 28.8, 28.3, 45.0, 30.2, 23.8, 10.2, 3.9, 0.5, null, null, null, null, null, null, null, null, null, 0.8, 4.0, 8.9, 21.9, 29.8, 38.6, 52.8, 59.7, 48.0, 49.2, 39.0, 26.8, 8.9, 3.0, 0.6, 0.0, null, null, null, null, null, null, null, 0.4, 3.1, 9.1, 16.5, 24.9, 35.3, 27.5, 56.2, 50.1, 46.0, 43.2, 36.5, 21.4, 11.1, 4.0, 0.7, null, null, null, null, null, null, null, null, null, 0.8, 6.8, 23.2, 33.2, 40.2, 49.1, 54.8, 47.6, 49.6, 41.2, 37.6, 24.1, 12.4, 3.6, 0.9, 0.0, null, null, null, null, null, null, null, null, 2.3, 10.4, 21.3, 26.5, 41.9, 51.2, 53.6, 44.8, 44.9, 23.5, 3.0, 8.2, 9.8, 3.1, 0.5, null, null, null, null, null, null, null, null, 0.0, 0.9, 2.4, 5.7, 13.7, 10.2, 20.9, 17.5, 22.4, 27.4, 42.4, 22.9, 24.2, 10.0, 3.0, 0.8, null, null, null, null, null, null, null, null, 0.5, 2.4, 12.9, 26.2, 38.4, 48.2, 51.5, 52.0, 47.8, 50.7, 46.4, 36.8, 21.7, 13.1, 3.1, 0.5, null, null, null, null, null, null, null, null, 0.1, 2.3, 9.0, 15.0, 33.8, 45.5, 51.3, 55.4, 56.1, 42.3, 40.6, 19.7, 12.4, 10.2, 4.4, 0.7, 0.0, null, null, null, null, null, null, null, null, 2.1, 8.4, 14.2, 26.1, 37.5, 54.3, 42.0, 52.7, 46.3, 29.3, 24.8, 15.2, 12.8, 2.0, 0.6, null, null, null, null, null, null, null, null, null, 0.7, 2.3, 3.9, 7.9, 12.0, 15.2, 22.6, 14.8, 14.7, 13.9, 15.8, 10.2, 7.1, 3.6, 1.1, null, null, null, null, null, null, null, null, 0.1, 2.3, 10.5, 10.6, 14.2, 18.2, 27.9, 24.1, 24.4, 21.8, 16.1, 20.6, 15.2, 13.1, 3.2, 0.5, null, null, null, null, null, null, null, null, null, 0.7, 2.6, 8.7, 20.4, 6.9, 6.8, 21.1, 36.7, 46.6, 37.7, 23.5, 18.1, 8.7, 3.9, 0.9, 0.0, null, null, null, null, null, null, null, 0.1, 1.9, 10.8, 14.8, 25.1, 34.2, 32.4, 41.5, 52.9, 48.7, 42.5, 34.5, 23.5, 10.3, 4.8, 1.1, 0.0, null, null, null, null, null, null, null, 0.2, 2.2, 10.8, 22.9, 34.5, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, null, 2.1, 5.3, 5.8, 13.3, 18.4, 35.4, 28.1, 28.4, 28.4, 45.1, 30.7, 24.2, 10.3, 3.9, 0.6, null, null, null, null, null, null, null, null, null, 0.8, 4.0, 8.8, 21.9, 29.8, 38.4, 52.3, 59.8, 48.9, 49.4, 39.6, 27.6, 9.3, 3.3, 0.6, 0.0, null, null, null, null, null, null, null, 0.6, 3.0, 9.1, 16.5, 24.6, 34.5, 27.4, 55.6, 50.0, 46.2, 43.5, 37.1, 21.6, 11.2, 4.3, 0.7, null, null, null, null, null, null, null, null, 0.2, 0.8, 6.7, 23.2, 33.5, 40.4, 49.0, 54.7, 46.5, 49.9, 41.1, 38.0, 24.9, 13.2, 3.8, 0.9, null, null, null, null, null, null, null, null, null, 2.2, 10.3, 21.3, 26.7, 42.0, 50.8, 53.0, 43.5, 45.0, 23.5, 3.0, 8.2, 10.0, 3.1, 0.5, 0.0, null, null, null, null, null, null, null, 0.0, 0.9, 2.5, 5.7, 13.7, 10.2, 20.9, 17.6, 22.5, 27.7, 42.9, 23.1, 24.9, 10.4, 3.2, 0.8, 0.0, null, null, null, null, null, null, null, 0.5, 1.9, 12.0, 26.4, 38.7, 48.5, 51.5, 51.9, 48.0, 50.6, 46.2, 37.3, 21.6, 14.0, 3.5, 0.5, 0.0, null, null, null, null, null, null, null, 0.1, 2.3, 9.0, 15.0, 34.1, 45.7, 51.2, 54.9, 55.8, 42.5, 40.9, 20.0, 12.6, 10.4, 4.5, 0.7, 0.0, null, null, null, null, null, null, null, 0.1, 2.1, 8.4, 14.2, 26.2, 37.6, 54.1, 41.9, 52.9, 46.1, 29.4, 24.9, 15.3, 13.2, 2.0, 0.6, 0.0, null, null, null, null, null, null, null, null, 0.7, 2.3, 3.9, 8.0, 12.0, 15.2, 22.6, 14.8, 14.7, 13.9, 15.8, 10.2, 7.2, 3.6, 1.1, 0.0, null, null, null, null, null, null, null, null, 2.3, 10.4, 10.6, 14.2, 18.2, 27.8, 24.2, 24.3, 21.8, 16.0, 20.9, 15.5, 14.0, 3.4, 0.5, null, null, null, null, null, null, null, null, null, 0.7, 2.6, 8.7, 20.2, 6.9, 6.8, 21.6, 37.0, 47.0, 37.2, 23.9, 18.6, 8.8, 4.0, 0.9, 0.0, null, null, null, null, null, null, null, null, 2.4, 10.5, 14.8, 25.4, 35.2, 32.6, 41.5, 52.8, 49.1, 43.0, 35.0, 24.1, 10.6, 4.9, 1.1, 0.0, null, null, null, null, null, null, null, 0.2, 2.0, 10.1, 22.9, 34.7, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, null, 1.5, 4.7, 5.2, 12.7, 17.6, 35.4, 27.0, 27.1, 27.4, 43.3, 29.0, 23.0, 9.4, 3.4, 0.3, null, null, null, null, null, null, null, null, null, 0.3, 3.4, 8.1, 21.3, 29.2, 37.3, 51.0, 58.5, 45.0, 47.7, 38.1, 26.0, 7.4, 1.9, 0.2, null, null, null, null, null, null, null, null, 0.1, 2.3, 8.0, 15.5, 23.6, 34.6, 26.1, 54.0, 48.6, 43.8, 42.0, 35.8, 20.4, 9.9, 2.9, 0.2, null, null, null, null, null, null, null, null, 0.0, 0.3, 5.6, 22.1, 32.5, 39.5, 48.0, 53.6, 42.1, 48.6, 40.5, 36.6, 23.9, 10.9, 2.8, 0.5, 0.0, null, null, null, null, null, null, null, null, 1.2, 8.5, 20.2, 26.1, 41.2, 50.6, 51.8, 41.3, 43.0, 22.6, 2.4, 7.6, 9.1, 2.5, 0.2, 0.0, null, null, null, null, null, null, null, 0.0, 0.4, 1.9, 5.1, 12.9, 9.4, 19.9, 16.6, 21.8, 26.1, 40.7, 22.1, 23.3, 8.9, 2.1, 0.3, 0.0, null, null, null, null, null, null, null, null, 1.1, 8.4, 25.7, 37.9, 47.7, 50.3, 51.1, 47.8, 49.6, 43.6, 36.0, 20.8, 11.6, 2.1, 0.2, 0.0, null, null, null, null, null, null, null, 0.0, 1.7, 7.9, 14.1, 33.2, 45.0, 50.2, 53.9, 54.5, 40.1, 38.0, 19.8, 11.7, 9.2, 3.8, 0.3, null, null, null, null, null, null, null, null, 0.0, 1.5, 7.3, 13.2, 25.1, 36.7, 53.0, 39.5, 51.0, 44.2, 28.3, 23.9, 14.4, 12.0, 1.4, 0.2, null, null, null, null, null, null, null, null, null, 0.4, 1.7, 3.3, 7.2, 11.2, 14.3, 21.7, 14.1, 13.8, 13.1, 15.0, 9.5, 6.5, 3.0, 0.7, 0.0, null, null, null, null, null, null, null, null, 1.6, 8.5, 9.7, 13.3, 17.4, 26.8, 23.1, 23.5, 20.8, 15.2, 20.3, 14.0, 11.6, 2.2, 0.1, null, null, null, null, null, null, null, null, null, 0.3, 2.0, 8.1, 19.2, 6.4, 6.2, 21.6, 36.2, 47.3, 35.1, 22.9, 17.6, 7.5, 3.1, 0.5, null, null, null, null, null, null, null, null, null, 1.2, 8.4, 13.4, 24.4, 36.3, 31.8, 40.0, 50.4, 46.9, 42.2, 33.5, 22.5, 9.3, 4.0, 0.7, 0.0, null, null, null, null, null, null, null, 0.0, 1.3, 7.3, 22.1, 33.9, null, null, null, null, null, null, null, null, null, null, null, null, null, null], [null, null, null, null, null, null, 1.8, 4.6, 5.0, 11.5, 16.0, 32.6, 24.2, 24.1, 24.9, 38.7, 26.5, 20.4, 8.7, 3.4, 0.5, null, null, null, null, null, null, null, null, null, 0.7, 3.5, 7.6, 18.7, 25.7, 33.5, 46.0, 52.7, 41.0, 42.0, 34.5, 22.4, 7.0, 2.5, 0.6, null, null, null, null, null, null, null, null, null, 2.5, 7.2, 13.6, 20.6, 30.2, 23.3, 48.6, 42.6, 40.4, 37.9, 32.3, 17.7, 9.3, 3.3, 0.6, null, null, null, null, null, null, null, null, 0.1, 0.7, 5.3, 19.1, 28.2, 35.3, 43.3, 48.4, 37.8, 42.4, 36.4, 32.9, 20.8, 10.3, 3.1, 0.8, 0.0, null, null, null, null, null, null, null, null, 1.6, 8.0, 17.8, 22.7, 36.7, 45.3, 46.8, 38.5, 38.5, 20.4, 2.6, 7.1, 8.5, 2.7, 0.5, 0.0, null, null, null, null, null, null, null, 0.0, 0.8, 2.2, 4.9, 11.7, 8.8, 18.0, 15.2, 20.3, 23.4, 36.2, 20.3, 20.3, 8.4, 2.5, 0.6, null, null, null, null, null, null, null, null, 0.4, 1.2, 8.1, 21.9, 32.8, 43.0, 45.4, 46.4, 43.4, 44.8, 39.0, 32.5, 19.1, 10.7, 2.6, 0.5, 0.0, null, null, null, null, null, null, null, null, 2.3, 7.3, 12.4, 28.6, 40.5, 45.2, 48.3, 49.0, 36.0, 33.8, 18.7, 10.8, 8.6, 3.8, 0.6, null, null, null, null, null, null, null, null, 0.1, 1.8, 6.8, 11.7, 21.9, 32.8, 47.6, 37.4, 46.0, 39.4, 25.5, 21.5, 13.1, 11.1, 1.8, 0.5, null, null, null, null, null, null, null, null, null, 0.6, 2.0, 3.5, 6.8, 10.3, 13.1, 19.6, 12.8, 12.6, 11.9, 13.7, 8.8, 6.2, 3.1, 1.0, 0.0, null, null, null, null, null, null, null, null, 1.9, 8.0, 8.9, 12.2, 15.7, 24.0, 20.8, 21.3, 18.6, 13.6, 18.2, 12.4, 10.8, 2.6, 0.4, null, null, null, null, null, null, null, null, null, 0.8, 2.3, 7.6, 16.9, 6.2, 5.9, 19.7, 32.2, 42.0, 32.7, 21.5, 15.5, 7.2, 3.3, 0.8, 0.0, null, null, null, null, null, null, null, null, 1.5, 8.0, 12.0, 21.4, 31.6, 29.1, 37.2, 45.5, 43.1, 38.0, 30.3, 19.7, 8.7, 4.1, 1.0, 0.0, null, null, null, null, null, null, null, 0.2, 1.5, 7.1, 18.9, 29.1, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "caps": [60, 60, 60, 60, 60], "alerts": [[], [], [], [], []]}</script>
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
+    <div class="card-title">Alerts — this site</div>
+    <div class="hm-empty">No alerts recorded for this site in the window.</div>
+  </div>
+</div>
+
+<div class="hm-tip" id="hmTip"></div>
+<script>
+const ROW_H=14, GAP=1, AVG_H=16, AXIS_H=36;
+function jet(v){
+  const r=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-3)))));
+  const g=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-2)))));
+  const b=Math.max(0,Math.min(255,Math.round(255*(1.5-Math.abs(4*v-1)))));
+  return [r,g,b];
+}
+function drawStrip(sid){
+  const dEl=document.getElementById('d'+sid), cv=document.getElementById('hm'+sid);
+  if(!dEl||!cv) return;
+  const data=JSON.parse(dEl.textContent);
+  const nInv=data.invs.length; if(!nInv) return;
+  const bm=data.binMin||60, binsPerHour=60/bm;
+  const totalH=AVG_H+nInv*ROW_H+AXIS_H;
+  const wCss=Math.max(cv.parentElement.clientWidth,500);
+  const dpr=window.devicePixelRatio||1;
+  cv.width=wCss*dpr; cv.height=totalH*dpr; cv.style.height=totalH+'px';
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  const bw=wCss/data.bins;
+  const t0=new Date(data.start.replace(' ','T'));
+  function isNight(b){ const hr=(t0.getHours()+b/binsPerHour)%24; return hr<5.5||hr>=20.5; }
+  const nightPat=(()=>{ const pc=document.createElement('canvas'); pc.width=4;pc.height=4;
+    const p=pc.getContext('2d'); p.fillStyle='#fff';p.fillRect(0,0,4,4);
+    p.strokeStyle='#d0d0d0';p.lineWidth=.5; p.beginPath();p.moveTo(0,4);p.lineTo(4,0);p.stroke();
+    return ctx.createPattern(pc,'repeat'); })();
+  const rows=data.vals;
+  const avg=[]; for(let b=0;b<data.bins;b++){ let s=0,n=0;
+    for(let i=0;i<rows.length;i++){ const v=rows[i][b]; if(v!==null&&v!==undefined&&v>=0){s+=v;n++;} }
+    avg.push(n?s/n:null); }
+  function paintRow(rv,y,h){ for(let b=0;b<data.bins;b++){ const v=rv[b]; const night=isNight(b);
+    if(v===null||v===undefined){ctx.fillStyle=night?nightPat:'#e8e8e8';}
+    else if(night&&v<1){ctx.fillStyle=nightPat;}
+    else { const c=jet(Math.min(v/100,1)); ctx.fillStyle='rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+    ctx.fillRect(b*bw,y,Math.ceil(bw)+0.5,h-GAP); } }
+  let y=0;
+  paintRow(avg,y,AVG_H); y+=AVG_H;
+  for(let i=0;i<nInv;i++){ paintRow(rows[i],y+i*ROW_H,ROW_H); }
+  const gridTop=AVG_H+nInv*ROW_H;
+  const tickHours=[5,8,12,16,20], tickLabels=['5a','8a','12p','4p','8p'];
+  ctx.font='11px Segoe UI, Arial';
+  for(let b=0;b<data.bins;b++){ const dt=new Date(t0.getTime()+b*bm*60000);
+    const hr=dt.getHours(),mn=dt.getMinutes();
+    if(hr===0&&mn===0){ctx.fillStyle='rgba(0,0,0,.2)';ctx.fillRect(b*bw,0,1,gridTop);}
+    const ti=tickHours.indexOf(hr);
+    if(ti>=0&&mn===0){ctx.fillStyle='#777';ctx.textAlign='center';ctx.fillText(tickLabels[ti],b*bw,gridTop+14);} }
+  ctx.fillStyle='#444';ctx.font='bold 12px Segoe UI, Arial';ctx.textAlign='center';
+  for(let b=0;b<data.bins;b+=binsPerHour*24){ const d=new Date(t0.getTime()+b*bm*60000);
+    ctx.fillText((d.getMonth()+1)+'/'+d.getDate(),(b+binsPerHour*12)*bw,gridTop+30); }
+  const lb=document.getElementById('lb'+sid);
+  let h='<div class="avg" style="height:'+AVG_H+'px;line-height:'+AVG_H+'px">Average</div>';
+  h+=data.invs.map(n=>'<div title="'+n+'">'+n+'</div>').join('');
+  lb.innerHTML=h;
+  const tip=document.getElementById('hmTip');
+  cv.onmousemove=e=>{ const rect=cv.getBoundingClientRect();
+    const mx=e.clientX-rect.left,my=e.clientY-rect.top; const b=Math.floor(mx/bw);
+    if(b<0||b>=data.bins){tip.style.display='none';return;}
+    const tS=new Date(t0.getTime()+b*bm*60000);
+    const fmtT=d=>{let h=d.getHours(),m=d.getMinutes(),ap='am';if(h>=12){ap='pm';if(h>12)h-=12;}if(h===0)h=12;return h+':'+(m<10?'0':'')+m+ap;};
+    const timeStr=fmtT(tS)+' '+((tS.getMonth()+1)+'/'+tS.getDate());
+    let html;
+    if(my<AVG_H){const v=avg[b];html='<b>Average of all inverters</b><br>'+timeStr+'<br>'+(v===null?'No data':'<b>CF: '+v.toFixed(1)+'%</b>');}
+    else { const ri=Math.floor((my-AVG_H)/ROW_H); if(ri<0||ri>=nInv){tip.style.display='none';return;}
+      const cf=data.vals[ri]?data.vals[ri][b]:null; const kw=data.kw&&data.kw[ri]?data.kw[ri][b]:null;
+      const cap=data.caps?data.caps[ri]:0;
+      html='<b>'+data.invs[ri]+'</b><br>'+timeStr+'<br>';
+      if(cf===null&&kw===null){html+='<span style="color:#bbb">No data</span>';}
+      else{if(cf!==null)html+='<b>CF: '+cf.toFixed(1)+'%</b><br>';if(kw!==null)html+=kw.toFixed(1)+' kW';if(cap>0)html+=' / '+Math.round(cap)+' kW';} }
+    tip.innerHTML=html;tip.style.display='block';
+    tip.style.left=Math.min(e.clientX+14,window.innerWidth-360)+'px';tip.style.top=(e.clientY+14)+'px'; };
+  cv.onmouseleave=()=>tip.style.display='none';
+}
+window.addEventListener('DOMContentLoaded',()=>{try{drawStrip('S');}catch(e){}});
+let _hmRt; window.addEventListener('resize',()=>{clearTimeout(_hmRt);_hmRt=setTimeout(()=>{try{drawStrip('S');}catch(e){}},200);});
+</script>
+
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:43 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
