@@ -488,6 +488,93 @@ function filterComms(q) {{
 </script>"""
 
 
+def compute_site_impact(alerts, hw):
+    """Per-site capacity impact from open INVERTER_FAULT alerts.
+
+    Returns {site: {mw_offline, total_mw, pct_offline, n_open_faults}}
+    """
+    result = {}
+    for site, hwd in hw.items():
+        inv_names = hwd.get("inverters", [])
+        inv_cap = hwd.get("inv_cap", {})
+        known_caps = [c for c in (inv_cap.get(n, 0) for n in inv_names) if c > 0]
+        total_kw = sum(known_caps)
+        avg_kw = total_kw / len(known_caps) if known_caps else 0
+
+        open_faults = {a["hardware_name"] for a in alerts
+                       if a["site_name"] == site
+                       and not a["is_resolved"]
+                       and a["category"] == "INVERTER_FAULT"}
+        offline_kw = sum(inv_cap.get(n, 0) or avg_kw for n in open_faults)
+
+        pct = round(offline_kw / total_kw * 100) if total_kw > 0 else 0
+        result[site] = {
+            "mw_offline": round(offline_kw / 1000, 2),
+            "total_mw": round(total_kw / 1000, 2),
+            "pct_offline": min(pct, 100),
+            "n_open_faults": len(open_faults),
+        }
+    return result
+
+
+def compute_portfolio_stats(filtered, site_impact, diags):
+    """Portfolio-level KPIs for the summary bar."""
+    crit_cats = ("INVERTER_FAULT", "GRID", "TRACKER_FAULT", "METER")
+    sites_with_issues = {a["site_name"] for a in filtered if not a["is_resolved"]}
+    total_mw_offline = sum(v["mw_offline"] for v in site_impact.values())
+    n_critical = sum(1 for a in filtered
+                     if not a["is_resolved"] and a["category"] in crit_cats)
+    top_diag = next((d for d in diags if d["site"] != "PORTFOLIO"), None)
+    return {
+        "n_sites": len(sites_with_issues),
+        "mw_offline": round(total_mw_offline, 1),
+        "est_daily_loss": int(round(total_mw_offline * 6)),
+        "n_critical": n_critical,
+        "top_site": top_diag["site"] if top_diag else "",
+        "top_title": (top_diag["title"][:55] if top_diag else ""),
+    }
+
+
+def render_portfolio_summary(stats):
+    """Dark KPI bar at the top of the page."""
+    top_html = ""
+    if stats["top_site"]:
+        top_html = (f"<div class='ps-item'><div class='ps-label'>Top Issue</div>"
+                    f"<div class='ps-value ps-small'>{esc(stats['top_site'])}</div>"
+                    f"<div class='ps-sub'>{esc(stats['top_title'])}</div></div>")
+    n_cols = 5 if top_html else 4
+    return f"""<div class="portfolio-summary" style="grid-template-columns:repeat({n_cols},1fr)">
+  <div class="ps-item"><div class="ps-label">Sites w/ Issues</div><div class="ps-value ps-red">{stats['n_sites']}</div></div>
+  <div class="ps-item"><div class="ps-label">MW Offline</div><div class="ps-value ps-red">{stats['mw_offline']:.1f}</div></div>
+  <div class="ps-item"><div class="ps-label">Est. Loss / Day</div><div class="ps-value ps-orange">{stats['est_daily_loss']} MWh</div></div>
+  <div class="ps-item"><div class="ps-label">Critical Alerts</div><div class="ps-value ps-red">{stats['n_critical']}</div></div>
+  {top_html}
+</div>"""
+
+
+def render_patterns_html(diags):
+    """Cross-site patterns: same diagnosis title at 2+ sites."""
+    by_title = defaultdict(list)
+    for d in diags:
+        if d["site"] != "PORTFOLIO":
+            by_title[d["title"]].append(d["site"])
+    patterns = sorted([(t, s) for t, s in by_title.items() if len(s) > 1],
+                      key=lambda x: -len(x[1]))
+    if not patterns:
+        return ""
+    items = []
+    for title, sites in patterns[:6]:
+        tags = "".join(f"<span class='patt-tag'>{esc(s)}</span>" for s in sites)
+        items.append(f"""<div class="pattern-card">
+          <div class="pattern-head">⚠ {esc(title)}</div>
+          <div class="pattern-sites">{len(sites)} sites: {tags}</div>
+        </div>""")
+    return f"""<div class="card" style="margin-bottom:14px">
+      <div class="card-title">Cross-Site Patterns</div>
+      {''.join(items)}
+    </div>"""
+
+
 SUMMARIES_XLSX = HERE / "ae_ai_summaries.xlsx"
 
 def _fix_encoding(s):
@@ -1019,30 +1106,94 @@ def render_site_emails(emails):
 
 
 def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
-                          ai_summary="", irrad_data=None, site_emails=None):
-    """Clickable <details> per site: badge + canvas strip heatmap + diagnoses + AI context + irradiance."""
+                          ai_summary="", irrad_data=None, site_emails=None,
+                          impact=None):
+    """Clickable <details> per site with impact bar, quick stats, and heatmap."""
     n_inv = len(strip["invs"])
-    if fault_h > 1:
-        badge = f"<span class='acc-badge acc-red'>{fault_h:.0f}h fault</span>"
-    elif comm_h > 1:
-        badge = f"<span class='acc-badge acc-orange'>{comm_h:.0f}h comm</span>"
+    impact = impact or {}
+    mw_offline = impact.get("mw_offline", 0)
+    total_mw = impact.get("total_mw", 0)
+    pct_offline = impact.get("pct_offline", 0)
+    n_open_faults = impact.get("n_open_faults", 0)
+
+    # Status
+    if pct_offline >= 20 or fault_h >= 24:
+        badge_cls, status_label = "acc-red", "Critical"
+    elif pct_offline >= 5 or fault_h >= 2:
+        badge_cls, status_label = "acc-orange", "Degraded"
     else:
-        badge = "<span class='acc-badge acc-green'>healthy</span>"
+        badge_cls, status_label = "acc-green", "Healthy"
+
+    badge = f"<span class='acc-badge {badge_cls}'>{status_label}</span>"
+    mw_badge = ""
+    if mw_offline > 0:
+        mw_badge = (f"<span class='acc-offline-mw'>"
+                    f"{mw_offline:.1f} MW offline · {pct_offline}%</span>")
+    elif fault_h > 0:
+        mw_badge = f"<span class='acc-badge {badge_cls}'>{fault_h:.0f}h faults</span>"
+
+    bar_pct = min(pct_offline, 100)
+    cap_bar = (f"<div class='cap-bar-wrap'>"
+               f"<div class='cap-bar-fill' style='width:{bar_pct}%'></div></div>")
+    mw_label = f"<span class='acc-mw'>{total_mw:.1f} MW</span>" if total_mw > 0 else ""
+
+    # Quick stats block for degraded/critical sites
+    stats_html = ""
+    if mw_offline > 0 or fault_h > 2 or n_open_faults > 0:
+        est_loss = round(mw_offline * 6, 1)
+        stats_html = f"""<div class="site-quick-stats">
+          <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">{mw_offline:.1f}</div></div>
+          <div class="qs-item"><div class="qs-label">Est. Loss/Day</div><div class="qs-val qs-orange">{est_loss:.0f} MWh</div></div>
+          <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">{n_open_faults}</div></div>
+          <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">{fault_h:.0f}h</div></div>
+        </div>"""
+
+    # AI summary → bullet sentences
+    ai_html = ""
+    if ai_summary:
+        sentences = [s.strip() for s in re.split(r'(?<=[.!?])\s+', ai_summary)
+                     if len(s.strip()) > 20]
+        bullets = "".join(f"<li>{esc(s)}</li>" for s in sentences[:5])
+        ai_html = (f"<div class='ai-summary'><div class='ai-label'>AI Analysis</div>"
+                   f"<ul class='ai-bullets'>{bullets}</ul></div>")
+
     diag_html = "".join(render_diag_card(d) for d in site_diags[:3])
     emails_html = render_site_emails(site_emails) if site_emails else ""
-    open_attr = " open" if fault_h > 1 or any(d["open"] for d in site_diags) or site_emails else ""
-    summary_html = ""
-    if ai_summary:
-        summary_html = f"""<div class="ai-summary"><div class="ai-label">AI Site Summary</div>{esc(ai_summary)}</div>"""
+    open_attr = (" open" if pct_offline >= 5 or fault_h > 1
+                 or any(d.get("open") for d in site_diags) or site_emails else "")
+
+    inv_label = f"{n_inv} inverters"
+    if n_open_faults:
+        inv_label = f"{n_inv} inv · {n_open_faults} offline"
+
     if irrad_data:
-        strip["irrad"] = irrad_data
+        # Downsample irradiance to match strip bin resolution
+        n_strip = strip["bins"]
+        if n_strip > 0 and len(irrad_data) > n_strip:
+            factor = len(irrad_data) // n_strip
+            agg = []
+            for h in range(n_strip):
+                chunk = [irrad_data[h * factor + k] for k in range(factor)
+                         if h * factor + k < len(irrad_data)
+                         and irrad_data[h * factor + k] is not None]
+                agg.append(round(sum(chunk) / len(chunk), 1) if chunk else None)
+            strip["irrad"] = agg
+        else:
+            strip["irrad"] = irrad_data
+
     return f"""
     <details class="site-acc" data-site="{esc(site.lower())}"{open_attr}>
-      <summary><span class="acc-name">{esc(site)}</span>
-        <span class="acc-meta">{n_inv} inverters</span>{badge}</summary>
+      <summary>
+        <span class="acc-name">{esc(site)}</span>
+        {mw_label}
+        <span class="acc-meta">{inv_label}</span>
+        {badge}{mw_badge}
+        {cap_bar}
+      </summary>
       <div class="acc-body">
+        {stats_html}
         {emails_html}
-        {summary_html}
+        {ai_html}
         {diag_html}
         <div class="hm-controls">
           <label>View:</label>
@@ -1293,6 +1444,36 @@ PAGE = """<!DOCTYPE html>
   .night-swatch {{ display: inline-block; width: 14px; height: 12px; border-radius: 2px;
     background: repeating-linear-gradient(-45deg, #fff, #fff 2px, #d0d0d0 2px, #d0d0d0 3px); border: 1px solid #ccc; }}
   footer {{ text-align: center; font-size: 11px; color: #aaa; padding: 14px; }}
+  /* Portfolio summary bar */
+  .portfolio-summary {{ display: grid; gap: 0; background: #1a2e45; padding: 10px 24px 12px; }}
+  .ps-item {{ text-align: center; border-right: 1px solid #2a4060; padding: 6px 16px; }}
+  .ps-item:last-child {{ border-right: none; }}
+  .ps-label {{ font-size: 10px; color: #8ab0c8; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 3px; }}
+  .ps-value {{ font-size: 22px; font-weight: 700; color: #fff; line-height: 1.1; }}
+  .ps-value.ps-red {{ color: #ff7070; }}
+  .ps-value.ps-orange {{ color: #ffb347; }}
+  .ps-value.ps-small {{ font-size: 13px; margin-top: 2px; }}
+  .ps-sub {{ font-size: 10px; color: #6a90aa; margin-top: 1px; }}
+  /* Capacity bar in site accordion header */
+  .cap-bar-wrap {{ display: block; height: 3px; background: #dde8f4; border-radius: 2px; margin-top: 5px; }}
+  .cap-bar-fill {{ height: 100%; background: linear-gradient(90deg, #c62828, #ef5350); border-radius: 2px; }}
+  .acc-offline-mw {{ font-size: 11px; color: #c62828; font-weight: 700; margin-left: 6px; }}
+  .acc-mw {{ font-size: 12px; color: #888; margin-left: 6px; }}
+  /* Quick stats panel */
+  .site-quick-stats {{ display: flex; gap: 20px; flex-wrap: wrap; background: #f4f8fd; border-radius: 6px; padding: 10px 14px; margin-bottom: 10px; border: 1px solid #dde8f4; }}
+  .qs-item {{ display: flex; flex-direction: column; min-width: 64px; }}
+  .qs-label {{ font-size: 9.5px; color: #999; text-transform: uppercase; letter-spacing: .4px; }}
+  .qs-val {{ font-size: 18px; font-weight: 700; color: #333; line-height: 1.2; }}
+  .qs-val.qs-red {{ color: #c62828; }}
+  .qs-val.qs-orange {{ color: #e65100; }}
+  /* AI bullets */
+  .ai-bullets {{ margin: 4px 0 0 14px; padding: 0; font-size: 12px; color: #444; line-height: 1.6; }}
+  .ai-bullets li {{ margin-bottom: 2px; }}
+  /* Cross-site patterns */
+  .pattern-card {{ background: #fff9e6; border-left: 4px solid #f9a825; border-radius: 4px; padding: 9px 12px; margin-bottom: 8px; }}
+  .pattern-head {{ font-size: 13px; font-weight: 600; color: #333; }}
+  .pattern-sites {{ font-size: 11px; color: #666; margin-top: 3px; }}
+  .patt-tag {{ background: #fff0cc; color: #7a5000; border-radius: 10px; padding: 1px 8px; margin: 2px 2px 0 0; display: inline-block; font-size: 10.5px; }}
 </style>
 </head>
 <body>
@@ -1303,6 +1484,7 @@ PAGE = """<!DOCTYPE html>
   </div>
   <div class="meta">Generated: {generated_at}<br><a href="index.html" style="color:#cde">← Portfolio Overview</a></div>
 </header>
+{portfolio_summary}
 <div class="nav">
   <a href="index.html">Portfolio</a>
   <a href="#" class="tab-link active" onclick="switchTab('diagnosis',this);return false">Diagnosis</a>
@@ -1317,6 +1499,7 @@ PAGE = """<!DOCTYPE html>
 <section>
   <h2>Diagnosis &amp; Recommended Actions
     <span class="muted">(cross-referenced: alerts + rule tool + AI summaries + live power + emails)</span></h2>
+  {patterns}
   {recommender}
 </section>
 </div>
@@ -1324,7 +1507,7 @@ PAGE = """<!DOCTYPE html>
 <div class="tab-panel" id="tab-heatmaps">
 <section>
   <h2>Inverter Heatmaps — All Sites
-    <span class="muted">— click to expand · 15-min capacity factor</span></h2>
+    <span class="muted">— sorted by impact · click to expand · hourly capacity factor</span></h2>
   <div class="controls">
     <input id="siteSearch" type="text" placeholder="Search sites…" oninput="filterSites(this.value)">
     <button onclick="setAll(true)">Expand all</button>
@@ -1753,6 +1936,9 @@ def main():
                         e["body"] = tbody
                         break
 
+    # ── site impact (MW offline per site) ────────────────────────────
+    site_impact = compute_site_impact(filtered, hw)
+
     # ── diagnosis + recommender ───────────────────────────────────────
     try:
         from ae_diagnosis import diagnose_portfolio
@@ -1768,6 +1954,11 @@ def main():
         render_diag_card(d, i + 1, emails=site_emails.get(d["site"], []))
         for i, d in enumerate(diags[:10])) or \
         "<div class='card muted'>No diagnoses generated for this window.</div>"
+
+    # ── portfolio summary bar ─────────────────────────────────────────
+    port_stats = compute_portfolio_stats(filtered, site_impact, diags)
+    portfolio_summary_html = render_portfolio_summary(port_stats)
+    patterns_html = render_patterns_html(diags)
 
     # ── AI summaries ───────────────────────────────────────────────────
     ai_sums = load_ai_summaries()
@@ -1825,7 +2016,12 @@ def main():
                    for c in invs.values() if isinstance(c, dict))
 
     site_order = sorted(all_sites,
-                        key=lambda s: (-hours(s, "fault"), -hours(s, "comm"), s))
+                        key=lambda s: (
+                            -site_impact.get(s, {}).get("mw_offline", 0),
+                            -hours(s, "fault"),
+                            -hours(s, "comm"),
+                            s,
+                        ))
     heatmaps_html = ""
     skipped = []
     for sid, site in enumerate(site_order):
@@ -1841,7 +2037,8 @@ def main():
             hours(site, "fault"), hours(site, "comm"),
             ai_summary=ai_sums.get(site, ""),
             irrad_data=irrad_by_site.get(site),
-            site_emails=site_emails.get(site))
+            site_emails=site_emails.get(site),
+            impact=site_impact.get(site, {}))
 
     if skipped:
         print(f"  SKIPPED (no invs): {skipped}")
@@ -1868,6 +2065,8 @@ def main():
     comms_html = render_comms_html(transcript_threads, site_emails)
 
     html = PAGE.format(
+        portfolio_summary=portfolio_summary_html,
+        patterns=patterns_html,
         chartjs=chartjs,
         days_n=args.days,
         window_label=f"{d_from.strftime('%b %d')} – {d_to.strftime('%b %d, %Y')}",
