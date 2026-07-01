@@ -69,6 +69,21 @@
   .al-desc { color: #999; font-size: 11px; }
   .al-open { color: #c62828; font-weight: 700; }
   .al-res { color: #2e9e5b; }
+  /* site specifications (from Projects-export.csv) */
+  .specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .spec-group h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+                    color: #2E75B6; margin-bottom: 6px; padding-bottom: 4px;
+                    border-bottom: 1px solid #eef1f5; }
+  .spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0;
+               font-size: 13px; border-bottom: 1px solid #f7f8fa; }
+  .spec-row .k { color: #777; white-space: nowrap; }
+  .spec-row .v { font-weight: 600; color: #333; text-align: right; }
+  .spec-row .v a { color: #2E75B6; text-decoration: none; }
+  .spec-photo { float: right; width: 260px; max-width: 42%; border-radius: 6px;
+                 margin: 0 0 12px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+  .spec-none { color: #888; font-size: 12px; padding: 8px 0; }
+  @media (max-width: 900px) { .specs-grid { grid-template-columns: 1fr; }
+                               .spec-photo { float: none; width: 100%; max-width: 100%; margin: 0 0 12px; } }
   footer { text-align: center; font-size: 11px; color: #aaa; padding: 12px; }
 </style>
 </head>
@@ -79,7 +94,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S54553 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-07-01 16:43 UTC<br>
+    Generated: 2026-07-01 21:16 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -96,8 +111,8 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="69.0 188.5"/>
-        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">1.46 MW</text>
+              stroke-dasharray="112.9 188.5"/>
+        <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">2.40 MW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 4.00 MW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
         <text x="140" y="106" text-anchor="middle" font-size="9" fill="#aaa">4000</text>
@@ -105,7 +120,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="">36.6% capacity</span>
+      <span class="">59.9% capacity</span>
     </div>
   </div>
 
@@ -166,9 +181,9 @@
       <canvas id="prodChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Measured: <strong>19.12 MWh</strong></span>
-      <span>Expected: <strong>16.72 MWh</strong></span>
-      <span class="pct-good">114.4% performance</span>
+      <span>Measured: <strong>19.99 MWh</strong></span>
+      <span>Expected: <strong>18.79 MWh</strong></span>
+      <span class="pct-good">106.4% performance</span>
     </div>
   </div>
 
@@ -179,7 +194,7 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>1.80 MWh</strong> (5.2%)</span>
+      <span>Today: <strong>14.43 MWh</strong> (41.7%)</span>
       <span>Yesterday: <strong>21.47 MWh</strong> (62.3%)</span>
     </div>
   </div>
@@ -187,15 +202,22 @@
 
 <div class="full">
   <div class="card">
+    <div class="card-title">Site Specifications</div>
+    <img class="spec-photo" src="https://solrivercapital.com/wp-content/uploads/2022/08/DJI_0935hdr-scaled.webp" alt="Butler Maple" loading="lazy" onerror="this.style.display='none'"><div class="specs-grid"><div class="spec-group"><h4>System Design</h4><div class="spec-row"><span class="k">DC Size</span><span class="v">5.35 MW</span></div><div class="spec-row"><span class="k">AC Size</span><span class="v">4.00 MW</span></div><div class="spec-row"><span class="k">PVSyst Size</span><span class="v">5.12 MW</span></div><div class="spec-row"><span class="k">Panels</span><span class="v">14,499 × Adani-bi 375W</span></div><div class="spec-row"><span class="k">Inverters</span><span class="v">1 × SMA @ 4000 kW</span></div><div class="spec-row"><span class="k">Strings</span><span class="v">528 × 27 mods</span></div><div class="spec-row"><span class="k">Combiner Boxes</span><span class="v">22</span></div><div class="spec-row"><span class="k">Transformers</span><span class="v">1 × SMA @ 4000 kVA</span></div><div class="spec-row"><span class="k">Racking</span><span class="v">ATI (SAT)</span></div><div class="spec-row"><span class="k">Rows</span><span class="v">176</span></div><div class="spec-row"><span class="k">Tariff</span><span class="v">TOU</span></div></div><div class="spec-group"><h4>Commercial</h4><div class="spec-row"><span class="k">Status</span><span class="v">Operating</span></div><div class="spec-row"><span class="k">COD</span><span class="v">2021-01-14</span></div><div class="spec-row"><span class="k">O&M Expiration</span><span class="v">2027-08-26</span></div><div class="spec-row"><span class="k">Financial Close</span><span class="v">2/9/2021</span></div><div class="spec-row"><span class="k">Contractor</span><span class="v">Konisto</span></div><div class="spec-row"><span class="k">Utility</span><span class="v">PGE</span></div><div class="spec-row"><span class="k">Revenue Rate</span><span class="v">$99.45/MWh</span></div><div class="spec-row"><span class="k">PPA Rate</span><span class="v">$99.45/MWh</span></div><div class="spec-row"><span class="k">REC</span><span class="v">$0.00/MWh</span></div><div class="spec-row"><span class="k">Organization</span><span class="v">SolRock</span></div><div class="spec-row"><span class="k">Group</span><span class="v">Maple</span></div></div><div class="spec-group"><h4>Location</h4><div class="spec-row"><span class="k">Address</span><span class="v">410 NW Orchard St. Sheridan, Oregon 97378</span></div><div class="spec-row"><span class="k">City</span><span class="v">Sheridan</span></div><div class="spec-row"><span class="k">County</span><span class="v">Yamhill</span></div><div class="spec-row"><span class="k">State</span><span class="v">Oregon</span></div><div class="spec-row"><span class="k">Coordinates</span><span class="v"><a href="https://www.google.com/maps?q=45.1014518737793,-123.41737365722656" target="_blank" rel="noopener">45.10145, -123.41737</a></span></div></div></div>
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
     <div class="card-title">Inverter Heatmap — hourly capacity factor</div>
-    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["SMA SC4000 Inverter - 1"], "bins": 336, "binMin": 60, "start": "2026-06-18 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 1.7, 30.8, 75.8, 94.5, 92.7, 90.8, 89.0, 84.0, 51.9, 47.8, 55.8, 72.3, 83.2, 81.2, 21.6, 3.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.3, 31.2, 79.7, 91.0, 90.7, 89.9, 88.1, 86.5, 85.7, 86.2, 86.8, 87.6, 89.0, 87.7, 43.0, 8.7, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 23.1, 22.5, 19.9, 29.9, 40.1, 81.9, 91.6, 90.5, 90.2, 89.5, 89.6, 90.7, 87.8, 50.4, 8.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 3.4, 10.1, 22.9, 34.0, 54.2, 87.7, 90.2, 89.7, 88.5, 87.1, 86.0, 86.0, 83.3, 47.8, 8.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 28.4, 76.8, 92.7, 89.6, 88.1, 86.0, 85.0, 83.4, 83.7, 82.3, 82.9, 83.8, 82.3, 47.8, 8.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 18.8, 51.0, 84.3, 76.0, 86.1, 86.0, 81.4, 82.8, 58.2, 83.8, 84.4, 84.2, 81.7, 45.5, 7.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.6, 23.6, 74.0, 84.8, 85.8, 86.4, 85.0, 82.6, 83.4, 83.2, 83.8, 84.6, 85.0, 84.5, 49.8, 7.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 7.6, 22.9, 27.1, 26.9, 35.5, 53.8, 52.4, 51.4, 51.2, 62.8, 22.1, 8.3, 2.7, 1.9, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 5.7, 14.1, 24.1, 49.7, 75.6, 79.3, 80.8, 87.1, 89.6, 91.8, 85.2, 90.6, 45.5, 14.2, 2.8, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 7.2, 63.9, 66.7, 41.6, 68.8, 71.5, 74.5, 39.1, 59.3, 68.5, 51.4, 40.0, 49.3, 28.6, 4.5, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7, 26.1, 18.4, 35.6, 47.6, 53.6, 68.0, 79.0, 64.4, 70.5, 65.0, 44.5, 26.8, 63.8, 12.4, 3.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 3.8, 8.6, 33.0, 31.7, 41.9, 51.1, 49.5, 72.0, 77.8, 46.3, 38.9, 26.1, 16.9, 7.9, 2.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 14.2, 33.7, 25.1, 49.6, 56.7, 44.4, 50.7, 45.5, 51.4, 58.7, 47.0, 23.5, 12.7, 10.5, 1.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 5.0, 10.4, 12.6, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.0, 70.5, 1266.6, 3120.2, 3889.1, 3814.8, 3735.9, 3666.7, 3460.6, 2136.1, 1967.9, 2298.9, 2976.6, 3427.4, 3345.2, 889.1, 145.5, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 51.8, 1286.0, 3282.4, 3747.6, 3734.6, 3700.0, 3626.4, 3560.4, 3529.5, 3546.3, 3573.9, 3608.2, 3666.2, 3610.8, 1770.9, 356.3, 4.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 22.6, 950.0, 926.6, 817.4, 1232.8, 1653.0, 3372.4, 3771.9, 3724.4, 3715.2, 3684.8, 3690.1, 3732.2, 3611.6, 2075.8, 341.4, 2.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.6, 138.3, 414.5, 943.9, 1399.2, 2231.2, 3609.1, 3712.7, 3691.1, 3643.6, 3587.9, 3539.3, 3543.2, 3429.6, 1966.6, 334.1, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 42.8, 1169.5, 3160.7, 3813.7, 3690.9, 3625.6, 3537.8, 3498.4, 3434.9, 3446.2, 3386.0, 3413.3, 3447.4, 3388.2, 1967.8, 329.6, 2.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 57.2, 773.8, 2098.8, 3472.2, 3130.3, 3546.4, 3542.1, 3351.8, 3407.8, 2396.9, 3448.7, 3473.9, 3468.4, 3363.0, 1874.4, 312.9, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 24.1, 970.1, 3046.4, 3493.0, 3532.9, 3557.7, 3500.5, 3401.1, 3434.5, 3425.9, 3452.4, 3481.5, 3498.7, 3480.4, 2049.7, 325.8, 1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 34.2, 313.6, 945.3, 1114.8, 1108.2, 1461.5, 2213.6, 2155.3, 2116.5, 2107.9, 2586.9, 908.9, 342.4, 111.9, 77.5, 37.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 13.6, 234.8, 582.7, 990.5, 2045.7, 3111.9, 3266.1, 3325.8, 3584.8, 3689.8, 3779.2, 3509.0, 3730.9, 1871.3, 586.0, 115.2, 2.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0, 297.5, 2630.1, 2743.8, 1711.9, 2834.8, 2943.0, 3067.2, 1611.9, 2440.9, 2821.1, 2114.5, 1647.0, 2029.3, 1178.8, 186.1, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 25.6, 1073.8, 757.7, 1468.1, 1962.9, 2205.2, 2796.8, 3254.0, 2649.8, 2903.6, 2677.9, 1834.4, 1101.8, 2625.1, 508.3, 148.9, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 9.6, 154.0, 352.9, 1358.8, 1304.0, 1724.8, 2102.2, 2039.0, 2964.6, 3205.0, 1905.8, 1600.9, 1076.7, 694.0, 326.5, 88.8, 1.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 17.7, 585.2, 1386.7, 1036.1, 2041.5, 2335.5, 1826.3, 2085.9, 1872.6, 2116.4, 2416.9, 1934.9, 968.8, 520.6, 432.3, 78.6, 2.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15.9, 206.7, 426.3, 520.4, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "caps": [4117.2], "alerts": [[]]}</script>
+    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["SMA SC4000 Inverter - 1"], "bins": 168, "binMin": 60, "start": "2026-06-25 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 7.7, 23.1, 27.3, 27.1, 35.7, 54.2, 52.7, 51.8, 51.6, 63.3, 22.2, 8.4, 2.8, 1.9, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.3, 5.8, 14.2, 24.2, 50.0, 76.2, 79.9, 81.3, 87.7, 90.3, 92.5, 85.8, 91.3, 45.8, 14.3, 2.8, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 7.3, 64.3, 67.1, 41.9, 69.4, 72.0, 75.0, 39.5, 59.7, 69.0, 51.7, 40.3, 49.6, 28.8, 4.5, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.7, 26.3, 18.6, 35.9, 48.0, 54.0, 68.4, 79.6, 64.8, 71.0, 65.5, 44.9, 26.9, 64.2, 12.4, 3.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 3.8, 8.7, 33.2, 31.9, 42.2, 51.5, 49.9, 72.5, 78.4, 46.6, 39.2, 26.3, 17.0, 8.0, 2.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 14.3, 33.9, 25.4, 50.0, 57.1, 44.7, 51.0, 45.8, 51.8, 59.1, 47.3, 23.7, 12.8, 10.6, 1.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 5.1, 10.4, 15.5, 32.6, 45.2, 70.3, 82.2, 81.1, 75.5, null, null, null, null, null, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.0, 34.2, 313.6, 945.3, 1114.8, 1108.2, 1461.5, 2213.6, 2155.3, 2116.5, 2107.9, 2586.9, 908.9, 342.4, 111.9, 77.5, 37.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 13.6, 234.8, 582.7, 990.5, 2045.7, 3111.9, 3266.1, 3325.8, 3584.8, 3689.8, 3779.2, 3509.0, 3730.9, 1871.3, 586.0, 115.2, 2.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 30.0, 297.5, 2630.1, 2743.8, 1711.9, 2834.8, 2943.0, 3067.2, 1611.9, 2440.9, 2821.1, 2114.5, 1647.0, 2029.3, 1178.8, 186.1, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 25.6, 1073.8, 757.7, 1468.1, 1962.9, 2205.2, 2796.8, 3254.0, 2649.8, 2903.6, 2677.9, 1834.4, 1101.8, 2625.1, 508.3, 148.9, 3.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 9.6, 154.0, 352.9, 1358.8, 1304.0, 1724.8, 2102.2, 2039.0, 2964.6, 3205.0, 1905.8, 1600.9, 1076.7, 694.0, 326.5, 88.8, 1.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 17.7, 585.2, 1386.7, 1036.1, 2041.5, 2335.5, 1826.3, 2085.9, 1872.6, 2116.4, 2416.9, 1934.9, 968.8, 520.6, 432.3, 78.6, 2.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 15.9, 206.7, 426.3, 632.9, 1332.5, 1846.5, 2876.1, 3359.4, 3313.9, 3084.0, null, null, null, null, null, null, null, null, null]], "caps": [4087.5], "alerts": [[]]}</script>
   </div>
 </div>
 
 <div class="full">
   <div class="card">
     <div class="card-title">Alerts — this site</div>
-    <div class='al-summary'>1 open · 2 total in window</div><table class='al-table'><tr><th>Start</th><th>Event</th><th>Device</th><th>Status</th></tr><tr><td>2026-06-30 13:58</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: , Performance (2)	 Communication: All tests passed</div></td><td></td><td><span class="al-open">OPEN</span></td></tr><tr><td>2026-06-22 22:05</td><td><b>Phoenix Contact - Quint UPS Alerts</b><div class='al-desc'>Battery Over Temperature</div></td><td>AE Smart UPS</td><td><span class="al-res">resolved</span></td></tr></table>
+    <div class='al-summary'>1 open · 1 total in window</div><table class='al-table'><tr><th>Start</th><th>Event</th><th>Device</th><th>Status</th></tr><tr><td>2026-06-30 13:58</td><td><b>Rule Tool Alert</b><div class='al-desc'>Errors: , Performance (2)	 Communication: All tests passed</div></td><td></td><td><span class="al-open">OPEN</span></td></tr></table>
   </div>
 </div>
 
@@ -276,7 +298,7 @@ window.addEventListener('DOMContentLoaded',()=>{try{drawStrip('S');}catch(e){}})
 let _hmRt; window.addEventListener('resize',()=>{clearTimeout(_hmRt);_hmRt=setTimeout(()=>{try{drawStrip('S');}catch(e){}},200);});
 </script>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:43 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 21:16 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -286,7 +308,7 @@ new Chart(prodCtx, {
     labels: ['Measured', 'Expected'],
     datasets: [{
       label: 'kWh (24h)',
-      data: [19123.1, 16722.8],
+      data: [19991.8, 18785.4],
       backgroundColor: ['#2E75B6', '#e9ecef'],
       borderColor: ['#1F4E79', '#ccc'],
       borderWidth: 1,
@@ -309,7 +331,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [1796.0, 34600.2, 21468.0, 34432.5, 1796.0, 4159590.0],
+      data: [14432.0, 34600.2, 21468.0, 34432.5, 14432.0, 4172226.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]

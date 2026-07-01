@@ -46,6 +46,190 @@ def slug(name: str) -> str:
     return re.sub(r"[^a-zA-Z0-9_-]", "_", name)
 
 
+# ─── Project metadata (Projects-export.csv) ─────────────────────────────────
+# Rich per-site specs (system design, commercial terms, location) joined to the
+# live AlsoEnergy site via the CSV's AE_Name column. Shown on each site page.
+PROJECT_CSV = HERE / "Projects-export.csv"
+
+# The export's real header row is wrapped in HTML <span> tags, so we define the
+# column order explicitly and skip the first row. Data rows carry a leading empty
+# selector column that we strip.
+PROJECT_COLUMNS = [
+    "ProjectID", "Project", "State", "Contractor", "Status", "COD", "OnM_Exp_Date",
+    "FC_Date", "SizeKwDC", "SizeKwAC", "PanelCt", "PanelMke", "PanelSizeW", "FixedvTOU",
+    "InverterCt", "InvertMfgr", "InverterSizekWAC", "StringCt", "ModsPString", "Xfmr_Ct",
+    "Xfmr_Mfgr", "XfmrSizekV", "CombinerBoxCt", "Racking", "RackType", "Rows", "Utility",
+    "Rev_Rate_MWH", "PPA_MWh", "REC", "AE_Name", "SPR", "Image", "PVSyst_Size",
+    "Group_Name", "Organization", "Proximity", "Street_Address", "City", "State2",
+    "Zip2", "Address", "Address1", "Zip", "GPS", "County", "Latitude", "Longitude",
+]
+
+
+def _norm_name(s: str) -> str:
+    """Normalize a site name for fuzzy joining (e.g. 'RRH 1 & 2' == 'RRH 1&2')."""
+    return re.sub(r"[^a-z0-9]", "", (s or "").lower())
+
+
+def load_project_meta():
+    """Read Projects-export.csv → {normalized AE_Name: {column: value}}.
+
+    Returns {} if the CSV is missing so the dashboard degrades gracefully.
+    """
+    import csv
+    if not PROJECT_CSV.exists():
+        print(f"  [warn] {PROJECT_CSV.name} not found — site specs will be omitted.")
+        return {}
+    out = {}
+    try:
+        with open(PROJECT_CSV, newline="", encoding="utf-8-sig") as f:
+            reader = csv.reader(f)
+            next(reader, None)                       # skip the HTML-wrapped header
+            for row in reader:
+                if not any(c.strip() for c in row):  # blank line
+                    continue
+                if row and row[0].strip() == "" and len(row) >= len(PROJECT_COLUMNS) + 1:
+                    row = row[1:]                    # drop leading selector column
+                d = dict(zip(PROJECT_COLUMNS, row))
+                ae = _norm_name(d.get("AE_Name"))
+                if ae:
+                    out[ae] = d
+    except Exception as e:
+        print(f"  [warn] failed to parse {PROJECT_CSV.name}: {e}")
+        return {}
+    print(f"  project metadata: {len(out)} sites from {PROJECT_CSV.name}")
+    return out
+
+
+def _spec_txt(v):
+    """Clean a raw CSV value; '' for blanks / N/A placeholders."""
+    if v is None:
+        return ""
+    s = str(v).strip()
+    return "" if s.upper() in ("N/A", "NA", "NONE", "NULL") else s
+
+
+def _spec_float(v):
+    s = _spec_txt(v)
+    if not s:
+        return None
+    try:
+        return float(s)
+    except ValueError:
+        return None
+
+
+def _spec_int(v):
+    """Integer-ish display: '1,308' from '1308', passes text through unchanged."""
+    f = _spec_float(v)
+    if f is None:
+        return _spec_txt(v)
+    return f"{int(round(f)):,}"
+
+
+def _spec_size(v):
+    """kW value → 'X.XX MW' when ≥1 MW, else 'N,NNN kW'."""
+    f = _spec_float(v)
+    if f is None:
+        return ""
+    return f"{f / 1000:.2f} MW" if f >= 1000 else f"{f:,.0f} kW"
+
+
+def _spec_money(v):
+    f = _spec_float(v)
+    if f is None:
+        return ""
+    return f"${f:,.2f}/MWh"
+
+
+def _combo(*parts):
+    """Join non-empty parts, e.g. '80 × Sungrow @ 125 kW' skipping missing pieces."""
+    parts = [p for p in parts if p]
+    return " ".join(parts).strip()
+
+
+def build_site_specs_html(name, meta_map):
+    """Project-spec panel (system design / commercial / location) for one site."""
+    m = meta_map.get(_norm_name(name))
+    if not m:
+        return ('<div class="spec-none">No project record found in '
+                'Projects-export.csv for this site.</div>')
+
+    g = lambda k: _spec_txt(m.get(k))  # noqa: E731
+
+    def group(title, pairs):
+        rows = "".join(
+            f'<div class="spec-row"><span class="k">{k}</span>'
+            f'<span class="v">{v}</span></div>'
+            for k, v in pairs if v
+        )
+        return f'<div class="spec-group"><h4>{title}</h4>{rows}</div>' if rows else ""
+
+    panels = _combo(_spec_int(m.get("PanelCt")),
+                    "×" if g("PanelMke") else "", g("PanelMke"),
+                    f"{g('PanelSizeW')}W" if g("PanelSizeW") else "")
+    inverters = _combo(_spec_int(m.get("InverterCt")),
+                       "×" if g("InvertMfgr") else "", g("InvertMfgr"),
+                       f"@ {g('InverterSizekWAC')} kW" if g("InverterSizekWAC") else "")
+    strings = _combo(_spec_int(m.get("StringCt")),
+                     f"× {g('ModsPString')} mods" if g("ModsPString") else "")
+    xfmr = _combo(_spec_int(m.get("Xfmr_Ct")),
+                  "×" if g("Xfmr_Mfgr") else "", g("Xfmr_Mfgr"),
+                  f"@ {g('XfmrSizekV')} kVA" if g("XfmrSizekV") else "")
+    racking = _combo(g("Racking"), f"({g('RackType')})" if g("RackType") else "")
+
+    system = group("System Design", [
+        ("DC Size", _spec_size(m.get("SizeKwDC"))),
+        ("AC Size", _spec_size(m.get("SizeKwAC"))),
+        ("PVSyst Size", _spec_size(m.get("PVSyst_Size"))),
+        ("Panels", panels),
+        ("Inverters", inverters),
+        ("Strings", strings),
+        ("Combiner Boxes", _spec_int(m.get("CombinerBoxCt"))),
+        ("Transformers", xfmr),
+        ("Racking", racking),
+        ("Rows", _spec_int(m.get("Rows"))),
+        ("Tariff", g("FixedvTOU")),
+    ])
+
+    commercial = group("Commercial", [
+        ("Status", g("Status")),
+        ("COD", g("COD")),
+        ("O&M Expiration", g("OnM_Exp_Date")),
+        ("Financial Close", g("FC_Date")),
+        ("Contractor", g("Contractor")),
+        ("Utility", g("Utility")),
+        ("Revenue Rate", _spec_money(m.get("Rev_Rate_MWH"))),
+        ("PPA Rate", _spec_money(m.get("PPA_MWh"))),
+        ("REC", _spec_money(m.get("REC"))),
+        ("Organization", g("Organization")),
+        ("Group", g("Group_Name")),
+    ])
+
+    lat, lon = _spec_float(m.get("Latitude")), _spec_float(m.get("Longitude"))
+    if lat is not None and lon is not None:
+        coords = (f'<a href="https://www.google.com/maps?q={lat},{lon}" '
+                  f'target="_blank" rel="noopener">{lat:.5f}, {lon:.5f}</a>')
+    else:
+        coords = ""
+    address = _combo(g("Street_Address"),
+                     f"{g('City')}," if g("City") else "",
+                     g("State2") or g("State"), g("Zip2") or g("Zip"))
+    location = group("Location", [
+        ("Address", address),
+        ("City", g("City")),
+        ("County", g("County")),
+        ("State", g("State2") or g("State")),
+        ("Coordinates", coords),
+    ])
+
+    img = g("Image")
+    photo = (f'<img class="spec-photo" src="{img}" alt="{name}" '
+             f'loading="lazy" onerror="this.style.display=\'none\'">'
+             if img.startswith("http") else "")
+
+    return f'{photo}<div class="specs-grid">{system}{commercial}{location}</div>'
+
+
 def load_active_alerts():
     """Real active-alert counts per site from ae_alerts.xlsx (is_resolved == False).
 
@@ -361,6 +545,21 @@ SITE_HTML = """\
   .al-desc {{ color: #999; font-size: 11px; }}
   .al-open {{ color: #c62828; font-weight: 700; }}
   .al-res {{ color: #2e9e5b; }}
+  /* site specifications (from Projects-export.csv) */
+  .specs-grid {{ display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }}
+  .spec-group h4 {{ font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+                    color: #2E75B6; margin-bottom: 6px; padding-bottom: 4px;
+                    border-bottom: 1px solid #eef1f5; }}
+  .spec-row {{ display: flex; justify-content: space-between; gap: 12px; padding: 5px 0;
+               font-size: 13px; border-bottom: 1px solid #f7f8fa; }}
+  .spec-row .k {{ color: #777; white-space: nowrap; }}
+  .spec-row .v {{ font-weight: 600; color: #333; text-align: right; }}
+  .spec-row .v a {{ color: #2E75B6; text-decoration: none; }}
+  .spec-photo {{ float: right; width: 260px; max-width: 42%; border-radius: 6px;
+                 margin: 0 0 12px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }}
+  .spec-none {{ color: #888; font-size: 12px; padding: 8px 0; }}
+  @media (max-width: 900px) {{ .specs-grid {{ grid-template-columns: 1fr; }}
+                               .spec-photo {{ float: none; width: 100%; max-width: 100%; margin: 0 0 12px; }} }}
   footer {{ text-align: center; font-size: 11px; color: #aaa; padding: 12px; }}
 </style>
 </head>
@@ -467,6 +666,13 @@ SITE_HTML = """\
       <span>Today: <strong>{today_kwh}</strong> ({today_pct}%)</span>
       <span>Yesterday: <strong>{yest_kwh}</strong> ({yest_pct}%)</span>
     </div>
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
+    <div class="card-title">Site Specifications</div>
+    {site_specs_html}
   </div>
 </div>
 
@@ -731,7 +937,7 @@ def rule_badge(v):
 
 
 def build_site_html(s, all_sites, generated_at, hw=None, prod=None, prod_bins=None,
-                    site_alerts=None, d_from=None, d_to=None):
+                    site_alerts=None, d_from=None, d_to=None, project_meta=None):
     d = s["data"]
     name = s["name"]
     key  = s["key"]
@@ -804,10 +1010,12 @@ def build_site_html(s, all_sites, generated_at, hw=None, prod=None, prod_bins=No
     heatmap_html = build_heatmap_html(name, hw or {}, prod or {}, prod_bins or {},
                                       d_from, d_to)
     site_alerts_html = build_site_alerts_html(name, site_alerts or {})
+    site_specs_html = build_site_specs_html(name, project_meta or {})
 
     return SITE_HTML.format(
         site_name=name, site_key=key, generated_at=generated_at,
         heatmap_html=heatmap_html, site_alerts_html=site_alerts_html,
+        site_specs_html=site_specs_html,
         strip_js=STRIP_JS,
         gauge_dash=f"{gauge_dash:.1f}",
         now_kw=fmt_kw(now), cap_kw=fmt_kw(cap), cap_raw=round(cap),
@@ -986,6 +1194,7 @@ if __name__ == "__main__":
     prod, prod_bins, d_from, d_to = load_production()
     hw = aad.load_hardware()
     site_alerts = load_site_alerts()
+    project_meta = load_project_meta()
     print(f"  production cache: {len(prod)} sites ({d_from}..{d_to}) | "
           f"hardware: {len(hw)} sites | alert history: {len(site_alerts)} sites")
 
@@ -996,7 +1205,7 @@ if __name__ == "__main__":
         fname = f"{key}_{slug(name)}.html"
         path  = out_dir / fname
         html  = build_site_html(s, sites, generated_at, hw, prod, prod_bins,
-                                site_alerts, d_from, d_to)
+                                site_alerts, d_from, d_to, project_meta)
         path.write_text(html, encoding="utf-8")
         now_kw = safe(s["data"], "now")
         perf   = round(safe(s["data"], "measKWhPct", 0), 1)

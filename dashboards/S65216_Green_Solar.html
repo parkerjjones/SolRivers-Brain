@@ -69,6 +69,21 @@
   .al-desc { color: #999; font-size: 11px; }
   .al-open { color: #c62828; font-weight: 700; }
   .al-res { color: #2e9e5b; }
+  /* site specifications (from Projects-export.csv) */
+  .specs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .spec-group h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .5px;
+                    color: #2E75B6; margin-bottom: 6px; padding-bottom: 4px;
+                    border-bottom: 1px solid #eef1f5; }
+  .spec-row { display: flex; justify-content: space-between; gap: 12px; padding: 5px 0;
+               font-size: 13px; border-bottom: 1px solid #f7f8fa; }
+  .spec-row .k { color: #777; white-space: nowrap; }
+  .spec-row .v { font-weight: 600; color: #333; text-align: right; }
+  .spec-row .v a { color: #2E75B6; text-decoration: none; }
+  .spec-photo { float: right; width: 260px; max-width: 42%; border-radius: 6px;
+                 margin: 0 0 12px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
+  .spec-none { color: #888; font-size: 12px; padding: 8px 0; }
+  @media (max-width: 900px) { .specs-grid { grid-template-columns: 1fr; }
+                               .spec-photo { float: none; width: 100%; max-width: 100%; margin: 0 0 12px; } }
   footer { text-align: center; font-size: 11px; color: #aaa; padding: 12px; }
 </style>
 </head>
@@ -79,7 +94,7 @@
     <div style="font-size:13px;margin-top:2px;opacity:.8">S65216 &bull; SolRiver Capital</div>
   </div>
   <div class="meta">
-    Generated: 2026-07-01 16:43 UTC<br>
+    Generated: 2026-07-01 21:16 UTC<br>
     <a href="index.html" style="color:#cde">← Portfolio Overview</a>
   </div>
 </header>
@@ -96,7 +111,7 @@
       <svg class="gauge" width="160" height="100" viewBox="0 0 160 100">
         <path d="M20,90 A60,60,0,0,1,140,90" stroke="#e9ecef" stroke-width="14" fill="none" stroke-linecap="round"/>
         <path id="gaugeFill" d="M20,90 A60,60,0,0,1,140,90" stroke="#2E75B6" stroke-width="14" fill="none" stroke-linecap="round"
-              stroke-dasharray="184.6 188.5"/>
+              stroke-dasharray="184.7 188.5"/>
         <text x="80" y="85" text-anchor="middle" font-size="22" font-weight="700" fill="#1F4E79">2.82 MW</text>
         <text x="80" y="100" text-anchor="middle" font-size="11" fill="#888">Total Cap: 2.88 MW</text>
         <text x="20" y="106" text-anchor="middle" font-size="9" fill="#aaa">0</text>
@@ -105,7 +120,7 @@
     </div>
     <div class="pct-row">
       <span>1 site</span>
-      <span class="pct-good">97.9% capacity</span>
+      <span class="pct-good">98.0% capacity</span>
     </div>
   </div>
 
@@ -113,12 +128,12 @@
   <div class="card">
     <div class="card-title">Losses Past 24hr</div>
     
-    <div class="big-num" style="font-size:22px;color:#721c24">903.9 kWh Loss</div>
+    <div class="big-num" style="font-size:22px;color:#721c24">936.0 kWh Loss</div>
     <div style="margin-top:8px">
       <div class="loss-row"><span class="loss-label">Downtime Loss</span><span class="loss-val">0.0 kWh</span></div>
       <div class="loss-row"><span class="loss-label">Soil Loss</span><span class="loss-val">0.0 kWh</span></div>
       <div class="loss-row"><span class="loss-label">Snow Loss</span><span class="loss-val">0.0 kWh</span></div>
-      <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">903.9 kWh</span></div>
+      <div class="loss-row"><span class="loss-label">Unclassified</span><span class="loss-val">936.0 kWh</span></div>
     </div>
   </div>
 
@@ -166,9 +181,9 @@
       <canvas id="prodChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Measured: <strong>34.12 MWh</strong></span>
+      <span>Measured: <strong>34.20 MWh</strong></span>
       <span>Expected: <strong>35.79 MWh</strong></span>
-      <span class="pct-good">95.4% performance</span>
+      <span class="pct-good">95.6% performance</span>
     </div>
   </div>
 
@@ -179,7 +194,7 @@
       <canvas id="energyChart"></canvas>
     </div>
     <div class="pct-row">
-      <span>Today: <strong>7.99 MWh</strong> (26.4%)</span>
+      <span>Today: <strong>20.34 MWh</strong> (67.1%)</span>
       <span>Yesterday: <strong>34.84 MWh</strong> (115.1%)</span>
     </div>
   </div>
@@ -187,15 +202,22 @@
 
 <div class="full">
   <div class="card">
+    <div class="card-title">Site Specifications</div>
+    <img class="spec-photo" src="https://solrivercapital.com/wp-content/uploads/2024/11/Green-Site-1.png" alt="Green Solar" loading="lazy" onerror="this.style.display='none'"><div class="specs-grid"><div class="spec-group"><h4>System Design</h4><div class="spec-row"><span class="k">DC Size</span><span class="v">3.72 MW</span></div><div class="spec-row"><span class="k">AC Size</span><span class="v">2.88 MW</span></div><div class="spec-row"><span class="k">PVSyst Size</span><span class="v">3.72 MW</span></div><div class="spec-row"><span class="k">Panels</span><span class="v">5,684 × CSI -bi 655W</span></div><div class="spec-row"><span class="k">Inverters</span><span class="v">1 × Sungrow @ 3425 kW</span></div><div class="spec-row"><span class="k">Strings</span><span class="v">203 × 28 mods</span></div><div class="spec-row"><span class="k">Combiner Boxes</span><span class="v">18</span></div><div class="spec-row"><span class="k">Transformers</span><span class="v">1 × Sungrow @ 1500 kVA</span></div><div class="spec-row"><span class="k">Racking</span><span class="v">ATI (SAT)</span></div><div class="spec-row"><span class="k">Rows</span><span class="v">83</span></div><div class="spec-row"><span class="k">Tariff</span><span class="v">TOU</span></div></div><div class="spec-group"><h4>Commercial</h4><div class="spec-row"><span class="k">Status</span><span class="v">Operating</span></div><div class="spec-row"><span class="k">COD</span><span class="v">2024-08-20</span></div><div class="spec-row"><span class="k">O&M Expiration</span><span class="v">2027-07-11</span></div><div class="spec-row"><span class="k">Financial Close</span><span class="v">9/27/2024</span></div><div class="spec-row"><span class="k">Contractor</span><span class="v">Konisto</span></div><div class="spec-row"><span class="k">Utility</span><span class="v">PAC</span></div><div class="spec-row"><span class="k">Revenue Rate</span><span class="v">$92.72/MWh</span></div><div class="spec-row"><span class="k">PPA Rate</span><span class="v">$92.72/MWh</span></div><div class="spec-row"><span class="k">REC</span><span class="v">$0.00/MWh</span></div><div class="spec-row"><span class="k">Organization</span><span class="v">SolRock</span></div><div class="spec-row"><span class="k">Group</span><span class="v">Green</span></div></div><div class="spec-group"><h4>Location</h4><div class="spec-row"><span class="k">Address</span><span class="v">10794 SW Green Dr. Culver, Oregon 97734</span></div><div class="spec-row"><span class="k">City</span><span class="v">Culver</span></div><div class="spec-row"><span class="k">County</span><span class="v">Jefferson</span></div><div class="spec-row"><span class="k">State</span><span class="v">Oregon</span></div><div class="spec-row"><span class="k">Coordinates</span><span class="v"><a href="https://www.google.com/maps?q=44.48728942871094,-121.24974060058594" target="_blank" rel="noopener">44.48729, -121.24974</a></span></div></div></div>
+  </div>
+</div>
+
+<div class="full">
+  <div class="card">
     <div class="card-title">Inverter Heatmap — hourly capacity factor</div>
-    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["INVERTER 1"], "bins": 336, "binMin": 60, "start": "2026-06-18 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 4.2, 31.3, 48.5, 76.6, 78.7, 90.1, 87.5, 83.2, 70.3, 51.8, 49.0, 40.3, 21.6, 39.8, 23.0, 2.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 19.1, 80.8, 95.2, 95.2, 95.2, 95.2, 95.2, 93.7, 79.2, 67.5, 36.0, 24.4, 51.3, 25.2, 2.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 29.8, 42.4, 79.7, 93.8, 95.2, 93.5, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 77.5, 28.6, 2.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 34.8, 83.5, 93.1, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 76.8, 27.8, 2.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.7, 28.4, 70.0, 95.2, 95.1, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 94.3, 74.8, 27.2, 3.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 31.0, 76.8, 95.1, 92.6, 94.5, 90.6, 94.3, 84.3, 76.0, 55.7, 79.9, 77.1, 57.2, 26.6, 2.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 32.4, 74.9, 93.0, 95.2, 90.5, 95.2, 95.2, 81.3, 59.2, 66.4, 26.6, 15.7, 11.3, 11.9, 2.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.2, 31.4, 75.3, 94.5, 88.2, 89.2, 84.0, 84.8, 55.8, 28.4, 16.4, 13.7, 6.0, 4.1, 2.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 7.3, 55.0, 69.5, 64.4, 63.7, 87.2, 72.3, 75.1, 76.9, 87.5, 85.4, 69.6, 39.5, 12.5, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 7.8, 31.6, 46.5, 59.3, 57.7, 73.0, 89.2, 71.7, 75.1, 88.3, 59.0, 75.6, 28.8, 12.6, 2.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 22.8, 66.5, 93.9, 95.2, 93.0, 69.0, 78.3, 69.3, 64.5, 70.1, 74.5, 44.9, 33.0, 29.5, 3.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 3.0, 7.5, 16.3, 55.5, 76.8, 90.8, 95.2, 95.2, 92.8, 94.1, 80.6, 64.2, 47.2, 12.7, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.4, 32.5, 80.7, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 79.3, 29.5, 3.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.4, 32.6, 79.5, 95.2, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.1, 124.4, 936.7, 1450.5, 2292.5, 2354.4, 2696.4, 2619.2, 2488.7, 2104.2, 1549.7, 1464.3, 1205.6, 646.1, 1190.6, 687.1, 69.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 84.0, 572.1, 2419.0, 2848.1, 2847.8, 2847.4, 2848.1, 2847.5, 2801.4, 2369.5, 2020.9, 1077.3, 729.0, 1533.9, 753.4, 86.3, 2.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 57.4, 892.4, 1266.8, 2385.9, 2808.2, 2848.1, 2799.0, 2847.8, 2848.0, 2847.3, 2847.8, 2847.8, 2847.9, 2317.5, 854.4, 88.1, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 73.5, 1041.4, 2498.3, 2786.5, 2848.3, 2848.4, 2848.4, 2848.0, 2847.7, 2847.8, 2847.7, 2847.7, 2847.9, 2297.9, 830.8, 88.2, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 80.1, 848.3, 2093.9, 2847.4, 2846.2, 2847.8, 2846.8, 2847.8, 2848.5, 2847.4, 2847.8, 2847.8, 2821.0, 2237.0, 814.0, 91.2, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 72.7, 928.4, 2298.5, 2846.6, 2770.7, 2827.8, 2711.1, 2820.8, 2522.2, 2272.6, 1666.9, 2391.6, 2308.1, 1710.0, 795.7, 86.7, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 72.5, 968.1, 2240.9, 2782.0, 2847.5, 2705.6, 2847.7, 2848.2, 2433.5, 1773.7, 1986.7, 794.7, 470.9, 337.6, 354.1, 78.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 67.2, 938.6, 2253.9, 2826.9, 2637.8, 2669.3, 2513.1, 2538.9, 1667.8, 849.9, 491.1, 410.9, 178.6, 121.9, 65.7, 22.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.1, 219.8, 1646.0, 2078.6, 1926.8, 1905.5, 2608.8, 2162.8, 2245.9, 2299.6, 2619.2, 2554.7, 2081.8, 1180.2, 373.5, 34.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 41.5, 232.2, 945.1, 1389.7, 1774.7, 1726.8, 2183.1, 2669.2, 2146.6, 2246.9, 2643.2, 1765.7, 2262.8, 861.5, 376.6, 66.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 25.1, 683.5, 1988.7, 2809.2, 2847.9, 2783.1, 2064.2, 2343.4, 2073.3, 1930.0, 2098.5, 2231.2, 1344.0, 989.1, 882.5, 115.2, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.1, 92.4, 222.8, 488.0, 1660.3, 2299.0, 2716.4, 2848.4, 2847.8, 2778.1, 2815.1, 2411.9, 1921.6, 1412.5, 379.1, 119.1, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 71.5, 974.1, 2413.2, 2848.7, 2848.4, 2847.8, 2847.8, 2848.2, 2847.4, 2848.6, 2848.5, 2848.2, 2848.2, 2371.4, 880.6, 91.9, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 71.2, 977.2, 2378.6, 2848.8, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]], "caps": [2992.0], "alerts": [[]]}</script>
+    <div class="strip-wrap"><div class="strip-labels" id="lbS"></div><div style="flex:1;min-width:0"><canvas id="hmS" class="strip-canvas"></canvas></div></div><div class="strip-legend"><span class="scale-ruler"><span class="scalebar"></span><span class="scale-ticks"><span>0%</span><span>20%</span><span>40%</span><span>60%</span><span>80%</span><span>100%</span></span></span><span class="strip-legendlbl">Capacity Factor (%) &middot; hatched = night &middot; grey = no data</span></div><script type="application/json" id="dS">{"invs": ["INVERTER 1"], "bins": 168, "binMin": 60, "start": "2026-06-25 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 2.2, 31.4, 75.3, 94.5, 88.2, 89.2, 84.0, 84.8, 55.8, 28.4, 16.4, 13.7, 6.0, 4.1, 2.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 7.3, 55.0, 69.5, 64.4, 63.7, 87.2, 72.3, 75.1, 76.9, 87.5, 85.4, 69.6, 39.5, 12.5, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 7.8, 31.6, 46.5, 59.3, 57.7, 73.0, 89.2, 71.7, 75.1, 88.3, 59.0, 75.6, 28.8, 12.6, 2.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.8, 22.8, 66.5, 93.9, 95.2, 93.0, 69.0, 78.3, 69.3, 64.5, 70.1, 74.5, 44.9, 33.0, 29.5, 3.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.4, 3.0, 7.5, 16.3, 55.5, 76.8, 90.8, 95.2, 95.2, 92.8, 94.1, 80.6, 64.2, 47.2, 12.7, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.4, 32.5, 80.7, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 79.3, 29.5, 3.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.4, 32.6, 79.5, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, 95.2, null, null, null, null, null, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.0, 67.2, 938.6, 2253.9, 2826.9, 2637.8, 2669.3, 2513.1, 2538.9, 1667.8, 849.9, 491.1, 410.9, 178.6, 121.9, 65.7, 22.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.1, 219.8, 1646.0, 2078.6, 1926.8, 1905.5, 2608.8, 2162.8, 2245.9, 2299.6, 2619.2, 2554.7, 2081.8, 1180.2, 373.5, 34.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 41.5, 232.2, 945.1, 1389.7, 1774.7, 1726.8, 2183.1, 2669.2, 2146.6, 2246.9, 2643.2, 1765.7, 2262.8, 861.5, 376.6, 66.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 25.1, 683.5, 1988.7, 2809.2, 2847.9, 2783.1, 2064.2, 2343.4, 2073.3, 1930.0, 2098.5, 2231.2, 1344.0, 989.1, 882.5, 115.2, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.1, 92.4, 222.8, 488.0, 1660.3, 2299.0, 2716.4, 2848.4, 2847.8, 2778.1, 2815.1, 2411.9, 1921.6, 1412.5, 379.1, 119.1, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 71.5, 974.1, 2413.2, 2848.7, 2848.4, 2847.8, 2847.8, 2848.2, 2847.4, 2848.6, 2848.5, 2848.2, 2848.2, 2371.4, 880.6, 91.9, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 71.2, 977.2, 2378.6, 2848.3, 2847.0, 2847.9, 2847.9, 2847.6, 2847.4, 2848.0, null, null, null, null, null, null, null, null, null]], "caps": [2992.0], "alerts": [[]]}</script>
   </div>
 </div>
 
 <div class="full">
   <div class="card">
     <div class="card-title">Alerts — this site</div>
-    <div class='al-summary'>0 open · 8 total in window</div><table class='al-table'><tr><th>Start</th><th>Event</th><th>Device</th><th>Status</th></tr><tr><td>2026-06-30 00:52</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-27 07:58</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-23 18:05</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-23 13:31</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-23 03:51</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-22 13:45</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-19 07:08</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-19 04:58</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr></table>
+    <div class='al-summary'>0 open · 2 total in window</div><table class='al-table'><tr><th>Start</th><th>Event</th><th>Device</th><th>Status</th></tr><tr><td>2026-06-30 00:52</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr><tr><td>2026-06-27 07:58</td><td><b>Device communication</b><div class='al-desc'>This error may be the result of one of the following:	 1. Wiring problem between the device and the gateway.</div></td><td>DC ZONES</td><td><span class="al-res">resolved</span></td></tr></table>
   </div>
 </div>
 
@@ -276,7 +298,7 @@ window.addEventListener('DOMContentLoaded',()=>{try{drawStrip('S');}catch(e){}})
 let _hmRt; window.addEventListener('resize',()=>{clearTimeout(_hmRt);_hmRt=setTimeout(()=>{try{drawStrip('S');}catch(e){}},200);});
 </script>
 
-<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 16:43 UTC</footer>
+<footer>SolRiver Capital &bull; AlsoEnergy PowerTrack &bull; Generated 2026-07-01 21:16 UTC</footer>
 
 <script>
 const prodCtx = document.getElementById('prodChart').getContext('2d');
@@ -286,7 +308,7 @@ new Chart(prodCtx, {
     labels: ['Measured', 'Expected'],
     datasets: [{
       label: 'kWh (24h)',
-      data: [34124.9, 35786.4],
+      data: [34198.7, 35786.4],
       backgroundColor: ['#2E75B6', '#e9ecef'],
       borderColor: ['#1F4E79', '#ccc'],
       borderWidth: 1,
@@ -309,7 +331,7 @@ new Chart(energyCtx, {
   data: {
     labels: ['Today Actual', 'Today Est.', 'Yesterday', 'Yest. Est.', 'Month', 'Year'],
     datasets: [{
-      data: [7986.0, 30305.3, 34835.0, 30255.0, 7986.0, 3454680.0],
+      data: [20344.0, 30305.3, 34835.0, 30255.0, 20344.0, 3467038.0],
       backgroundColor: ['#2E75B6','#90c0e8','#5cb85c','#90d890','#f0ad4e','#9b59b6'],
       borderRadius: 3,
     }]
