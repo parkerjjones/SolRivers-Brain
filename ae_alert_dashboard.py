@@ -39,14 +39,15 @@ import json
 import re
 import sys
 import time
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
-API_BASE       = "https://apps.alsoenergy.com/api"
-PORTFOLIO_KEYS = ["C12941", "C47197"]
-TZ_OFFSET_MIN  = 360
-SLEEP          = 0.5
+API_BASE            = "https://apps.alsoenergy.com/api"
+PORTFOLIO_KEYS      = ["C12941", "C47197"]
+TZ_OFFSET_MIN       = 360
+SLEEP               = 0.5
+REVENUE_RATE_PER_MWH = 40.0   # $/MWh — typical Ohio commercial solar PPA/SREC blended rate
 HERE           = Path(__file__).parent
 CHARTJS_FILE   = HERE / "assets" / "chart.umd.min.js"
 HW_XLSX        = HERE / "ae_hardware.xlsx"
@@ -501,10 +502,13 @@ def compute_site_impact(alerts, hw):
         total_kw = sum(known_caps)
         avg_kw = total_kw / len(known_caps) if known_caps else 0
 
+        # Count both INVERTER_FAULT and persistent INVERTER_COMM (>1h) as offline
         open_faults = {a["hardware_name"] for a in alerts
                        if a["site_name"] == site
                        and not a["is_resolved"]
-                       and a["category"] == "INVERTER_FAULT"}
+                       and (a["category"] == "INVERTER_FAULT"
+                            or (a["category"] == "INVERTER_COMM"
+                                and a.get("duration_h", 0) >= 1))}
         offline_kw = sum(inv_cap.get(n, 0) or avg_kw for n in open_faults)
 
         pct = round(offline_kw / total_kw * 100) if total_kw > 0 else 0
@@ -517,39 +521,185 @@ def compute_site_impact(alerts, hw):
     return result
 
 
+def _build_action_queue(site_impact, diags, filtered):
+    """Derive top-5 prioritised action items from existing data."""
+    # Fault hours per site
+    site_fault_h = defaultdict(float)
+    for a in filtered:
+        if not a.get("is_resolved") and a.get("category") in (
+                "INVERTER_FAULT", "TRACKER_FAULT", "METER", "GRID"):
+            site_fault_h[a["site_name"]] = max(
+                site_fault_h[a["site_name"]], a.get("duration_h", 0))
+
+    diag_by_site = {}
+    for d in diags:
+        if d["site"] != "PORTFOLIO" and d["site"] not in diag_by_site:
+            diag_by_site[d["site"]] = d
+
+    scored = []
+    for site, imp in site_impact.items():
+        mw = imp.get("mw_offline", 0)
+        pct = imp.get("pct_offline", 0)
+        fh = site_fault_h.get(site, 0)
+        score = mw * 200 + pct * 2 + fh * 0.5
+        if score > 0:
+            scored.append((score, site, imp, fh))
+    scored.sort(reverse=True)
+
+    actions = []
+    for score, site, imp, fh in scored[:4]:
+        mw = imp.get("mw_offline", 0)
+        pct = imp.get("pct_offline", 0)
+        cost_day = mw * 6 * REVENUE_RATE_PER_MWH
+        diag = diag_by_site.get(site, {})
+        diag_actions = diag.get("actions", []) if isinstance(diag.get("actions"), list) else []
+        if diag_actions:
+            action_text = str(diag_actions[0])[:80]
+        elif mw > 0:
+            action_text = f"Investigate & repair offline capacity at {site}"
+        else:
+            action_text = f"Escalate long-running fault at {site} ({fh:.0f}h)"
+        if pct >= 50 or fh >= 72:
+            urgency, cls = "CRITICAL", "aq-critical"
+        elif pct >= 20 or fh >= 24:
+            urgency, cls = "HIGH", "aq-high"
+        else:
+            urgency, cls = "MEDIUM", "aq-medium"
+        parts = []
+        if mw > 0:
+            parts.append(f"{mw:.1f} MW offline ({pct}%)")
+        if cost_day >= 1:
+            parts.append(f"${cost_day:,.0f}/day")
+        if fh > 0:
+            parts.append(f"{fh:.0f}h open")
+        actions.append({"urgency": urgency, "cls": cls,
+                        "action": action_text, "detail": " · ".join(parts)})
+
+    # Cross-site pattern action
+    by_title = defaultdict(list)
+    for d in diags:
+        if d["site"] != "PORTFOLIO":
+            by_title[d["title"]].append(d["site"])
+    top_patterns = sorted([(t, s) for t, s in by_title.items() if len(s) >= 3],
+                          key=lambda x: -len(x[1]))
+    if top_patterns:
+        title, sites = top_patterns[0]
+        actions.append({"urgency": "PATTERN", "cls": "aq-pattern",
+                        "action": f"Coordinate cross-site fix: {title[:60]}",
+                        "detail": f"{len(sites)} sites: {', '.join(sites[:5])}"})
+    return actions[:5]
+
+
 def compute_portfolio_stats(filtered, site_impact, diags):
     """Portfolio-level KPIs for the summary bar."""
     crit_cats = ("INVERTER_FAULT", "GRID", "TRACKER_FAULT", "METER")
     sites_with_issues = {a["site_name"] for a in filtered if not a["is_resolved"]}
     total_mw_offline = sum(v["mw_offline"] for v in site_impact.values())
+    total_mw = sum(v.get("total_mw", 0) for v in site_impact.values())
     n_critical = sum(1 for a in filtered
                      if not a["is_resolved"] and a["category"] in crit_cats)
     top_diag = next((d for d in diags if d["site"] != "PORTFOLIO"), None)
+
+    # Revenue impact
+    mwh_loss_day = total_mw_offline * 6   # ~25% CF → 6 MWh/MW/day
+    usd_per_day  = int(round(mwh_loss_day * REVENUE_RATE_PER_MWH))
+    usd_7day     = usd_per_day * 7
+
+    # Root-cause breakdown of open alerts
+    _cat_map = {
+        "INVERTER_FAULT": "Equipment", "TRACKER_FAULT": "Equipment",
+        "METER": "Equipment", "GRID": "Grid",
+        "INVERTER_COMM": "Comms", "TRACKER_COMM": "Comms",
+        "DAS_COMM": "Comms", "COMMS_LOW": "Comms",
+    }
+    open_alerts = [a for a in filtered if not a.get("is_resolved")]
+    cause_counts = Counter(_cat_map.get(a["category"], "Other") for a in open_alerts)
+
+    # Portfolio health score (0–100)
+    pct_mw_offline = (total_mw_offline / total_mw * 100) if total_mw > 0 else 0
+    health = max(0, min(100, round(
+        100 - pct_mw_offline * 2.5 - len(sites_with_issues) * 1.5 - n_critical * 0.4)))
+
+    # Action queue
+    actions = _build_action_queue(site_impact, diags, filtered)
+
     return {
         "n_sites": len(sites_with_issues),
         "mw_offline": round(total_mw_offline, 1),
-        "est_daily_loss": int(round(total_mw_offline * 6)),
+        "est_daily_loss": int(round(mwh_loss_day)),
+        "usd_per_day": usd_per_day,
+        "usd_7day": usd_7day,
         "n_critical": n_critical,
         "top_site": top_diag["site"] if top_diag else "",
         "top_title": (top_diag["title"][:55] if top_diag else ""),
+        "cause_counts": dict(cause_counts),
+        "health_score": health,
+        "actions": actions,
     }
 
 
 def render_portfolio_summary(stats):
-    """Dark KPI bar at the top of the page."""
+    """Dark KPI bar + action queue panel."""
+    health = stats["health_score"]
+    health_cls = "ps-green" if health >= 85 else ("ps-orange" if health >= 65 else "ps-red")
+
+    usd_day = f"${stats['usd_per_day']:,}"
+    usd_7d  = f"${stats['usd_7day']:,}"
+
     top_html = ""
     if stats["top_site"]:
-        top_html = (f"<div class='ps-item'><div class='ps-label'>Top Issue</div>"
+        top_html = (f"<div class='ps-item'><div class='ps-label'>Top Issue Site</div>"
                     f"<div class='ps-value ps-small'>{esc(stats['top_site'])}</div>"
                     f"<div class='ps-sub'>{esc(stats['top_title'])}</div></div>")
-    n_cols = 5 if top_html else 4
-    return f"""<div class="portfolio-summary" style="grid-template-columns:repeat({n_cols},1fr)">
+
+    # Root-cause pill breakdown
+    cause_html = ""
+    cause_order = ["Equipment", "Grid", "Comms", "Other"]
+    cause_cls   = {"Equipment": "#e05", "Grid": "#d96", "Comms": "#59a", "Other": "#888"}
+    cc = stats.get("cause_counts", {})
+    if cc:
+        def _pill(k):
+            bg = cause_cls.get(k, "#888")
+            return (f"<span style='background:{bg};color:#fff;"
+                    f"border-radius:10px;padding:2px 8px;font-size:11px;margin:2px'>"
+                    f"{k}: {cc[k]}</span>")
+        pills = "".join(_pill(k) for k in cause_order if cc.get(k, 0) > 0)
+        cause_html = (f"<div class='ps-item' style='grid-column:1/-1;padding-top:4px'>"
+                      f"<div class='ps-label'>Open Alert Causes</div>"
+                      f"<div style='margin-top:4px'>{pills}</div></div>")
+
+    n_cols = 6 if top_html else 5
+    kpi_bar = f"""<div class="portfolio-summary" style="grid-template-columns:repeat({n_cols},1fr)">
+  <div class="ps-item"><div class="ps-label">Health Score</div><div class="ps-value {health_cls}">{health}/100</div></div>
   <div class="ps-item"><div class="ps-label">Sites w/ Issues</div><div class="ps-value ps-red">{stats['n_sites']}</div></div>
   <div class="ps-item"><div class="ps-label">MW Offline</div><div class="ps-value ps-red">{stats['mw_offline']:.1f}</div></div>
-  <div class="ps-item"><div class="ps-label">Est. Loss / Day</div><div class="ps-value ps-orange">{stats['est_daily_loss']} MWh</div></div>
-  <div class="ps-item"><div class="ps-label">Critical Alerts</div><div class="ps-value ps-red">{stats['n_critical']}</div></div>
+  <div class="ps-item"><div class="ps-label">$/Day Lost</div><div class="ps-value ps-orange">{usd_day}</div></div>
+  <div class="ps-item"><div class="ps-label">7-Day Risk</div><div class="ps-value ps-orange">{usd_7d}</div></div>
   {top_html}
+  {cause_html}
 </div>"""
+
+    # Action queue panel
+    actions = stats.get("actions", [])
+    if actions:
+        rows = ""
+        for i, a in enumerate(actions):
+            cls_val = a["cls"]
+            rows += (f"<div class='aq-row'>"
+                     f"<span class='aq-num'>{i+1}</span>"
+                     f"<div class='aq-content'>"
+                     f"<div class='aq-action'>{esc(a['action'])}</div>"
+                     f"<div class='aq-detail'>{esc(a['detail'])}</div>"
+                     f"</div>"
+                     f"<span class='aq-badge {cls_val}'>{a['urgency']}</span>"
+                     f"</div>")
+        aq_html = (f"<div class='action-queue'>"
+                   f"<div class='aq-header'>&#9654; What Should I Do Next?</div>"
+                   f"{rows}</div>")
+    else:
+        aq_html = ""
+
+    return kpi_bar + aq_html
 
 
 def render_patterns_html(diags):
@@ -1116,10 +1266,10 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
     pct_offline = impact.get("pct_offline", 0)
     n_open_faults = impact.get("n_open_faults", 0)
 
-    # Status
-    if pct_offline >= 20 or fault_h >= 24:
+    # Status — fault_h + comm_h both count; comm alerts often mean inverter is offline
+    if pct_offline >= 20 or fault_h >= 24 or comm_h >= 24:
         badge_cls, status_label = "acc-red", "Critical"
-    elif pct_offline >= 5 or fault_h >= 2:
+    elif pct_offline >= 5 or fault_h >= 2 or comm_h >= 4:
         badge_cls, status_label = "acc-orange", "Degraded"
     else:
         badge_cls, status_label = "acc-green", "Healthy"
@@ -1129,8 +1279,9 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
     if mw_offline > 0:
         mw_badge = (f"<span class='acc-offline-mw'>"
                     f"{mw_offline:.1f} MW offline · {pct_offline}%</span>")
-    elif fault_h > 0:
-        mw_badge = f"<span class='acc-badge {badge_cls}'>{fault_h:.0f}h faults</span>"
+    elif fault_h > 0 or comm_h > 0:
+        hours_str = f"{fault_h:.0f}h faults" if fault_h > 0 else f"{comm_h:.0f}h comms"
+        mw_badge = f"<span class='acc-badge {badge_cls}'>{hours_str}</span>"
 
     bar_pct = min(pct_offline, 100)
     cap_bar = (f"<div class='cap-bar-wrap'>"
@@ -1140,10 +1291,15 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
     # Quick stats block for degraded/critical sites
     stats_html = ""
     if mw_offline > 0 or fault_h > 2 or n_open_faults > 0:
-        est_loss = round(mw_offline * 6, 1)
+        est_mwh = round(mw_offline * 6, 1)
+        est_usd = int(round(mw_offline * 6 * REVENUE_RATE_PER_MWH))
+        usd_7d  = est_usd * 7
+        usd_str = f"${est_usd:,}/day" if est_usd > 0 else "—"
+        risk_str = f"${usd_7d:,}" if usd_7d > 0 else "—"
         stats_html = f"""<div class="site-quick-stats">
           <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">{mw_offline:.1f}</div></div>
-          <div class="qs-item"><div class="qs-label">Est. Loss/Day</div><div class="qs-val qs-orange">{est_loss:.0f} MWh</div></div>
+          <div class="qs-item"><div class="qs-label">$/Day Lost</div><div class="qs-val qs-orange">{usd_str}</div></div>
+          <div class="qs-item"><div class="qs-label">7-Day Risk</div><div class="qs-val qs-orange">{risk_str}</div></div>
           <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">{n_open_faults}</div></div>
           <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">{fault_h:.0f}h</div></div>
         </div>"""
@@ -1201,10 +1357,17 @@ def render_site_accordion(sid, site, strip, site_diags, fault_h, comm_h,
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt{sid}" onchange="sortStrip({sid}, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb{sid}"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm{sid}" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm{sid}" class="strip-canvas" data-site="{esc(site)}"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt{sid}">Capacity Factor (%)</span>
@@ -1474,6 +1637,23 @@ PAGE = """<!DOCTYPE html>
   .pattern-head {{ font-size: 13px; font-weight: 600; color: #333; }}
   .pattern-sites {{ font-size: 11px; color: #666; margin-top: 3px; }}
   .patt-tag {{ background: #fff0cc; color: #7a5000; border-radius: 10px; padding: 1px 8px; margin: 2px 2px 0 0; display: inline-block; font-size: 10.5px; }}
+  /* portfolio health + $/day metrics */
+  .ps-green {{ color: #27ae60 !important; }}
+  .ps-sub {{ font-size: 10px; color: #ccc; margin-top: 2px; word-break: break-word; }}
+  /* action queue */
+  .action-queue {{ background:#fff8f0;border:2px solid #f0a830;border-radius:8px;padding:12px 16px;margin-bottom:14px; }}
+  .aq-header {{ font-size:13px;font-weight:700;color:#b35900;margin-bottom:8px; }}
+  .aq-row {{ display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid #f0dfc0; }}
+  .aq-row:last-child {{ border-bottom:none; }}
+  .aq-num {{ font-size:15px;font-weight:700;color:#b35900;min-width:18px;padding-top:1px; }}
+  .aq-content {{ flex:1; }}
+  .aq-action {{ font-size:13px;font-weight:600;color:#1a1a1a; }}
+  .aq-detail {{ font-size:11px;color:#666;margin-top:2px; }}
+  .aq-badge {{ font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:12px;white-space:nowrap;margin-top:2px; }}
+  .aq-critical {{ background:#fde8e8;color:#c00; }}
+  .aq-high {{ background:#fff0db;color:#b35900; }}
+  .aq-medium {{ background:#e8f5e8;color:#1a6b1a; }}
+  .aq-pattern {{ background:#e8eef8;color:#1a3a8a; }}
 </style>
 </head>
 <body>
@@ -1616,6 +1796,7 @@ function jet(v) {{
 
 const ROW_H = 14, GAP = 1, AVG_H = 16, IRR_H = 16, AXIS_H = 36;
 const stripCache = {{}};
+const stripSortOrder = {{}};
 
 function drawStrip(sid, mode) {{
   const dEl = document.getElementById('d' + sid);
@@ -1657,6 +1838,17 @@ function drawStrip(sid, mode) {{
   /* pick data source based on mode */
   const isCF = mode === 'cf';
   const srcRows = isCF ? data.vals : data.kw;
+
+  /* sorted inverter indices — null/undefined treated as 0 (offline = worst) */
+  const _sort = stripSortOrder[sid] || 'none';
+  let sortedIdx = Array.from({{length: nInv}}, (_, i) => i);
+  if (_sort !== 'none') {{
+    const _avgs = srcRows.map(row =>
+      row.reduce((s, v) => s + (v !== null && v !== undefined ? v : 0), 0) / row.length
+    );
+    sortedIdx.sort((a, b) => _sort === 'asc' ? _avgs[a] - _avgs[b] : _avgs[b] - _avgs[a]);
+  }}
+  data._sorted = sortedIdx;
 
   /* compute max kW per inverter for kW-mode scaling */
   let maxKwPerInv = [];
@@ -1726,10 +1918,10 @@ function drawStrip(sid, mode) {{
   paintRow(avg, y, AVG_H, 100);
   y += AVG_H;
 
-  /* inverter rows */
-  srcRows.forEach((row, i) => {{
-    const scale = isCF ? 100 : (maxKwPerInv[i] || 1);
-    paintRow(row, y + i * ROW_H, ROW_H, scale);
+  /* inverter rows — drawn in sorted order */
+  sortedIdx.forEach((origIdx, drawIdx) => {{
+    const scale = isCF ? 100 : (maxKwPerInv[origIdx] || 1);
+    paintRow(srcRows[origIdx], y + drawIdx * ROW_H, ROW_H, scale);
   }});
 
   /* x-axis */
@@ -1761,7 +1953,7 @@ function drawStrip(sid, mode) {{
   let labelsHtml = '';
   if (hasIrrad) labelsHtml += '<div style="height:' + IRR_H + 'px;line-height:' + IRR_H + 'px;color:#d48800;font-weight:600">Irradiance</div>';
   labelsHtml += '<div class="avg" style="height:' + AVG_H + 'px;line-height:' + AVG_H + 'px">Average</div>';
-  labelsHtml += data.invs.map(n => `<div title="${{n}}">${{n}}</div>`).join('');
+  labelsHtml += sortedIdx.map(i => `<div title="${{data.invs[i]}}">${{data.invs[i]}}</div>`).join('');
   lb.innerHTML = labelsHtml;
   cv.dataset.drawn = '1';
   cv.dataset.mode = mode;
@@ -1817,10 +2009,11 @@ function drawStrip(sid, mode) {{
     else {{
       const rowIdx = Math.floor((my - irradOffset - AVG_H) / ROW_H);
       if (rowIdx < 0 || rowIdx >= nInv) {{ tip.style.display = 'none'; return; }}
-      const cf = data.vals[rowIdx] ? data.vals[rowIdx][b] : null;
-      const kw = data.kw && data.kw[rowIdx] ? data.kw[rowIdx][b] : null;
-      const cap = data.caps ? data.caps[rowIdx] : 0;
-      const name = data.invs[rowIdx];
+      const origIdx = sortedIdx[rowIdx];
+      const cf = data.vals[origIdx] ? data.vals[origIdx][b] : null;
+      const kw = data.kw && data.kw[origIdx] ? data.kw[origIdx][b] : null;
+      const cap = data.caps ? data.caps[origIdx] : 0;
+      const name = data.invs[origIdx];
       html = `<b>${{name}}</b><br>${{timeStr}}<br>`;
       if (cf === null && kw === null) {{
         html += '<span style="color:#bbb">No data</span>';
@@ -1829,21 +2022,107 @@ function drawStrip(sid, mode) {{
         if (kw !== null) html += `${{kw.toFixed(2)}} kW actual`;
         if (cap > 0) html += ` / ${{Math.round(cap)}} kW capacity`;
       }}
-      if (data.alerts[rowIdx] && data.alerts[rowIdx].length)
+      if (data.alerts[origIdx] && data.alerts[origIdx].length)
         html += '<br><span style="color:#ff9999;font-size:10px">' +
-                data.alerts[rowIdx].slice(0, 3).join('<br>') + '</span>';
+                data.alerts[origIdx].slice(0, 3).join('<br>') + '</span>';
     }}
     tip.innerHTML = html; tip.style.display = 'block';
     tip.style.left = Math.min(e.clientX + 14, window.innerWidth - 360) + 'px';
     tip.style.top = (e.clientY + 14) + 'px';
   }};
   cv.onmouseleave = () => tip.style.display = 'none';
+
+  /* day-column click → expanded bar chart preview */
+  cv.style.cursor = 'crosshair';
+  cv.onclick = e => {{
+    const rect = cv.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const b = Math.floor(mx / bw);
+    if (b < 0 || b >= data.bins) return;
+    const binsPerDay = Math.round(24 * 60 / bm);
+    showDayModal(sid, Math.floor(b / binsPerDay), bm, isCF);
+  }};
 }}
 
 function switchMode(sid) {{
   const sel = document.getElementById('sel' + sid);
+  const srt = document.getElementById('srt' + sid);
+  stripSortOrder[sid] = srt ? srt.value : 'none';
   if (sel) drawStrip(sid, sel.value);
 }}
+
+function sortStrip(sid, order) {{
+  stripSortOrder[sid] = order;
+  const mode = (document.getElementById('sel' + sid) || {{}}).value || 'cf';
+  drawStrip(sid, mode);
+}}
+
+function showDayModal(sid, dayIdx, bm, isCF) {{
+  const data = stripCache[sid];
+  if (!data) return;
+  bm = bm || data.binMin || 60;
+  const binsPerDay = Math.round(24 * 60 / bm);
+  const start = dayIdx * binsPerDay;
+  const end = Math.min(start + binsPerDay, data.bins);
+  const src = isCF ? data.vals : data.kw;
+  const sortedIndices = data._sorted || Array.from({{length: data.invs.length}}, (_, i) => i);
+  const labels = [], values = [], offlineFlags = [];
+  sortedIndices.forEach(origIdx => {{
+    labels.push(data.invs[origIdx]);
+    const row = (src[origIdx] || []).slice(start, end);
+    const allNull = row.every(v => v === null || v === undefined);
+    offlineFlags.push(allNull);
+    const avg = row.reduce((s, v) => s + (v !== null && v !== undefined ? v : 0), 0) / Math.max(row.length, 1);
+    values.push(Math.round(avg * 10) / 10);
+  }});
+  const t0 = new Date(data.start.replace(' ', 'T'));
+  const dayDate = new Date(t0.getTime() + dayIdx * binsPerDay * bm * 60000);
+  const dateStr = (dayDate.getMonth()+1) + '/' + dayDate.getDate() + '/' + (dayDate.getFullYear() % 100);
+  const cv = document.getElementById('hm' + sid);
+  const siteName = cv ? (cv.dataset.site || '') : '';
+  const maxVal = isCF ? 100 : (Math.max(...values.filter(v => v > 0)) || 1);
+  const colors = values.map((v, i) => {{
+    if (offlineFlags[i]) return 'rgba(200,200,200,0.7)';
+    const [r, g, b_] = jet(Math.min(v / maxVal, 1));
+    return `rgba(${{r}},${{g}},${{b_}},0.85)`;
+  }});
+  const old = document.getElementById('dayModal');
+  if (old) old.remove();
+  const modal = document.createElement('div');
+  modal.id = 'dayModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center';
+  modal.addEventListener('click', e => {{ if (e.target === modal) modal.remove(); }});
+  const chartH = Math.min(Math.max(labels.length * 22 + 60, 220), 600);
+  modal.innerHTML = `<div style="background:#fff;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.3);padding:18px 20px;width:700px;max-width:95vw;max-height:92vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <b style="font-size:14px;color:#1F4E79">${{siteName}} — ${{dateStr}} &nbsp;·&nbsp; ${{isCF ? 'Capacity Factor' : 'AC Production'}} (day detail)</b>
+      <button onclick="document.getElementById('dayModal').remove()" style="border:none;background:#f0f0f0;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div style="height:${{chartH}}px"><canvas id="dayModalChart"></canvas></div>
+    <div style="font-size:11px;color:#999;margin-top:8px">Grey bars = offline / no-data (treated as 0). Average over ${{end - start}} × ${{bm}}-min bins.</div>
+  </div>`;
+  document.body.appendChild(modal);
+  new Chart(document.getElementById('dayModalChart'), {{
+    type: 'bar',
+    data: {{ labels, datasets: [{{ data: values, backgroundColor: colors, borderWidth: 0 }}] }},
+    options: {{
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      scales: {{
+        x: {{ beginAtZero: true, max: isCF ? 100 : undefined,
+               grid: {{ color: 'rgba(0,0,0,.06)' }},
+               title: {{ display: true, text: isCF ? 'Avg Capacity Factor (%)' : 'Avg AC Production (kW)', font: {{ size: 11 }} }} }},
+        y: {{ ticks: {{ font: {{ size: 10 }} }} }}
+      }},
+      plugins: {{
+        legend: {{ display: false }},
+        tooltip: {{ callbacks: {{ label: ctx => ` ${{ctx.parsed.x.toFixed(1)}} ${{isCF ? '%' : 'kW'}}` }} }}
+      }}
+    }}
+  }});
+}}
+document.addEventListener('keydown', e => {{
+  if (e.key === 'Escape') {{ const m = document.getElementById('dayModal'); if (m) m.remove(); }}
+}});
 
 document.querySelectorAll('details.site-acc').forEach(d => {{
   const cvEl = d.querySelector('canvas.strip-canvas');
@@ -2051,7 +2330,6 @@ def main():
                                for v in tracker_data[s]['per_day'].values())))) or \
         "<div class='card muted'>No tracker/TCU alerts in this window.</div>"
 
-    from collections import Counter
     cat_counter = Counter(a["cat_label"] for a in filtered)
     day_all = [sum(1 for a in filtered if a["start"] and a["start"].date() == d)
                for d in days]

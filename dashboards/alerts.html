@@ -187,6 +187,23 @@
   .pattern-head { font-size: 13px; font-weight: 600; color: #333; }
   .pattern-sites { font-size: 11px; color: #666; margin-top: 3px; }
   .patt-tag { background: #fff0cc; color: #7a5000; border-radius: 10px; padding: 1px 8px; margin: 2px 2px 0 0; display: inline-block; font-size: 10.5px; }
+  /* portfolio health + $/day metrics */
+  .ps-green { color: #27ae60 !important; }
+  .ps-sub { font-size: 10px; color: #ccc; margin-top: 2px; word-break: break-word; }
+  /* action queue */
+  .action-queue { background:#fff8f0;border:2px solid #f0a830;border-radius:8px;padding:12px 16px;margin-bottom:14px; }
+  .aq-header { font-size:13px;font-weight:700;color:#b35900;margin-bottom:8px; }
+  .aq-row { display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:1px solid #f0dfc0; }
+  .aq-row:last-child { border-bottom:none; }
+  .aq-num { font-size:15px;font-weight:700;color:#b35900;min-width:18px;padding-top:1px; }
+  .aq-content { flex:1; }
+  .aq-action { font-size:13px;font-weight:600;color:#1a1a1a; }
+  .aq-detail { font-size:11px;color:#666;margin-top:2px; }
+  .aq-badge { font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:12px;white-space:nowrap;margin-top:2px; }
+  .aq-critical { background:#fde8e8;color:#c00; }
+  .aq-high { background:#fff0db;color:#b35900; }
+  .aq-medium { background:#e8f5e8;color:#1a6b1a; }
+  .aq-pattern { background:#e8eef8;color:#1a3a8a; }
 </style>
 </head>
 <body>
@@ -195,15 +212,17 @@
     <h1>Operational Alerts</h1>
     <div style="font-size:13px;margin-top:2px;opacity:.8">SolRiver Capital</div>
   </div>
-  <div class="meta">Generated: 2026-06-30 18:04<br><a href="index.html" style="color:#cde">← Portfolio Overview</a></div>
+  <div class="meta">Generated: 2026-06-30 18:21<br><a href="index.html" style="color:#cde">← Portfolio Overview</a></div>
 </header>
-<div class="portfolio-summary" style="grid-template-columns:repeat(5,1fr)">
+<div class="portfolio-summary" style="grid-template-columns:repeat(6,1fr)">
+  <div class="ps-item"><div class="ps-label">Health Score</div><div class="ps-value ps-orange">74/100</div></div>
   <div class="ps-item"><div class="ps-label">Sites w/ Issues</div><div class="ps-value ps-red">15</div></div>
   <div class="ps-item"><div class="ps-label">MW Offline</div><div class="ps-value ps-red">0.1</div></div>
-  <div class="ps-item"><div class="ps-label">Est. Loss / Day</div><div class="ps-value ps-orange">1 MWh</div></div>
-  <div class="ps-item"><div class="ps-label">Critical Alerts</div><div class="ps-value ps-red">7</div></div>
-  <div class='ps-item'><div class='ps-label'>Top Issue</div><div class='ps-value ps-small'>Elk Solar</div><div class='ps-sub'>Grid disturbance / utility event tripped inverters (not</div></div>
-</div>
+  <div class="ps-item"><div class="ps-label">$/Day Lost</div><div class="ps-value ps-orange">$29</div></div>
+  <div class="ps-item"><div class="ps-label">7-Day Risk</div><div class="ps-value ps-orange">$203</div></div>
+  <div class='ps-item'><div class='ps-label'>Top Issue Site</div><div class='ps-value ps-small'>Elk Solar</div><div class='ps-sub'>Grid disturbance / utility event tripped inverters (not</div></div>
+  <div class='ps-item' style='grid-column:1/-1;padding-top:4px'><div class='ps-label'>Open Alert Causes</div><div style='margin-top:4px'><span style='background:#e05;color:#fff;border-radius:10px;padding:2px 8px;font-size:11px;margin:2px'>Equipment: 3</span><span style='background:#d96;color:#fff;border-radius:10px;padding:2px 8px;font-size:11px;margin:2px'>Grid: 4</span><span style='background:#59a;color:#fff;border-radius:10px;padding:2px 8px;font-size:11px;margin:2px'>Comms: 2</span><span style='background:#888;color:#fff;border-radius:10px;padding:2px 8px;font-size:11px;margin:2px'>Other: 13</span></div></div>
+</div><div class='action-queue'><div class='aq-header'>&#9654; What Should I Do Next?</div><div class='aq-row'><span class='aq-num'>1</span><div class='aq-content'><div class='aq-action'>Investigate &amp; repair offline capacity at Eagle</div><div class='aq-detail'>0.1 MW offline (4%) · $29/day · 154h open</div></div><span class='aq-badge aq-critical'>CRITICAL</span></div><div class='aq-row'><span class='aq-num'>2</span><div class='aq-content'><div class='aq-action'>Escalate long-running fault at Elk Solar (159h)</div><div class='aq-detail'>159h open</div></div><span class='aq-badge aq-critical'>CRITICAL</span></div><div class='aq-row'><span class='aq-num'>3</span><div class='aq-content'><div class='aq-action'>Escalate long-running fault at C &amp; B Graham Energy (156h)</div><div class='aq-detail'>156h open</div></div><span class='aq-badge aq-critical'>CRITICAL</span></div><div class='aq-row'><span class='aq-num'>4</span><div class='aq-content'><div class='aq-action'>Escalate long-running fault at Whitetail (150h)</div><div class='aq-detail'>150h open</div></div><span class='aq-badge aq-critical'>CRITICAL</span></div><div class='aq-row'><span class='aq-num'>5</span><div class='aq-content'><div class='aq-action'>Coordinate cross-site fix: Underperformance without equipment faults — soiling/shading/</div><div class='aq-detail'>9 sites: RIT, Warbler, Bulloch 1A, Richmond, McLean</div></div><span class='aq-badge aq-pattern'>PATTERN</span></div></div>
 <div class="nav">
   <a href="index.html">Portfolio</a>
   <a href="#" class="tab-link active" onclick="switchTab('diagnosis',this);return false">Diagnosis</a>
@@ -257,7 +276,7 @@
       <div class="diag-head"><span class='diag-rank'>#4</span><b>C &amp; B Graham Energy</b> — Recurring hardware fault on INVERTER 1 (board/IGBT/capacitor suspect)</div>
       <ul class="diag-ev"><li>[pattern] 1 fault alerts on this inverter in window</li><li>[alert 06-24 11:58] INVERTER 1: Solectria XGI 1500 Series - Fault Alert — External Fan Damaged (OPEN)</li><li>[AI summary] “…cross METER 2 and METER 3.
 
-Several inverters are confirmed offline based on hourly production: INV-4 (since Jun 9 ~1 PM EDT, forced outage â Shu…”</li><li class='email-ev'><b>[Insurance]</b> 2026-06-15 — Solar loss at Graham Project<br><span class='email-body'>Equipment-loss claim (DOL 2/15/26) involving Solectria inverters. Travelers requested pre-incident O&amp;M reports, alarm logs, work orders, all Solectria communications, warranty/claims docs, and a root </span></li></ul>
+Several inverters are confirmed offline based on hourly production: INV-4 (since Jun 9 ~1 PM EDT, forced outage â Shu…”</li><li class='email-ev'><b>[Insurance]</b> 2026-06-15 — Solar loss at Graham Project<br><span class='email-body'>Equipment-loss claim (DOL 2/15/26) involving Solectria inverters. Travelers requested pre-incident O&amp;M reports, alarm logs, work orders, all Solectria communications, warranty/claims docs, and a root </span></li><li class='email-ev'><b>[O&amp;M / Equipment]</b> 2026-06-25 — Graham Solar — Inverter RMA Status Update<br><span class='email-body'>9 inverters offline (8 thermal, #4 component failure); coordinating RMA replacements with Solectria.</span></li><li class='email-ev'><b>[O&amp;M / Equipment]</b> 2026-06-29 — Re: Solectria Quote — 5 spare inverters<br><span class='email-body'>Spare-inverter purchase for Graham; lead-time confirmation.</span></li></ul>
       <div class="diag-action">→ Pull the inverter's internal event log, check warranty status, and schedule component or unit replacement. Same-model faults at other sites would indicate a batch defect.</div>
     </div>
     <div class="diag-card">
@@ -269,12 +288,12 @@ Several inverters are confirmed offline based on hourly production: INV-4 (since
       <div class="diag-head"><span class='diag-rank'>#6</span><b>Warbler</b> — Underperformance without equipment faults — soiling/shading/baseline suspect</div>
       <ul class="diag-ev"><li>[alert 06-24 11:49] site: Rule Tool Alert — Errors: Performance (6)	 Communication: All tests passed (OPEN)</li><li>[alert 06-24 11:36] Sungrow SG125 Inverter A14 at 100%: Inverter / irradiance check — Checking production against available sunlight for 'Sungrow SG125 Inverter A14 at 100%' an (1.6h, resolved)</li><li>[AI summary] “…ay 22â26 and Jun 1â2 aligns with weather, not equipment issues.
 
-30-day Energy Performance Index averaged 0.88 and inverter availability 97%.…”</li></ul>
+30-day Energy Performance Index averaged 0.88 and inverter availability 97%.…”</li><li class='email-ev'><b>[Grid / Utility]</b> 2026-06-24 — NARENCO O&amp;M | 06/24/26 Incident Report<br><span class='email-body'>Utility trip at Warbler; reclosed remotely.</span></li><li class='email-ev'><b>[Grid / Utility]</b> 2026-06-29 — SR/NRCO — Site Trips/Outages on 6/28<br><span class='email-body'>All three NC sites showed 6/28 outages per AlsoEnergy.</span></li></ul>
       <div class="diag-action">→ Cross-check irradiance vs output. Clear-day deficit → schedule module wash / vegetation survey; deficit only vs model → recalibrate expected baseline (stale baselines cause ~40% of these alerts).</div>
     </div>
     <div class="diag-card">
       <div class="diag-head"><span class='diag-rank'>#7</span><b>Bulloch 1A</b> — Underperformance without equipment faults — soiling/shading/baseline suspect</div>
-      <ul class="diag-ev"><li>[alert 06-24 07:44] site: Rule Tool Alert — Errors: , Performance (3)	 Communication: All tests passed (OPEN)</li><li>[AI summary] “…Tracker &quot;Position A1 S 16&quot; stuck at 0Â° and AE Smart UPS default alerts not set â monitoring items only. Tracker losses remain small (~24 kWh…”</li><li class='email-ev'><b>[Land / County / Tax]</b> 2026-06-19 — Re: Bulloch County Assessment Appeals<br><span class='email-body'>Conflicting valuations: the April audit pegged each site at ~$6.8M FMV while May notices show ~$2.7M each. Income-method argument (favored by SolRiver) apparently not addressed in the re-assessment. C</span></li><li class='email-ev'><b>[Grid / Utility]</b> 2026-06-18 — Outage New — 92 Ben-Hill Rd<br><span class='email-body'>Georgia Power reported widespread outages affecting 92 Ben-Hill Rd with no estimated restoration time.</span></li><li class='email-ev'><b>[Grid / Utility]</b> 2026-06-13 — Outage New — 2436 GA-Hwy-88<br><span class='email-body'>Georgia Power reported an outage at 2436 GA-Highway-88 with anticipated restoration by 06/13 05:00 PM.</span></li></ul>
+      <ul class="diag-ev"><li>[alert 06-24 07:44] site: Rule Tool Alert — Errors: , Performance (3)	 Communication: All tests passed (OPEN)</li><li>[AI summary] “…Tracker &quot;Position A1 S 16&quot; stuck at 0Â° and AE Smart UPS default alerts not set â monitoring items only. Tracker losses remain small (~24 kWh…”</li><li class='email-ev'><b>[Land / County / Tax]</b> 2026-06-19 — Re: Bulloch County Assessment Appeals<br><span class='email-body'>Conflicting valuations: the April audit pegged each site at ~$6.8M FMV while May notices show ~$2.7M each. Income-method argument (favored by SolRiver) apparently not addressed in the re-assessment. C</span></li><li class='email-ev'><b>[Grid / Utility]</b> 2026-06-18 — Outage New — 92 Ben-Hill Rd<br><span class='email-body'>Georgia Power reported widespread outages affecting 92 Ben-Hill Rd with no estimated restoration time.</span></li><li class='email-ev'><b>[Grid / Utility]</b> 2026-06-13 — Outage New — 2436 GA-Hwy-88<br><span class='email-body'>Georgia Power reported an outage at 2436 GA-Highway-88 with anticipated restoration by 06/13 05:00 PM.</span></li><li class='email-ev'><b>[O&amp;M / Equipment]</b> 2026-06-30 — SR/NRCO — Bulloch 1B Underperformance<br><span class='email-body'>Investigating Bulloch 1B underproduction vs 1A.</span></li></ul>
       <div class="diag-action">→ Cross-check irradiance vs output. Clear-day deficit → schedule module wash / vegetation survey; deficit only vs model → recalibrate expected baseline (stale baselines cause ~40% of these alerts).</div>
     </div>
     <div class="diag-card">
@@ -318,7 +337,8 @@ No production events in the reporting window. A brief site dip on Jun 5 (EPI 0.8
       <div class="acc-body">
         <div class="site-quick-stats">
           <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">0.1</div></div>
-          <div class="qs-item"><div class="qs-label">Est. Loss/Day</div><div class="qs-val qs-orange">1 MWh</div></div>
+          <div class="qs-item"><div class="qs-label">$/Day Lost</div><div class="qs-val qs-orange">$29/day</div></div>
+          <div class="qs-item"><div class="qs-label">7-Day Risk</div><div class="qs-val qs-orange">$203</div></div>
           <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">1</div></div>
           <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">154h</div></div>
         </div>
@@ -336,10 +356,17 @@ No production events in the reporting window. A brief site dip on Jun 5 (EPI 0.8
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt0" onchange="sortStrip(0, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb0"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm0" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm0" class="strip-canvas" data-site="Eagle"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt0">Capacity Factor (%)</span>
@@ -367,12 +394,13 @@ No production events in the reporting window. A brief site dip on Jun 5 (EPI 0.8
       <div class="acc-body">
         <div class="site-quick-stats">
           <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">0.0</div></div>
-          <div class="qs-item"><div class="qs-label">Est. Loss/Day</div><div class="qs-val qs-orange">0 MWh</div></div>
+          <div class="qs-item"><div class="qs-label">$/Day Lost</div><div class="qs-val qs-orange">—</div></div>
+          <div class="qs-item"><div class="qs-label">7-Day Risk</div><div class="qs-val qs-orange">—</div></div>
           <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">1</div></div>
           <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">156h</div></div>
         </div>
         <div class="email-section">
-      <div class="email-header">Site Emails (1)</div>
+      <div class="email-header">Site Emails (3)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-15</td>
@@ -458,6 +486,18 @@ wrote:
 &gt;
 &gt; can be reviewed for your loss(es)…</pre></details></td>
           <td class="muted">Tracy Beaudoin (Travelers) / Abhinav Korni (SolRiv</td>
+        </tr><tr>
+          <td>2026-06-25</td>
+          <td><span class="email-cat">O&amp;M / Equipment</span></td>
+          <td><b>Graham Solar — Inverter RMA Status Update</b><br><span class="email-body">9 inverters offline (8 thermal, #4 component failure); coordinating RMA replacements with Solectria.</span>
+            </td>
+          <td class="muted">Steve Maloney (SolRiver) ↔ Tom Shanahan (Solectria</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">O&amp;M / Equipment</span></td>
+          <td><b>Re: Solectria Quote — 5 spare inverters</b><br><span class="email-body">Spare-inverter purchase for Graham; lead-time confirmation.</span>
+            </td>
+          <td class="muted">Steve Maloney (SolRiver) ↔ Jonathan Helmuth (Solec</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>Site producing through evening with light rain; meter shows 22,830 kWh today across METER 2 and METER 3.</li><li>Several inverters are confirmed offline based on hourly production: INV-4 (since Jun 9 ~1 PM EDT, forced outage — Shutdown Command), INV-7 and INV-9 (since Jun 2, forced outages), INV-13 (since May 21), INV-17 (since Apr 22), INV-22 (Jun 9 ~5 PM, arc fault), INV-23 (since Apr 10), INV-35 (since Apr 6).</li><li>INV-14 tripped Jun 9 7:21 AM (hardware self-test) but resumed.</li><li>Combined ~1.4 MW offline; today's loss ~6–8 MWh vs.</li><li>~61 MWh daily estimate.</li></ul></div>
         
@@ -474,10 +514,17 @@ Several inverters are confirmed offline based on hourly production: INV-4 (since
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt1" onchange="sortStrip(1, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb1"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm1" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm1" class="strip-canvas" data-site="C &amp; B Graham Energy"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt1">Capacity Factor (%)</span>
@@ -505,7 +552,8 @@ Several inverters are confirmed offline based on hourly production: INV-4 (since
       <div class="acc-body">
         <div class="site-quick-stats">
           <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">0.0</div></div>
-          <div class="qs-item"><div class="qs-label">Est. Loss/Day</div><div class="qs-val qs-orange">0 MWh</div></div>
+          <div class="qs-item"><div class="qs-label">$/Day Lost</div><div class="qs-val qs-orange">—</div></div>
+          <div class="qs-item"><div class="qs-label">7-Day Risk</div><div class="qs-val qs-orange">—</div></div>
           <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">0</div></div>
           <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">8h</div></div>
         </div>
@@ -583,10 +631,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt2" onchange="sortStrip(2, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb2"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm2" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm2" class="strip-canvas" data-site="Marble Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt2">Capacity Factor (%)</span>
@@ -614,11 +669,21 @@ wrote:
       <div class="acc-body">
         <div class="site-quick-stats">
           <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">0.0</div></div>
-          <div class="qs-item"><div class="qs-label">Est. Loss/Day</div><div class="qs-val qs-orange">0 MWh</div></div>
+          <div class="qs-item"><div class="qs-label">$/Day Lost</div><div class="qs-val qs-orange">—</div></div>
+          <div class="qs-item"><div class="qs-label">7-Day Risk</div><div class="qs-val qs-orange">—</div></div>
           <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">0</div></div>
           <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">4h</div></div>
         </div>
-        
+        <div class="email-section">
+      <div class="email-header">Site Emails (1)</div>
+      <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
+      <tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">O&amp;M / Equipment</span></td>
+          <td><b>Re: Vegetation Management + PMI — Town of Monroe Solar Farm</b><br><span class="email-body">Veg management + PMI for Monroe; a tree fell onto modules 6/29 prompting a change order.</span>
+            </td>
+          <td class="muted">Steve/Brandon/Riley (SolRiver); Danny Avrith/Judy </td>
+        </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>Inverter 20 has been offline since May 30, confirmed by an Insulation Resistance Low (IsolationErr) fault and stuck-at-zero AC telemetry.</li><li>Classified as a forced outage affecting ~73 kW (~3.7% of site capacity), with ~2.3 MWh lost over 11 days (~210 kWh/day expected per the PV model losses for the sampled inverter).</li><li>All other 26 inverters are online and producing in line with peers as of Jun 9 at 8:03 PM EDT.</li><li>30-day EPI averages 1.18 and inverter availability is 96%, the latter dragged by INV-20.</li><li>Sustained EPI above 1.1 and rule tool high-energy-ratio flags across all inverters suggest a PV model or weather station calibration issue.</li></ul></div>
         
     <div class="diag-card">
@@ -632,10 +697,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt3" onchange="sortStrip(3, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb3"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm3" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm3" class="strip-canvas" data-site="Monroe Landfill"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt3">Capacity Factor (%)</span>
@@ -656,14 +728,20 @@ wrote:
       <summary>
         <span class="acc-name">Williams Solar, LLC</span>
         
-        <span class="acc-meta">40 inverters</span>
-        <span class='acc-badge acc-green'>Healthy</span>
+        <span class="acc-meta">40 inv · 1 offline</span>
+        <span class='acc-badge acc-red'>Critical</span><span class='acc-badge acc-red'>150h comms</span>
         <div class='cap-bar-wrap'><div class='cap-bar-fill' style='width:0%'></div></div>
       </summary>
       <div class="acc-body">
-        
+        <div class="site-quick-stats">
+          <div class="qs-item"><div class="qs-label">MW Offline</div><div class="qs-val qs-red">0.0</div></div>
+          <div class="qs-item"><div class="qs-label">$/Day Lost</div><div class="qs-val qs-orange">—</div></div>
+          <div class="qs-item"><div class="qs-label">7-Day Risk</div><div class="qs-val qs-orange">—</div></div>
+          <div class="qs-item"><div class="qs-label">Open Faults</div><div class="qs-val">1</div></div>
+          <div class="qs-item"><div class="qs-label">Fault Hours</div><div class="qs-val">0h</div></div>
+        </div>
         <div class="email-section">
-      <div class="email-header">Site Emails (1)</div>
+      <div class="email-header">Site Emails (2)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-19</td>
@@ -676,6 +754,12 @@ Ticket #SiteStart Date | TimeEnd Date | TimeIssue
 
 ===============================================================</pre></details></td>
           <td class="muted">omops via Projects (NARENCO / NCC)</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Regulatory / REC</span></td>
+          <td><b>Longleaf &amp; Williams Solar — filing Notice of Termination (NO</b><br><span class="email-body">Permit closeout (Notice of Termination) for two NC sites.</span>
+            </td>
+          <td class="muted">Steve/Abhinav (SolRiver) ↔ Chris Bailey (NC DEQ-DE</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>INVERTER A20 has been offline since Jun 5 with zero production while peers operate normally.</li><li>The meter-to-inverter ratio of 0.97 confirms a true outage, not a comm loss.</li><li>A grid overvoltage fault on Jun 8 at 3:10 PM EDT followed by a device communication alert at 3:39 PM points to a forced outage.</li><li>The other 39 inverters are online and producing normally under clear skies.</li><li>INVERTER A20 forced outage (Jun 5–present, ongoing ~5 days, 125 kW / 2.5% of site capacity).</li></ul></div>
         
@@ -700,10 +784,17 @@ Ticket #SiteStart Date | TimeEnd Date | TimeIssue
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt4" onchange="sortStrip(4, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb4"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm4" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm4" class="strip-canvas" data-site="Williams Solar, LLC"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt4">Capacity Factor (%)</span>
@@ -725,13 +816,13 @@ Ticket #SiteStart Date | TimeEnd Date | TimeIssue
         <span class="acc-name">Elk Solar</span>
         
         <span class="acc-meta">43 inverters</span>
-        <span class='acc-badge acc-green'>Healthy</span>
+        <span class='acc-badge acc-red'>Critical</span><span class='acc-badge acc-red'>36h comms</span>
         <div class='cap-bar-wrap'><div class='cap-bar-fill' style='width:0%'></div></div>
       </summary>
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (6)</div>
+      <div class="email-header">Site Emails (18)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-24</td>
@@ -788,10 +879,17 @@ Ticket #SiteStart Date | TimeEnd Date | TimeIssue
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt5" onchange="sortStrip(5, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb5"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm5" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm5" class="strip-canvas" data-site="Elk Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt5">Capacity Factor (%)</span>
@@ -813,7 +911,7 @@ Ticket #SiteStart Date | TimeEnd Date | TimeIssue
         <span class="acc-name">Rio Grande Elementary</span>
         <span class='acc-mw'>0.4 MW</span>
         <span class="acc-meta">13 inverters</span>
-        <span class='acc-badge acc-green'>Healthy</span>
+        <span class='acc-badge acc-orange'>Degraded</span><span class='acc-badge acc-orange'>6h comms</span>
         <div class='cap-bar-wrap'><div class='cap-bar-fill' style='width:0%'></div></div>
       </summary>
       <div class="acc-body">
@@ -842,10 +940,17 @@ Ticket #SiteStart Date | TimeEnd Date | TimeIssue
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt6" onchange="sortStrip(6, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb6"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm6" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm6" class="strip-canvas" data-site="Rio Grande Elementary"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt6">Capacity Factor (%)</span>
@@ -867,13 +972,13 @@ Ticket #SiteStart Date | TimeEnd Date | TimeIssue
         <span class="acc-name">Bulloch 1B</span>
         
         <span class="acc-meta">24 inverters</span>
-        <span class='acc-badge acc-green'>Healthy</span>
+        <span class='acc-badge acc-green'>Healthy</span><span class='acc-badge acc-green'>1h comms</span>
         <div class='cap-bar-wrap'><div class='cap-bar-fill' style='width:0%'></div></div>
       </summary>
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (3)</div>
+      <div class="email-header">Site Emails (5)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-19</td>
@@ -1010,6 +1115,18 @@ Links:
 
 ===============================================================</pre></details></td>
           <td class="muted">Georgia Power (do-not-reply) → projects@</td>
+        </tr><tr>
+          <td>2026-06-30</td>
+          <td><span class="email-cat">O&amp;M / Equipment</span></td>
+          <td><b>SR/NRCO — Bulloch 1B Underperformance</b><br><span class="email-body">Investigating Bulloch 1B underproduction vs 1A.</span>
+            </td>
+          <td class="muted">Abhinav/Steve (SolRiver); Jayme Orrock/Joseph Lang</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Land / County / Tax</span></td>
+          <td><b>SolRiver — Bulloch County GA appraiser sourcing &amp; peer coord</b><br><span class="email-body">Coordinated appraiser search for the Bulloch tax arbitration (transcripts kept individually).</span>
+            </td>
+          <td class="muted">Riley/Wendy (SolRiver) → REC Solar, Monarch/Cardin</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>All 24 inverters online and reporting as of Jun 9 at 8:07 PM EDT, with the site producing 24,000 kWh today against a 24,475 kWh estimate.</li><li>Current conditions are clear and 82°F at sunset, so production is finished for the day.</li><li>30-day Energy Performance Index averages 0.99 with inverter availability at 100% over the last 10 days.</li><li>PV model losses on the sampled inverter show no major issues; tracker lost energy averages ~76 kWh/day, minor.</li><li>Meter-to-inverter ratio is 0.98, normal.</li></ul></div>
         
@@ -1026,10 +1143,17 @@ Meter-to-inverter ratio is…”</li></ul>
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt7" onchange="sortStrip(7, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb7"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm7" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm7" class="strip-canvas" data-site="Bulloch 1B"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt7">Capacity Factor (%)</span>
@@ -1051,7 +1175,7 @@ Meter-to-inverter ratio is…”</li></ul>
         <span class="acc-name">Sunflower Solar</span>
         
         <span class="acc-meta">80 inverters</span>
-        <span class='acc-badge acc-green'>Healthy</span>
+        <span class='acc-badge acc-green'>Healthy</span><span class='acc-badge acc-green'>0h comms</span>
         <div class='cap-bar-wrap'><div class='cap-bar-fill' style='width:0%'></div></div>
       </summary>
       <div class="acc-body">
@@ -1091,10 +1215,17 @@ No production events in the last two weeks. Daily output has tracked the site pe
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt8" onchange="sortStrip(8, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb8"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm8" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm8" class="strip-canvas" data-site="Sunflower Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt8">Capacity Factor (%)</span>
@@ -1116,13 +1247,13 @@ No production events in the last two weeks. Daily output has tracked the site pe
         <span class="acc-name">Washington Solar</span>
         
         <span class="acc-meta">40 inverters</span>
-        <span class='acc-badge acc-green'>Healthy</span>
+        <span class='acc-badge acc-green'>Healthy</span><span class='acc-badge acc-green'>0h comms</span>
         <div class='cap-bar-wrap'><div class='cap-bar-fill' style='width:0%'></div></div>
       </summary>
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (2)</div>
+      <div class="email-header">Site Emails (3)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-23</td>
@@ -1200,6 +1331,18 @@ Asst. Project Manager – *SolRiver Capital LLC*
 
 ===============================================================</pre></details></td>
           <td class="muted">Abhinav Korni (SolRiver) → M-RETS admin</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Grid / Utility</span></td>
+          <td><b>NARENCO O&amp;M | 06/29/26 Incident Report</b><br><span class="email-body">Utility trips at Whitetail &amp; Washington; reclosed remotely.</span>
+            <details class='transcript-details'><summary>Full transcript</summary><pre class='comm-body'>NCC Daily WO Report - Sol River
+
+| Ticket # | Site | Start Date | Time | End Date | Time | Issue |
+| 50425 | Whitetail | 06/27/2026 | 19:27 | 06/28/2026 | 15:47 | Utility Tripped the site offline at 19:27 on 06/27/2026. Production restored to the site by the NCC remotely at 15:47 on 06/28/2026 |
+| 50429 | Washington | 06/29/2026 | 04:00 | 06/29/2026 | 09:30 | Utility Tripped the site offline at 04:00 on 06/29/2026. Production restored to the site by the NCC remotely at 09:30 on 06/29/2026 |
+
+---</pre></details></td>
+          <td class="muted">NARENCO NCC daily report (via projects@)</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>All 40 inverters communicating as of Jun 9 at 8:08 PM EDT, with site availability at 100% over the last 30 days.</li><li>Current conditions are light rain at 77°F, and today's production reflects a cloudy/rainy profile, peaking near 3.7 MW at 1:00 PM versus ~5 MW expected.</li><li>The INVERTER 6 invalid-data warning that triggered at 8:03 PM is a brief end-of-day comm blip; Last Update is current.</li><li>The 30-day Energy Performance Index averages ~1.16, consistently above 1.1, suggesting a PV model or POA sensor calibration issue worth review.</li><li>30-day production is 1,246 MWh (94% of estimate).</li></ul></div>
         
@@ -1209,10 +1352,17 @@ Asst. Project Manager – *SolRiver Capital LLC*
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt9" onchange="sortStrip(9, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb9"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm9" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm9" class="strip-canvas" data-site="Washington Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt9">Capacity Factor (%)</span>
@@ -1240,7 +1390,7 @@ Asst. Project Manager – *SolRiver Capital LLC*
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (1)</div>
+      <div class="email-header">Site Emails (2)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-22</td>
@@ -1304,6 +1454,12 @@ wrote:
 &gt; finds that if the participant’s subscription has generated more kWh than
 &gt; the site consumed during the previous twelve months, the Participant wi…</pre></details></td>
           <td class="muted">Steve Maloney / Brandon Conard (SolRiver) ↔ Oregon</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Regulatory / REC</span></td>
+          <td><b>Arcadia/PGE — Oregon Shines QRE Agreement (Sheridan, Auburn,</b><br><span class="email-body">Oregon Shines QRE REC compliance for 3 OR sites.</span>
+            </td>
+          <td class="muted">SolRiver (Steve, Riley) / Perch (Eric Timlin) / PG</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>All hardware is communicating as of Jun 9 at 5:09 PM PDT, with Inverter 1 producing normally through the afternoon under light rain conditions.</li><li>Today's production tracks expected output closely, peaking near 2.0 MW.</li><li>Over the last 30 days, the site is performing well: EPI averages 1.09 and inverter availability is 100%.</li><li>Total production of 553 MWh is 123% of estimate.</li><li>The persistently elevated EPI (&gt;1.1 on several days) suggests a possible PV model or pyranometer calibration drift worth reviewing.</li></ul></div>
         
@@ -1313,10 +1469,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt10" onchange="sortStrip(10, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb10"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm10" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm10" class="strip-canvas" data-site="Auburn Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt10">Capacity Factor (%)</span>
@@ -1344,7 +1507,7 @@ wrote:
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (3)</div>
+      <div class="email-header">Site Emails (5)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-19</td>
@@ -1481,6 +1644,18 @@ Links:
 
 ===============================================================</pre></details></td>
           <td class="muted">Georgia Power (do-not-reply) → projects@</td>
+        </tr><tr>
+          <td>2026-06-30</td>
+          <td><span class="email-cat">O&amp;M / Equipment</span></td>
+          <td><b>SR/NRCO — Bulloch 1B Underperformance</b><br><span class="email-body">Investigating Bulloch 1B underproduction vs 1A.</span>
+            </td>
+          <td class="muted">Abhinav/Steve (SolRiver); Jayme Orrock/Joseph Lang</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Land / County / Tax</span></td>
+          <td><b>SolRiver — Bulloch County GA appraiser sourcing &amp; peer coord</b><br><span class="email-body">Coordinated appraiser search for the Bulloch tax arbitration (transcripts kept individually).</span>
+            </td>
+          <td class="muted">Riley/Wendy (SolRiver) → REC Solar, Monarch/Cardin</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>All 28 inverters online and reporting fresh telemetry as of Jun 9 at 8:07 PM EDT, with the site past sunset under clear 82°F skies.</li><li>Earlier today the site reached ~3.0 MW around noon, consistent with AC capacity, though afternoon production was variable with passing clouds.</li><li>Over the last 30 days, the site averaged an EPI of 0.98 and 99.9% inverter availability.</li><li>Sampled-inverter PV model losses show only minor age and soiling losses; no major losses identified.</li><li>Meter-to-inverter ratio is 0.98, normal.</li></ul></div>
         
@@ -1495,10 +1670,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt11" onchange="sortStrip(11, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb11"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm11" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm11" class="strip-canvas" data-site="Bulloch 1A"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt11">Capacity Factor (%)</span>
@@ -1534,10 +1716,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt12" onchange="sortStrip(12, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb12"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm12" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm12" class="strip-canvas" data-site="Butler Maple"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt12">Capacity Factor (%)</span>
@@ -1657,10 +1846,17 @@ o: 720-400-8451 www.solrivercapital.com
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt13" onchange="sortStrip(13, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb13"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm13" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm13" class="strip-canvas" data-site="Gallia Academy"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt13">Capacity Factor (%)</span>
@@ -1708,10 +1904,17 @@ No production events in the last two weeks. Jun 8 and Jun 9 both saw weather-dri
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt14" onchange="sortStrip(14, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb14"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm14" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm14" class="strip-canvas" data-site="Gray Fox Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt14">Capacity Factor (%)</span>
@@ -1761,10 +1964,17 @@ No production events in the last two weeks. Jun 8 and Jun 9 both saw weather-dri
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt15" onchange="sortStrip(15, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb15"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm15" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm15" class="strip-canvas" data-site="Green Elementary"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt15">Capacity Factor (%)</span>
@@ -1877,10 +2087,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt16" onchange="sortStrip(16, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb16"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm16" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm16" class="strip-canvas" data-site="Green Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt16">Capacity Factor (%)</span>
@@ -1921,10 +2138,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt17" onchange="sortStrip(17, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb17"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm17" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm17" class="strip-canvas" data-site="Harding Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt17">Capacity Factor (%)</span>
@@ -1941,7 +2165,7 @@ wrote:
       </div>
       <script type="application/json" id="d17">{"invs": ["INVERTER 1", "INVERTER 2", "INVERTER 3", "INVERTER 4", "INVERTER 5", "INVERTER 6", "INVERTER 7", "INVERTER 8", "INVERTER 9", "INVERTER 10", "INVERTER 11", "INVERTER 12", "INVERTER 13", "INVERTER 14", "INVERTER 15", "INVERTER 16", "INVERTER 17", "INVERTER 18", "INVERTER 19", "INVERTER 20", "INVERTER 21", "INVERTER 22", "INVERTER 23", "INVERTER 24"], "bins": 168, "binMin": 60, "start": "2026-06-24 00:00", "vals": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.8, 39.8, 63.9, 80.8, 73.1, 68.1, 89.0, 76.1, 66.0, 68.0, 44.2, 32.3, 13.3, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.6, 18.4, 18.6, 24.4, 57.0, 71.8, 61.1, 58.1, 56.0, 62.6, 35.9, 19.2, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 7.9, 27.0, 48.9, 76.7, 93.2, 92.9, 94.5, 87.8, 81.3, 89.2, 68.8, 89.3, 53.0, 16.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.1, 49.1, 65.0, 88.3, 94.8, 95.2, 95.2, 95.2, 88.2, 75.0, 75.1, 55.6, 35.0, 13.3, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.2, 16.2, 63.5, 77.3, 79.8, 77.2, 77.8, 78.2, 53.5, 71.5, 69.5, 48.4, 14.6, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.2, 34.1, 64.0, 78.0, 94.0, 89.2, 64.6, 33.0, 62.4, 56.7, 7.4, 36.9, 28.5, 9.8, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.4, 51.0, 85.5, 95.2, 95.2, 95.2, 95.2, 89.1, 94.0, 70.2, 66.4, 68.5, 48.5, 16.1, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.9, 42.2, 65.1, 81.1, 74.0, 68.2, 89.0, 75.9, 65.8, 68.2, 44.2, 35.7, 15.0, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.3, 17.6, 18.0, 24.1, 57.3, 72.3, 62.1, 58.7, 56.6, 65.3, 40.0, 22.3, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.6, 28.9, 51.6, 79.8, 93.8, 93.1, 94.7, 88.3, 82.5, 90.2, 71.5, 94.2, 60.7, 18.3, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.4, 56.3, 71.4, 92.8, 95.1, 95.2, 95.2, 95.2, 88.4, 74.4, 76.2, 59.9, 39.1, 15.1, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.1, 15.3, 64.3, 78.0, 80.0, 77.4, 77.8, 78.1, 53.1, 71.5, 75.2, 55.3, 16.9, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 38.0, 68.9, 79.0, 94.2, 89.5, 64.8, 33.3, 62.9, 56.8, 7.3, 37.7, 30.8, 10.4, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.0, 59.0, 92.7, 95.2, 95.2, 95.2, 95.2, 90.8, 94.2, 71.0, 67.8, 72.8, 54.0, 18.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.0, 38.9, 61.1, 76.8, 71.2, 64.5, 87.8, 73.6, 62.8, 62.4, 40.5, 32.6, 13.6, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.2, 4.2, 4.0, 16.1, 16.4, 22.1, 54.4, 70.1, 58.6, 54.1, 52.9, 62.7, 36.6, 20.0, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.9, 26.6, 47.6, 74.5, 92.6, 89.7, 92.4, 84.1, 76.0, 86.9, 67.4, 91.5, 55.8, 16.6, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.4, 52.1, 65.8, 87.1, 94.0, 95.2, 95.2, 95.2, 87.4, 72.3, 73.5, 55.9, 35.8, 13.8, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.5, 9.2, 14.1, 61.9, 76.8, 79.0, 75.7, 76.9, 76.3, 51.0, 70.0, 70.8, 50.8, 15.3, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.1, 35.0, 64.3, 77.2, 93.7, 89.1, 62.1, 31.5, 59.7, 54.4, 6.7, 34.8, 28.9, 9.3, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.9, 54.7, 88.2, 95.2, 95.2, 95.2, 95.2, 90.2, 93.5, 67.0, 63.5, 68.1, 49.5, 16.0, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.9, 44.0, 67.2, 83.3, 76.5, 71.7, 90.4, 76.6, 68.1, 72.5, 47.3, 38.0, 15.9, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.1, 4.7, 19.0, 19.5, 25.9, 60.1, 76.0, 66.6, 63.3, 59.5, 68.1, 42.9, 23.0, 1.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.3, 31.2, 55.2, 84.4, 94.5, 94.4, 95.1, 91.1, 88.3, 92.0, 75.2, 94.9, 64.6, 19.5, 1.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.3, 60.8, 77.2, 94.6, 95.2, 95.2, 95.2, 95.2, 89.4, 74.9, 77.1, 61.4, 42.0, 16.2, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.0, 16.6, 67.2, 79.9, 80.9, 78.4, 78.8, 78.7, 55.1, 71.7, 77.4, 59.8, 17.9, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.9, 41.0, 71.6, 80.8, 94.4, 90.2, 66.5, 35.2, 65.8, 59.6, 8.2, 40.1, 33.2, 10.7, 1.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.8, 63.7, 94.2, 95.2, 95.2, 95.2, 95.2, 91.8, 94.7, 74.7, 71.7, 76.0, 57.7, 18.5, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.9, 44.3, 67.2, 83.3, 76.3, 71.5, 90.2, 76.5, 67.8, 72.6, 47.7, 37.7, 15.7, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.0, 4.7, 19.0, 19.4, 25.9, 60.0, 75.3, 66.8, 62.9, 59.2, 68.0, 42.5, 22.6, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.5, 31.3, 55.2, 84.3, 94.5, 94.3, 95.0, 90.9, 88.0, 91.9, 75.0, 94.9, 64.6, 19.2, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.1, 60.8, 77.1, 94.6, 95.2, 95.2, 95.2, 95.2, 89.0, 74.5, 76.3, 60.9, 41.8, 16.1, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.0, 16.4, 67.4, 79.8, 80.7, 78.0, 78.5, 77.9, 54.9, 71.5, 77.2, 59.9, 17.6, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.9, 40.9, 71.5, 80.8, 94.4, 90.1, 66.1, 34.9, 65.2, 59.3, 7.9, 39.3, 32.9, 10.2, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.7, 63.6, 94.5, 95.2, 95.2, 95.2, 95.2, 91.7, 94.7, 74.4, 71.4, 75.9, 57.6, 18.1, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.8, 44.8, 67.7, 83.6, 76.4, 71.3, 90.0, 76.8, 68.0, 72.0, 47.2, 37.5, 15.2, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.0, 4.7, 19.2, 19.6, 25.8, 59.8, 74.3, 67.4, 62.8, 59.0, 68.5, 42.5, 21.6, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.5, 31.7, 55.8, 84.8, 94.5, 94.3, 95.1, 90.9, 88.0, 91.9, 75.1, 94.9, 64.8, 18.8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.5, 61.6, 78.0, 94.7, 95.2, 95.2, 95.2, 95.2, 89.6, 74.3, 75.4, 60.1, 41.4, 15.7, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.1, 16.6, 68.0, 80.0, 80.6, 77.9, 78.8, 77.5, 55.0, 71.4, 77.3, 60.2, 17.1, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.7, 41.4, 72.0, 81.1, 94.5, 90.1, 66.0, 34.7, 65.0, 59.1, 7.8, 38.8, 33.0, 10.0, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.0, 64.5, 94.8, 95.2, 95.2, 95.2, 95.2, 91.3, 94.7, 74.3, 71.5, 76.0, 57.6, 16.8, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.9, 42.4, 65.5, 80.4, 74.1, 67.0, 88.7, 75.5, 66.6, 67.5, 44.4, 25.1, 7.8, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.3, 17.7, 18.0, 23.9, 57.1, 71.3, 62.8, 57.3, 55.1, 65.8, 29.3, 9.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.8, 29.4, 52.2, 80.7, 93.9, 93.2, 94.7, 88.0, 81.7, 90.1, 71.8, 93.9, 49.9, 11.6, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.2, 57.1, 72.5, 93.1, 95.1, 95.2, 95.2, 95.2, 91.8, 73.4, 74.2, 57.4, 30.2, 8.3, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.1, 15.2, 64.9, 77.7, 79.3, 76.7, 78.3, 78.3, 51.8, 69.3, 75.1, 46.9, 7.9, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.4, 38.3, 69.1, 79.0, 94.3, 90.2, 64.1, 32.6, 62.2, 56.7, 7.2, 35.2, 25.6, 7.1, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.7, 60.0, 93.4, 95.2, 95.2, 95.2, 95.2, 91.0, 94.4, 69.9, 66.6, 71.8, 42.8, 9.6, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.8, 42.1, 64.8, 81.0, 73.8, 67.3, 88.9, 75.2, 65.5, 67.3, 41.1, 28.2, 8.7, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.6, 4.3, 17.4, 17.8, 23.7, 56.9, 71.9, 62.0, 56.8, 54.8, 62.5, 32.0, 10.7, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.6, 28.8, 51.4, 80.0, 93.8, 93.0, 94.5, 87.7, 81.2, 89.8, 71.1, 88.2, 49.8, 12.1, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.8, 55.8, 71.3, 92.6, 95.1, 95.2, 95.2, 95.2, 91.4, 73.5, 73.7, 53.5, 31.4, 9.1, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.0, 15.0, 64.4, 77.7, 79.0, 76.5, 78.3, 78.9, 51.1, 69.4, 68.3, 46.5, 8.9, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.4, 37.6, 68.3, 78.8, 94.3, 90.0, 64.9, 32.6, 62.0, 56.2, 7.1, 34.4, 26.6, 7.3, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.2, 58.5, 92.4, 95.2, 95.2, 95.2, 95.2, 90.8, 94.3, 69.5, 66.0, 67.3, 44.7, 10.3, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.9, 42.8, 64.8, 81.1, 74.2, 67.6, 89.3, 75.0, 65.9, 67.8, 43.6, 27.4, 9.8, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.4, 17.6, 18.0, 23.9, 57.4, 72.5, 62.0, 57.6, 55.4, 65.2, 30.9, 12.4, 1.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.6, 28.8, 51.6, 80.2, 93.7, 93.1, 94.7, 88.1, 81.9, 90.0, 71.6, 92.9, 48.6, 13.4, 1.1, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.8, 55.7, 71.5, 92.8, 95.1, 95.2, 95.2, 95.2, 91.3, 74.4, 73.8, 57.2, 30.5, 9.9, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.2, 15.3, 64.1, 78.0, 79.0, 77.1, 78.3, 79.4, 51.6, 69.8, 73.6, 45.2, 10.3, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 37.6, 68.7, 78.8, 94.5, 90.7, 65.1, 33.0, 62.4, 56.8, 7.4, 36.1, 26.4, 8.3, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.2, 58.5, 92.5, 95.2, 95.2, 95.2, 95.2, 91.2, 94.3, 70.1, 66.8, 71.3, 42.6, 11.3, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.8, 44.4, 67.3, 83.3, 76.6, 70.5, 89.9, 76.7, 68.1, 72.6, 47.9, 34.0, 11.8, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.1, 4.7, 18.9, 19.4, 25.7, 60.0, 74.7, 65.2, 62.6, 59.2, 67.5, 38.9, 15.7, 1.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.4, 31.2, 55.0, 84.5, 94.5, 94.3, 95.1, 90.9, 87.8, 91.8, 75.0, 94.9, 60.8, 15.6, 1.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.3, 60.4, 76.9, 94.6, 95.2, 95.2, 95.2, 95.2, 91.6, 76.5, 75.3, 60.4, 38.9, 12.2, 1.0, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.0, 16.6, 65.9, 79.0, 80.0, 78.2, 79.2, 80.7, 53.5, 71.0, 76.9, 57.5, 12.7, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.0, 40.8, 71.4, 80.4, 94.7, 90.8, 66.9, 34.8, 65.0, 59.2, 8.0, 40.0, 30.7, 9.5, 1.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.8, 63.3, 94.0, 95.2, 95.2, 95.2, 95.2, 91.7, 94.7, 74.0, 70.9, 75.6, 54.3, 14.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.9, 44.8, 67.8, 83.5, 76.5, 71.4, 90.4, 77.2, 68.5, 72.9, 48.1, 38.1, 14.5, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.1, 4.7, 19.0, 19.5, 26.1, 60.2, 74.9, 65.4, 63.7, 60.1, 67.6, 43.1, 20.8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.5, 31.6, 55.6, 84.9, 94.6, 94.4, 95.2, 91.3, 88.7, 92.1, 75.5, 95.0, 64.7, 18.6, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.3, 61.3, 77.6, 94.8, 95.2, 95.2, 95.2, 95.2, 91.0, 76.8, 75.5, 61.2, 41.6, 14.8, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.1, 16.8, 65.8, 79.3, 79.9, 78.5, 79.1, 81.0, 53.9, 71.1, 77.0, 60.6, 16.2, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.1, 41.4, 71.7, 80.7, 94.7, 90.6, 67.2, 34.9, 65.8, 60.1, 8.0, 41.1, 32.8, 11.2, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.8, 64.4, 94.2, 95.2, 95.2, 95.2, 95.2, 90.7, 94.7, 74.9, 71.8, 76.3, 57.9, 17.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.8, 45.1, 67.6, 83.9, 75.9, 71.5, 90.4, 77.1, 68.5, 71.4, 46.9, 38.4, 16.0, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.0, 4.7, 18.9, 19.4, 25.8, 60.0, 74.1, 64.5, 63.8, 60.5, 67.2, 43.3, 23.8, 1.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.5, 31.3, 55.2, 84.3, 94.5, 94.3, 95.0, 91.0, 88.2, 92.0, 75.3, 95.0, 64.5, 19.9, 1.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.0, 61.0, 77.0, 94.7, 95.2, 95.2, 95.2, 95.2, 90.3, 77.5, 75.8, 61.8, 42.0, 16.2, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.1, 11.1, 16.8, 65.7, 79.6, 80.4, 78.2, 79.0, 81.0, 54.2, 71.5, 77.2, 60.3, 18.4, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.0, 41.3, 71.6, 80.5, 94.6, 90.8, 67.0, 34.9, 65.4, 59.7, 8.1, 41.1, 32.6, 11.8, 1.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.5, 64.1, 94.3, 95.2, 95.2, 95.2, 95.2, 89.2, 94.6, 74.7, 71.9, 76.3, 58.1, 19.3, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.9, 45.5, 67.2, 83.7, 76.0, 70.8, 90.4, 77.2, 68.5, 72.2, 47.8, 38.4, 16.0, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.1, 4.7, 19.1, 19.5, 26.1, 60.3, 74.5, 64.5, 63.7, 60.5, 67.0, 43.5, 24.1, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.6, 31.7, 55.9, 85.0, 94.5, 94.4, 95.0, 91.1, 88.5, 92.0, 75.4, 95.0, 64.7, 19.9, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.7, 61.6, 77.8, 94.8, 95.2, 95.2, 95.2, 95.2, 91.3, 77.9, 75.2, 61.6, 41.7, 16.4, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.2, 17.1, 66.8, 79.5, 80.5, 78.8, 79.1, 81.9, 53.5, 71.2, 76.7, 61.0, 18.5, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.1, 41.8, 72.1, 80.7, 94.8, 90.9, 67.7, 34.9, 65.5, 59.9, 8.0, 41.2, 32.7, 12.0, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 13.2, 64.8, 94.6, 95.2, 95.2, 95.2, 95.2, 89.1, 94.6, 74.8, 71.9, 76.2, 58.1, 19.6, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.8, 44.2, 67.4, 83.5, 75.6, 71.2, 90.0, 77.4, 68.7, 72.3, 47.5, 38.1, 15.8, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.0, 4.6, 18.8, 19.3, 25.9, 60.2, 74.1, 63.2, 63.8, 60.9, 66.7, 43.2, 23.9, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 9.2, 31.2, 55.2, 84.4, 94.5, 94.3, 95.1, 91.0, 88.4, 91.9, 75.2, 95.0, 64.4, 19.7, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.8, 60.3, 76.9, 94.7, 95.2, 95.2, 95.2, 95.2, 91.0, 78.0, 75.2, 61.5, 41.8, 16.0, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.1, 16.9, 66.4, 79.2, 80.4, 78.8, 79.2, 81.6, 54.1, 71.4, 76.7, 60.6, 18.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.9, 41.1, 71.7, 80.3, 94.8, 90.8, 67.1, 34.7, 65.4, 59.8, 7.9, 41.1, 32.4, 12.0, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.3, 63.4, 94.7, 95.2, 95.2, 95.2, 95.2, 87.6, 94.6, 74.7, 71.8, 76.1, 57.9, 19.1, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.8, 44.2, 67.2, 83.8, 75.9, 71.5, 89.9, 78.0, 68.7, 71.5, 47.6, 38.4, 15.8, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.0, 4.6, 18.8, 19.4, 26.0, 60.1, 73.2, 62.5, 64.2, 61.5, 66.1, 43.0, 23.9, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.4, 31.3, 55.4, 84.5, 94.6, 94.4, 95.2, 91.1, 88.5, 91.9, 75.2, 95.0, 64.5, 19.7, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.9, 60.6, 77.0, 94.7, 95.2, 95.2, 95.2, 95.2, 91.0, 79.1, 75.9, 62.0, 42.1, 15.8, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.2, 17.0, 65.9, 79.4, 80.7, 79.2, 78.8, 81.4, 54.2, 72.0, 76.7, 60.5, 18.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.9, 41.2, 71.7, 80.5, 94.7, 90.7, 67.8, 34.9, 65.7, 59.9, 7.9, 41.2, 32.4, 12.2, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.3, 63.6, 94.8, 95.2, 95.2, 95.2, 95.2, 86.2, 94.5, 74.8, 72.0, 76.2, 58.1, 19.4, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.8, 41.8, 64.3, 81.3, 73.5, 68.7, 88.5, 76.7, 66.5, 67.2, 44.1, 35.8, 14.8, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.6, 4.3, 17.4, 17.9, 24.1, 57.4, 70.2, 58.7, 59.8, 58.7, 63.6, 39.6, 22.3, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.7, 29.0, 51.7, 80.0, 93.8, 93.2, 94.6, 88.2, 82.7, 90.1, 71.8, 94.3, 60.5, 18.3, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.8, 56.2, 71.2, 92.8, 95.1, 95.2, 95.2, 95.2, 90.4, 78.6, 74.8, 60.2, 38.9, 14.5, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.4, 15.9, 63.5, 78.7, 79.9, 77.3, 78.0, 80.1, 52.9, 71.0, 75.1, 56.1, 16.9, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 38.3, 68.8, 78.8, 94.5, 90.1, 65.6, 33.2, 63.4, 57.5, 7.4, 38.6, 30.4, 11.6, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.2, 59.1, 93.4, 95.2, 95.2, 95.2, 95.2, 84.5, 94.0, 71.3, 68.3, 73.0, 54.3, 18.1, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.4, 11.9, 41.4, 64.8, 80.8, 73.3, 68.1, 88.0, 77.5, 66.8, 67.1, 44.8, 36.2, 15.1, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.3, 4.7, 4.4, 17.5, 18.0, 24.2, 57.5, 69.9, 57.8, 59.8, 59.1, 63.7, 39.6, 22.7, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.8, 28.9, 52.0, 79.9, 93.8, 93.2, 94.6, 88.2, 82.5, 90.2, 71.7, 94.2, 60.6, 18.6, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.1, 55.8, 71.2, 92.7, 95.1, 95.2, 95.2, 95.2, 90.8, 79.3, 75.5, 60.4, 38.7, 14.7, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.6, 16.2, 63.7, 79.2, 80.0, 78.3, 78.2, 80.5, 53.0, 71.3, 75.3, 55.9, 17.2, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 38.0, 68.9, 78.9, 94.5, 90.3, 65.6, 33.1, 63.0, 57.4, 7.0, 38.5, 30.7, 12.2, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.6, 58.6, 93.4, 95.2, 95.2, 95.2, 95.2, 84.7, 93.9, 71.3, 68.4, 73.1, 54.5, 18.5, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.8, 44.3, 67.7, 84.0, 76.0, 71.8, 89.4, 78.9, 69.0, 72.4, 48.1, 39.2, 16.1, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.1, 4.7, 18.9, 19.4, 26.4, 60.5, 73.3, 60.5, 64.5, 63.4, 65.8, 42.7, 24.2, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.1, 31.5, 55.9, 84.8, 94.5, 94.5, 95.0, 91.2, 88.7, 92.2, 75.1, 95.0, 64.4, 19.8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.7, 61.2, 77.3, 94.7, 95.2, 95.2, 95.2, 95.2, 91.4, 80.7, 77.5, 62.3, 41.7, 15.4, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.4, 17.7, 66.2, 81.2, 80.9, 79.2, 79.0, 80.7, 55.5, 72.1, 76.6, 60.4, 18.1, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.9, 41.7, 71.9, 80.5, 94.8, 90.5, 67.7, 35.3, 65.8, 60.6, 8.0, 41.5, 32.2, 12.9, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.3, 64.2, 95.0, 95.2, 95.2, 95.2, 95.2, 85.0, 94.5, 75.1, 72.2, 76.3, 58.4, 19.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.6, 12.8, 43.9, 66.2, 83.7, 75.4, 72.0, 90.0, 79.3, 68.3, 71.2, 47.6, 39.4, 16.2, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 5.0, 4.7, 18.9, 19.4, 26.1, 60.2, 72.5, 59.8, 63.9, 64.0, 66.3, 43.0, 24.6, 1.2, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 9.6, 31.3, 55.6, 84.5, 94.6, 94.3, 95.0, 91.0, 88.3, 92.0, 75.1, 95.0, 64.6, 20.2, 1.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.7, 60.7, 76.8, 94.6, 95.2, 95.2, 95.2, 95.2, 91.6, 80.7, 77.7, 62.6, 41.8, 15.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 11.6, 17.9, 65.9, 81.8, 81.2, 79.1, 79.2, 80.7, 55.5, 72.5, 76.8, 60.1, 18.5, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.0, 41.5, 71.8, 80.4, 94.9, 90.6, 67.9, 35.4, 65.8, 60.2, 8.3, 42.2, 32.5, 13.4, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 13.2, 63.7, 94.7, 95.2, 95.2, 95.2, 95.2, 85.0, 94.3, 74.9, 72.2, 76.5, 58.7, 20.0, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.4, 11.8, 41.1, 66.2, 82.2, 73.7, 69.2, 88.5, 78.7, 65.2, 68.2, 45.2, 37.5, 15.5, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.5, 17.6, 18.1, 24.4, 57.7, 70.2, 57.2, 59.7, 60.2, 64.1, 40.0, 23.2, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.6, 28.9, 52.3, 80.6, 93.9, 93.3, 94.6, 88.7, 83.2, 90.2, 71.8, 94.6, 61.7, 18.8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.8, 56.4, 72.0, 93.1, 95.1, 95.2, 95.2, 95.2, 88.5, 78.7, 77.9, 61.4, 39.8, 14.6, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.9, 10.4, 15.8, 63.8, 79.4, 79.7, 77.7, 78.1, 78.5, 55.2, 71.8, 75.8, 55.0, 17.1, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 38.5, 69.5, 79.3, 94.6, 89.1, 64.6, 33.2, 63.6, 58.1, 7.5, 38.5, 30.8, 12.0, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.3, 59.1, 93.7, 95.2, 95.2, 95.2, 95.2, 82.6, 93.6, 71.8, 68.8, 73.8, 55.3, 18.4, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.7, 41.0, 66.2, 83.2, 73.9, 69.0, 88.9, 78.5, 65.2, 67.9, 44.1, 37.0, 15.2, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.1, 4.7, 4.5, 17.4, 17.9, 24.2, 57.2, 70.7, 58.4, 59.7, 59.2, 63.9, 39.7, 22.7, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.7, 28.9, 51.9, 80.0, 93.8, 93.2, 94.5, 88.5, 82.8, 90.2, 71.8, 94.5, 61.2, 18.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.5, 56.5, 71.6, 92.8, 95.1, 95.2, 95.2, 95.2, 88.0, 78.7, 77.8, 61.2, 39.5, 14.6, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.2, 15.6, 63.5, 79.1, 79.8, 77.1, 77.8, 78.3, 55.0, 72.0, 75.5, 54.9, 16.9, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 38.4, 69.3, 78.8, 94.3, 89.1, 64.8, 33.2, 63.6, 57.6, 7.5, 38.8, 30.8, 11.8, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.0, 59.3, 93.5, 95.2, 95.2, 95.2, 95.2, 83.8, 93.6, 71.7, 68.6, 73.6, 54.9, 18.3, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.8, 41.3, 65.9, 82.7, 73.8, 68.9, 89.1, 78.3, 65.4, 68.2, 44.4, 36.6, 14.9, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.4, 17.4, 17.9, 24.1, 57.5, 71.0, 59.1, 59.9, 58.2, 63.9, 39.6, 22.2, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.6, 28.9, 51.9, 80.0, 94.0, 93.2, 94.5, 88.6, 83.0, 90.4, 71.7, 94.4, 61.0, 18.3, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.8, 56.9, 71.6, 92.9, 95.1, 95.2, 95.2, 95.2, 87.8, 78.4, 77.3, 60.8, 39.4, 14.5, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.2, 15.5, 63.7, 78.7, 79.9, 77.8, 78.1, 78.7, 54.9, 72.0, 75.4, 54.9, 16.5, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.4, 38.4, 69.0, 78.9, 94.3, 88.6, 64.8, 33.4, 63.4, 58.3, 7.4, 38.5, 30.6, 11.4, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.3, 59.8, 93.3, 95.2, 95.2, 95.2, 95.2, 85.1, 94.0, 71.7, 68.5, 73.4, 54.5, 18.0, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 12.0, 41.4, 65.1, 82.0, 73.8, 68.9, 89.2, 77.3, 66.0, 68.8, 44.6, 36.8, 15.2, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.4, 17.5, 17.9, 24.1, 57.3, 71.4, 59.9, 59.6, 57.8, 64.3, 40.0, 22.4, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.7, 28.9, 51.9, 79.9, 93.8, 93.2, 94.6, 88.4, 82.8, 90.1, 71.8, 94.4, 61.0, 18.5, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.0, 56.6, 71.7, 92.9, 95.2, 95.2, 95.2, 95.2, 87.7, 78.0, 76.9, 61.0, 39.6, 14.8, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.8, 10.1, 15.4, 64.0, 78.4, 79.7, 76.8, 78.0, 79.0, 54.7, 72.0, 75.2, 54.9, 16.7, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 38.3, 68.9, 78.7, 94.2, 89.0, 64.2, 33.2, 63.1, 57.7, 7.4, 38.0, 30.8, 11.2, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.6, 59.5, 93.0, 95.2, 95.2, 95.2, 95.2, 86.2, 94.1, 71.5, 68.2, 73.2, 54.5, 18.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 3.3, 11.9, 41.4, 64.2, 82.5, 73.6, 69.3, 88.8, 76.5, 66.1, 68.6, 45.0, 36.2, 14.7, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.4, 4.7, 4.4, 17.6, 18.0, 24.2, 57.2, 71.5, 60.8, 59.2, 56.9, 64.1, 39.7, 21.7, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.7, 28.7, 51.6, 79.8, 93.7, 93.2, 94.6, 88.2, 82.5, 90.0, 71.5, 94.3, 60.5, 18.2, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.1, 55.7, 71.3, 92.8, 95.2, 95.2, 95.2, 95.2, 87.9, 77.1, 77.2, 60.5, 39.3, 14.6, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.7, 10.1, 15.5, 64.2, 78.0, 80.0, 76.9, 78.0, 78.6, 54.0, 72.3, 75.0, 54.9, 16.3, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 5.5, 37.9, 68.9, 78.9, 94.1, 89.5, 65.0, 33.1, 63.1, 57.2, 7.4, 38.1, 30.4, 10.8, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.6, 58.5, 92.5, 95.2, 95.2, 95.2, 95.2, 87.6, 94.2, 71.3, 67.9, 72.9, 54.0, 17.8, null, null, null, null]], "kw": [[0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.6, 52.6, 84.5, 106.9, 96.7, 90.1, 117.8, 100.7, 87.3, 90.0, 58.5, 42.8, 17.6, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.2, 6.1, 24.3, 24.6, 32.2, 75.3, 94.9, 80.8, 76.8, 74.1, 82.9, 47.4, 25.4, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 10.4, 35.8, 64.8, 101.5, 123.4, 122.9, 125.0, 116.2, 107.5, 118.0, 91.1, 118.2, 70.2, 22.0, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 13.3, 65.0, 85.9, 116.8, 125.4, 126.0, 126.0, 126.0, 116.7, 99.2, 99.3, 73.7, 46.3, 17.6, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.5, 21.4, 84.0, 102.3, 105.5, 102.1, 103.0, 103.5, 70.8, 94.6, 91.9, 64.0, 19.4, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.9, 45.1, 84.7, 103.2, 124.4, 118.0, 85.5, 43.7, 82.6, 75.0, 9.8, 48.8, 37.7, 13.0, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 13.7, 67.5, 113.1, 126.0, 126.0, 126.0, 126.0, 117.9, 124.4, 92.8, 87.9, 90.7, 64.1, 21.3, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.8, 55.8, 86.1, 107.3, 97.8, 90.2, 117.8, 100.4, 87.1, 90.3, 58.5, 47.3, 19.8, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.1, 5.8, 23.2, 23.8, 31.8, 75.8, 95.7, 82.2, 77.6, 74.8, 86.5, 52.9, 29.5, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 11.3, 38.2, 68.2, 105.6, 124.2, 123.2, 125.2, 116.8, 109.2, 119.2, 94.7, 124.7, 80.3, 24.2, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.2, 74.5, 94.5, 122.7, 125.8, 126.0, 126.0, 126.0, 117.0, 98.5, 100.8, 79.3, 51.8, 19.9, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.3, 20.3, 85.1, 103.2, 105.8, 102.3, 103.0, 103.3, 70.2, 94.6, 99.5, 73.2, 22.4, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.3, 50.3, 91.2, 104.5, 124.7, 118.4, 85.7, 44.0, 83.2, 75.2, 9.7, 49.9, 40.7, 13.8, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.9, 78.0, 122.6, 126.0, 126.0, 126.0, 126.0, 120.1, 124.7, 94.0, 89.7, 96.4, 71.4, 24.1, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.0, 14.5, 51.5, 80.8, 101.7, 94.3, 85.4, 116.2, 97.3, 83.0, 82.5, 53.5, 43.1, 18.0, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.7, 5.6, 5.2, 21.2, 21.8, 29.2, 71.9, 92.7, 77.5, 71.5, 70.0, 83.0, 48.4, 26.5, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 10.5, 35.2, 63.0, 98.5, 122.5, 118.7, 122.2, 111.3, 100.6, 115.0, 89.1, 121.1, 73.8, 22.0, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 13.8, 69.0, 87.0, 115.2, 124.3, 126.0, 126.0, 126.0, 115.7, 95.7, 97.3, 74.0, 47.4, 18.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.4, 12.2, 18.6, 81.9, 101.7, 104.5, 100.0, 101.7, 101.0, 67.5, 92.5, 93.6, 67.3, 20.2, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 6.7, 46.4, 85.0, 102.1, 123.9, 117.8, 82.2, 41.6, 78.9, 72.0, 8.9, 46.0, 38.2, 12.3, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.4, 72.3, 116.6, 126.0, 126.0, 126.0, 126.0, 119.2, 123.8, 88.6, 84.0, 90.1, 65.5, 21.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.7, 17.1, 58.3, 88.8, 110.3, 101.2, 94.8, 119.6, 101.3, 90.0, 96.0, 62.6, 50.3, 21.1, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 6.8, 6.2, 25.2, 25.9, 34.3, 79.6, 100.5, 88.2, 83.7, 78.8, 90.1, 56.8, 30.4, 1.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.4, 41.3, 73.0, 111.7, 125.0, 124.9, 125.8, 120.5, 116.8, 121.8, 99.5, 125.5, 85.4, 25.7, 1.7, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 14.9, 80.4, 102.1, 125.2, 126.0, 126.0, 126.0, 126.0, 118.3, 99.1, 102.0, 81.2, 55.5, 21.5, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.0, 14.6, 21.9, 88.8, 105.6, 107.1, 103.7, 104.2, 104.1, 72.8, 94.8, 102.4, 79.1, 23.7, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.8, 54.3, 94.6, 106.8, 124.9, 119.3, 88.0, 46.6, 87.0, 78.9, 10.9, 53.0, 43.9, 14.2, 1.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.6, 84.2, 124.6, 126.0, 126.0, 126.0, 126.0, 121.4, 125.3, 98.8, 94.8, 100.5, 76.3, 24.5, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.7, 17.1, 58.5, 88.9, 110.2, 100.9, 94.6, 119.3, 101.3, 89.6, 96.1, 63.0, 49.9, 20.7, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 6.6, 6.2, 25.1, 25.7, 34.2, 79.4, 99.6, 88.4, 83.1, 78.2, 90.0, 56.2, 29.9, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.5, 41.4, 73.0, 111.6, 125.1, 124.8, 125.8, 120.3, 116.4, 121.5, 99.3, 125.6, 85.5, 25.3, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.0, 80.3, 102.0, 125.1, 126.0, 126.0, 126.0, 126.0, 117.8, 98.5, 100.9, 80.6, 55.3, 21.2, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.6, 21.8, 89.2, 105.5, 106.7, 103.2, 103.9, 103.1, 72.6, 94.7, 102.1, 79.2, 23.3, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.8, 54.1, 94.5, 106.9, 125.0, 119.2, 87.4, 46.1, 86.3, 78.4, 10.4, 52.0, 43.5, 13.5, 1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.8, 84.2, 125.0, 126.0, 126.0, 126.0, 126.0, 121.3, 125.3, 98.4, 94.5, 100.4, 76.1, 23.9, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.7, 17.0, 59.2, 89.6, 110.6, 101.0, 94.3, 119.1, 101.5, 90.0, 95.2, 62.4, 49.6, 20.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 6.6, 6.2, 25.4, 25.9, 34.2, 79.1, 98.2, 89.2, 83.1, 78.0, 90.6, 56.2, 28.6, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.5, 42.0, 73.8, 112.2, 125.0, 124.8, 125.8, 120.3, 116.4, 121.6, 99.4, 125.5, 85.8, 24.8, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.2, 81.4, 103.3, 125.3, 126.0, 126.0, 126.0, 126.0, 118.5, 98.3, 99.8, 79.5, 54.7, 20.8, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.7, 21.9, 89.9, 105.9, 106.6, 103.1, 104.3, 102.5, 72.7, 94.5, 102.3, 79.6, 22.6, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.5, 54.7, 95.2, 107.3, 125.0, 119.2, 87.3, 46.0, 86.0, 78.2, 10.3, 51.3, 43.7, 13.2, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.9, 85.3, 125.4, 126.0, 126.0, 126.0, 126.0, 120.8, 125.3, 98.3, 94.5, 100.5, 76.2, 22.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.8, 56.0, 86.6, 106.4, 98.0, 88.6, 117.3, 99.9, 88.0, 89.3, 58.7, 33.2, 10.3, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.2, 5.8, 23.4, 23.9, 31.6, 75.6, 94.3, 83.1, 75.8, 73.0, 87.0, 38.8, 12.1, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.6, 38.9, 69.0, 106.8, 124.2, 123.2, 125.2, 116.5, 108.0, 119.2, 95.0, 124.3, 66.0, 15.3, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.9, 75.6, 95.9, 123.2, 125.8, 126.0, 126.0, 126.0, 121.5, 97.1, 98.2, 76.0, 40.0, 11.0, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.4, 20.1, 85.8, 102.7, 104.9, 101.4, 103.6, 103.6, 68.5, 91.7, 99.4, 62.0, 10.5, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.2, 50.6, 91.4, 104.6, 124.8, 119.3, 84.8, 43.1, 82.2, 75.0, 9.5, 46.6, 33.9, 9.4, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.5, 79.5, 123.5, 126.0, 126.0, 126.0, 126.0, 120.4, 124.9, 92.4, 88.1, 95.0, 56.6, 12.6, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.3, 15.6, 55.6, 85.8, 107.1, 97.7, 89.1, 117.6, 99.5, 86.7, 89.0, 54.4, 37.4, 11.6, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.1, 5.7, 23.1, 23.6, 31.4, 75.3, 95.1, 82.1, 75.2, 72.5, 82.7, 42.4, 14.1, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.3, 38.0, 68.0, 105.8, 124.0, 123.0, 125.1, 116.0, 107.4, 118.8, 94.1, 116.7, 65.8, 16.0, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.3, 73.8, 94.3, 122.5, 125.8, 126.0, 126.0, 126.0, 121.0, 97.2, 97.5, 70.7, 41.6, 12.0, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.2, 19.9, 85.2, 102.8, 104.6, 101.2, 103.6, 104.4, 67.6, 91.8, 90.3, 61.5, 11.8, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.1, 49.7, 90.4, 104.3, 124.8, 119.1, 85.8, 43.1, 82.0, 74.4, 9.3, 45.6, 35.2, 9.7, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.9, 77.4, 122.2, 126.0, 126.0, 126.0, 126.0, 120.2, 124.8, 92.0, 87.4, 89.0, 59.1, 13.7, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.7, 56.5, 85.7, 107.2, 98.1, 89.4, 118.1, 99.3, 87.2, 89.7, 57.7, 36.2, 12.9, 1.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.2, 5.8, 23.2, 23.9, 31.6, 75.8, 95.9, 82.0, 76.2, 73.2, 86.2, 41.0, 16.4, 1.4, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.3, 38.1, 68.2, 106.0, 124.0, 123.2, 125.3, 116.5, 108.3, 119.0, 94.8, 123.0, 64.3, 17.7, 1.5, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.3, 73.8, 94.5, 122.8, 125.8, 126.0, 126.0, 126.0, 120.9, 98.5, 97.6, 75.6, 40.3, 13.2, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.4, 20.3, 84.8, 103.2, 104.5, 101.9, 103.7, 105.0, 68.3, 92.3, 97.4, 59.7, 13.6, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.2, 49.7, 90.8, 104.2, 125.0, 119.9, 86.0, 43.6, 82.6, 75.2, 9.8, 47.8, 34.9, 11.0, 1.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.9, 77.5, 122.3, 126.0, 126.0, 126.0, 126.0, 120.7, 124.8, 92.8, 88.4, 94.3, 56.3, 15.0, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.8, 17.0, 58.7, 89.2, 110.2, 101.3, 93.2, 119.0, 101.5, 90.1, 96.1, 63.4, 45.0, 15.7, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 6.7, 6.2, 25.0, 25.7, 34.1, 79.5, 98.8, 86.3, 82.8, 78.3, 89.3, 51.4, 20.7, 1.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.5, 41.2, 72.8, 111.8, 125.0, 124.8, 125.9, 120.3, 116.2, 121.5, 99.2, 125.5, 80.4, 20.7, 1.8, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.3, 79.8, 101.8, 125.2, 126.0, 126.0, 126.0, 126.0, 121.2, 101.2, 99.6, 80.0, 51.4, 16.2, 1.3, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.6, 22.0, 87.2, 104.5, 105.8, 103.5, 104.8, 106.7, 70.7, 93.9, 101.8, 76.1, 16.8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.0, 53.9, 94.5, 106.3, 125.3, 120.2, 88.5, 46.0, 86.0, 78.3, 10.6, 53.0, 40.6, 12.5, 1.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.9, 83.8, 124.4, 126.0, 126.0, 126.0, 126.0, 121.2, 125.2, 98.0, 93.8, 100.0, 71.8, 18.7, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.8, 17.1, 59.2, 89.7, 110.4, 101.2, 94.5, 119.6, 102.2, 90.5, 96.5, 63.6, 50.4, 19.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 6.7, 6.2, 25.1, 25.8, 34.5, 79.7, 99.0, 86.5, 84.2, 79.6, 89.4, 57.0, 27.5, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.6, 41.8, 73.5, 112.3, 125.2, 125.0, 125.9, 120.8, 117.4, 121.8, 99.9, 125.6, 85.6, 24.6, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.3, 81.1, 102.6, 125.4, 126.0, 126.0, 126.0, 126.0, 120.4, 101.6, 99.9, 81.0, 55.0, 19.5, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.7, 22.2, 87.0, 104.9, 105.7, 103.8, 104.7, 107.2, 71.2, 94.0, 102.0, 80.2, 21.5, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.0, 54.8, 94.9, 106.8, 125.3, 119.9, 88.9, 46.2, 87.1, 79.5, 10.6, 54.4, 43.4, 14.9, 1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 17.0, 85.2, 124.7, 126.0, 126.0, 126.0, 126.0, 119.9, 125.3, 99.2, 95.1, 100.9, 76.7, 22.8, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.8, 16.9, 59.7, 89.4, 111.0, 100.4, 94.6, 119.6, 102.0, 90.6, 94.4, 62.0, 50.8, 21.2, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 6.7, 6.2, 24.9, 25.6, 34.1, 79.4, 98.0, 85.3, 84.3, 80.0, 88.9, 57.3, 31.5, 1.7, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.6, 41.5, 73.0, 111.6, 125.0, 124.8, 125.7, 120.4, 116.8, 121.8, 99.7, 125.7, 85.3, 26.3, 1.8, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.9, 80.7, 101.9, 125.2, 126.0, 126.0, 126.0, 126.0, 119.5, 102.5, 100.3, 81.8, 55.5, 21.5, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.6, 22.1, 86.8, 105.2, 106.4, 103.5, 104.5, 107.2, 71.8, 94.5, 102.1, 79.8, 24.4, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.0, 54.6, 94.7, 106.6, 125.2, 120.2, 88.6, 46.2, 86.5, 79.0, 10.8, 54.4, 43.2, 15.7, 1.9, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.6, 84.8, 124.8, 126.0, 126.0, 126.0, 126.0, 118.0, 125.2, 98.9, 95.2, 101.0, 76.8, 25.5, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.8, 17.1, 60.2, 89.0, 110.7, 100.6, 93.7, 119.6, 102.2, 90.7, 95.5, 63.2, 50.8, 21.2, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 6.7, 6.2, 25.3, 25.9, 34.5, 79.7, 98.5, 85.3, 84.3, 80.0, 88.6, 57.6, 31.9, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.7, 42.0, 74.0, 112.4, 125.0, 124.9, 125.8, 120.5, 117.2, 121.7, 99.7, 125.6, 85.6, 26.4, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.8, 81.5, 103.0, 125.4, 126.0, 126.0, 126.0, 126.0, 120.8, 103.0, 99.5, 81.4, 55.2, 21.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.8, 22.6, 88.4, 105.2, 106.5, 104.2, 104.6, 108.3, 70.8, 94.2, 101.5, 80.7, 24.5, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 8.1, 55.4, 95.4, 106.8, 125.4, 120.2, 89.5, 46.2, 86.7, 79.3, 10.6, 54.6, 43.2, 15.8, 1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 17.5, 85.7, 125.2, 126.0, 126.0, 126.0, 126.0, 117.8, 125.2, 99.0, 95.1, 100.8, 76.9, 25.9, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.7, 16.9, 58.5, 89.1, 110.5, 100.0, 94.2, 119.0, 102.3, 90.8, 95.7, 62.9, 50.4, 20.9, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 6.6, 6.0, 24.9, 25.6, 34.3, 79.7, 98.0, 83.6, 84.4, 80.6, 88.2, 57.1, 31.6, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 12.2, 41.2, 73.0, 111.7, 125.0, 124.9, 125.8, 120.4, 116.9, 121.5, 99.5, 125.7, 85.1, 26.1, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.6, 79.8, 101.7, 125.3, 126.0, 126.0, 126.0, 126.0, 120.4, 103.2, 99.5, 81.4, 55.3, 21.2, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.7, 22.3, 87.8, 104.8, 106.4, 104.2, 104.7, 107.9, 71.5, 94.4, 101.5, 80.1, 24.2, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.8, 54.3, 94.9, 106.2, 125.5, 120.0, 88.8, 45.9, 86.5, 79.2, 10.4, 54.3, 42.9, 15.8, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.3, 83.8, 125.3, 126.0, 126.0, 126.0, 126.0, 116.0, 125.2, 98.8, 94.9, 100.6, 76.6, 25.3, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.7, 16.9, 58.5, 88.9, 110.9, 100.4, 94.7, 118.9, 103.1, 90.8, 94.7, 63.0, 50.8, 21.0, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.9, 6.6, 6.1, 24.9, 25.6, 34.4, 79.6, 96.8, 82.7, 84.9, 81.3, 87.5, 56.9, 31.5, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.5, 41.4, 73.2, 111.8, 125.1, 124.9, 125.9, 120.6, 117.1, 121.6, 99.5, 125.7, 85.3, 26.1, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.8, 80.1, 101.8, 125.3, 126.0, 126.0, 126.0, 126.0, 120.5, 104.6, 100.3, 82.0, 55.6, 20.9, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 14.8, 22.6, 87.1, 105.0, 106.8, 104.8, 104.2, 107.7, 71.7, 95.2, 101.4, 80.0, 24.1, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.8, 54.5, 94.9, 106.5, 125.3, 120.0, 89.7, 46.1, 87.0, 79.2, 10.5, 54.5, 42.8, 16.2, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.3, 84.2, 125.4, 126.0, 126.0, 126.0, 126.0, 114.1, 125.1, 99.0, 95.2, 100.8, 76.9, 25.8, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.7, 55.2, 85.1, 107.6, 97.2, 90.8, 117.2, 101.4, 88.0, 88.9, 58.4, 47.4, 19.6, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.2, 5.8, 23.0, 23.7, 31.9, 76.0, 92.9, 77.6, 79.0, 77.7, 84.1, 52.4, 29.5, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.5, 38.3, 68.4, 105.8, 124.2, 123.3, 125.2, 116.8, 109.4, 119.2, 95.0, 124.8, 80.1, 24.2, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.3, 74.3, 94.2, 122.8, 125.9, 126.0, 126.0, 126.0, 119.6, 104.0, 98.8, 79.6, 51.4, 19.2, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.8, 21.1, 84.0, 104.1, 105.8, 102.3, 103.2, 105.9, 69.9, 94.0, 99.3, 74.2, 22.3, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.2, 50.7, 91.0, 104.2, 125.0, 119.3, 86.8, 43.9, 84.0, 76.0, 9.8, 51.1, 40.1, 15.3, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.9, 78.2, 123.6, 126.0, 126.0, 126.0, 126.0, 111.9, 124.4, 94.3, 90.3, 96.5, 71.9, 23.9, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.5, 15.8, 54.8, 85.8, 106.9, 97.0, 90.1, 116.4, 102.5, 88.4, 88.8, 59.2, 47.8, 20.0, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.7, 6.2, 5.8, 23.2, 23.9, 32.1, 76.1, 92.5, 76.5, 79.1, 78.2, 84.2, 52.4, 30.0, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 11.6, 38.2, 68.7, 105.7, 124.1, 123.3, 125.2, 116.7, 109.2, 119.3, 94.8, 124.7, 80.2, 24.6, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.7, 73.8, 94.2, 122.7, 125.8, 126.0, 126.0, 126.0, 120.2, 104.9, 99.9, 79.9, 51.1, 19.4, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.8, 14.0, 21.4, 84.2, 104.7, 105.9, 103.6, 103.4, 106.4, 70.1, 94.4, 99.6, 74.0, 22.8, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 7.3, 50.4, 91.1, 104.3, 125.0, 119.5, 86.7, 43.8, 83.2, 76.0, 9.3, 50.9, 40.6, 16.1, 1.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.3, 77.5, 123.6, 126.0, 126.0, 126.0, 126.0, 112.0, 124.2, 94.3, 90.5, 96.7, 72.1, 24.4, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.8, 17.0, 58.6, 89.6, 111.1, 100.5, 95.0, 118.2, 104.4, 91.2, 95.8, 63.6, 51.9, 21.2, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 6.7, 6.2, 25.1, 25.8, 34.9, 80.1, 97.0, 80.1, 85.2, 83.9, 87.1, 56.5, 32.0, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 12.0, 41.7, 73.9, 112.2, 125.1, 125.0, 125.7, 120.8, 117.3, 121.9, 99.3, 125.7, 85.3, 26.1, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.5, 81.0, 102.2, 125.3, 126.0, 126.0, 126.0, 126.0, 121.0, 106.7, 102.5, 82.5, 55.1, 20.4, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 15.2, 23.4, 87.6, 107.3, 107.0, 104.8, 104.5, 106.7, 73.3, 95.5, 101.3, 79.8, 23.9, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.8, 55.1, 95.1, 106.6, 125.5, 119.8, 89.5, 46.7, 87.0, 80.1, 10.6, 55.0, 42.6, 17.1, 1.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.2, 85.0, 125.7, 126.0, 126.0, 126.0, 126.0, 112.5, 125.0, 99.3, 95.6, 101.0, 77.2, 25.5, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.7, 17.0, 58.1, 87.6, 110.7, 99.8, 95.2, 119.1, 105.0, 90.4, 94.2, 62.9, 52.1, 21.5, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 2.0, 6.7, 6.3, 25.0, 25.7, 34.6, 79.7, 95.9, 79.0, 84.5, 84.7, 87.8, 56.9, 32.5, 1.6, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 12.7, 41.5, 73.6, 111.8, 125.1, 124.9, 125.7, 120.5, 116.8, 121.7, 99.3, 125.7, 85.5, 26.7, 1.7, 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 16.8, 80.2, 101.6, 125.2, 126.0, 126.0, 126.0, 126.0, 121.2, 106.7, 102.8, 82.8, 55.2, 20.6, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 4.0, 15.2, 23.6, 87.2, 108.2, 107.4, 104.6, 104.8, 106.8, 73.5, 96.0, 101.7, 79.5, 24.6, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 8.0, 54.9, 95.0, 106.3, 125.5, 119.8, 89.8, 46.8, 87.0, 79.7, 11.0, 55.8, 43.1, 17.7, 1.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 17.5, 84.2, 125.3, 126.0, 126.0, 126.0, 126.0, 112.3, 124.8, 99.0, 95.5, 101.2, 77.6, 26.5, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.6, 54.4, 87.6, 108.7, 97.4, 91.5, 117.1, 104.1, 86.3, 90.2, 59.8, 49.6, 20.4, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.2, 5.9, 23.3, 23.9, 32.2, 76.3, 92.8, 75.8, 79.0, 79.6, 84.8, 52.9, 30.7, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 11.4, 38.1, 69.2, 106.6, 124.2, 123.5, 125.2, 117.4, 110.1, 119.4, 95.0, 125.1, 81.7, 24.9, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.3, 74.7, 95.2, 123.2, 125.9, 126.0, 126.0, 126.0, 117.2, 104.0, 103.0, 81.2, 52.6, 19.4, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.8, 13.7, 20.9, 84.4, 105.1, 105.4, 102.8, 103.3, 103.8, 73.1, 95.0, 100.2, 72.8, 22.6, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.2, 51.0, 92.0, 104.9, 125.2, 117.9, 85.4, 43.9, 84.1, 76.9, 9.9, 51.0, 40.7, 15.9, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.9, 78.2, 124.0, 126.0, 126.0, 126.0, 126.0, 109.3, 123.8, 95.0, 91.1, 97.6, 73.2, 24.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.3, 15.5, 54.2, 87.6, 110.2, 97.8, 91.2, 117.6, 103.9, 86.3, 89.9, 58.4, 48.9, 20.1, 0.7, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.5, 6.2, 5.8, 23.1, 23.7, 32.0, 75.7, 93.5, 77.3, 79.0, 78.3, 84.5, 52.5, 30.1, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.5, 38.2, 68.6, 105.9, 124.2, 123.3, 125.0, 117.1, 109.5, 119.3, 94.9, 125.0, 81.0, 24.5, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.2, 74.8, 94.7, 122.8, 125.8, 126.0, 126.0, 126.0, 116.5, 104.0, 103.0, 80.9, 52.3, 19.3, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.4, 20.7, 84.0, 104.6, 105.5, 102.0, 103.0, 103.7, 72.7, 95.2, 99.8, 72.6, 22.3, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.2, 50.8, 91.7, 104.2, 124.8, 117.8, 85.7, 44.0, 84.2, 76.3, 9.9, 51.3, 40.8, 15.5, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.9, 78.5, 123.7, 126.0, 126.0, 126.0, 126.0, 110.8, 123.8, 94.8, 90.8, 97.3, 72.6, 24.2, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.7, 54.6, 87.1, 109.3, 97.6, 91.1, 117.9, 103.6, 86.5, 90.2, 58.8, 48.4, 19.8, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.1, 5.8, 23.0, 23.7, 32.0, 76.0, 93.9, 78.2, 79.2, 77.0, 84.5, 52.4, 29.4, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.4, 38.3, 68.7, 105.9, 124.3, 123.4, 125.1, 117.3, 109.9, 119.5, 94.8, 124.9, 80.7, 24.2, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.3, 75.2, 94.8, 123.0, 125.9, 126.0, 126.0, 126.0, 116.2, 103.7, 102.2, 80.5, 52.1, 19.2, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.4, 20.5, 84.3, 104.1, 105.6, 102.9, 103.3, 104.2, 72.6, 95.2, 99.8, 72.6, 21.9, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.1, 50.8, 91.2, 104.3, 124.8, 117.2, 85.7, 44.1, 83.8, 77.2, 9.8, 51.0, 40.5, 15.1, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.9, 79.0, 123.5, 126.0, 126.0, 126.0, 126.0, 112.6, 124.4, 94.8, 90.6, 97.0, 72.1, 23.8, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.8, 54.8, 86.1, 108.5, 97.6, 91.2, 118.0, 102.3, 87.2, 91.1, 59.1, 48.6, 20.1, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.1, 5.8, 23.1, 23.7, 31.9, 75.7, 94.4, 79.3, 78.8, 76.5, 85.1, 52.9, 29.7, 1.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.2, 11.5, 38.3, 68.7, 105.7, 124.1, 123.3, 125.2, 116.9, 109.5, 119.2, 94.9, 124.9, 80.7, 24.4, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.6, 74.8, 94.8, 122.9, 125.9, 126.0, 126.0, 126.0, 116.0, 103.2, 101.7, 80.7, 52.4, 19.6, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.7, 13.4, 20.4, 84.6, 103.8, 105.5, 101.5, 103.3, 104.5, 72.4, 95.2, 99.6, 72.5, 22.1, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.2, 50.7, 91.2, 104.1, 124.6, 117.7, 84.9, 44.0, 83.5, 76.4, 9.8, 50.3, 40.7, 14.9, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.3, 78.6, 123.0, 126.0, 126.0, 126.0, 126.0, 114.0, 124.5, 94.5, 90.2, 96.9, 72.0, 24.1, null, null, null, null], [0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 4.4, 15.8, 54.7, 85.0, 109.1, 97.4, 91.7, 117.4, 101.2, 87.4, 90.8, 59.6, 47.9, 19.5, 0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.8, 6.2, 5.9, 23.2, 23.9, 32.0, 75.8, 94.7, 80.4, 78.3, 75.3, 84.8, 52.5, 28.7, 1.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 11.4, 38.0, 68.3, 105.6, 124.0, 123.3, 125.2, 116.8, 109.2, 119.0, 94.7, 124.7, 80.0, 24.1, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 14.7, 73.7, 94.4, 122.7, 125.9, 126.0, 126.0, 126.0, 116.3, 102.0, 102.1, 80.1, 52.0, 19.3, 0.9, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.6, 13.4, 20.5, 85.0, 103.2, 105.8, 101.8, 103.2, 104.0, 71.4, 95.7, 99.2, 72.7, 21.6, 0.6, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 7.2, 50.1, 91.2, 104.4, 124.4, 118.5, 86.0, 43.8, 83.6, 75.7, 9.8, 50.4, 40.3, 14.3, 1.4, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.1, 15.3, 77.3, 122.4, 126.0, 126.0, 126.0, 126.0, 115.8, 124.6, 94.4, 89.9, 96.5, 71.5, 23.5, null, null, null, null]], "caps": [132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3, 132.3], "alerts": [[], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], [], []]}</script>
     </details>
-    <details class="site-acc" data-site="longleaf pine solar, llc">
+    <details class="site-acc" data-site="longleaf pine solar, llc" open>
       <summary>
         <span class="acc-name">Longleaf Pine Solar, LLC</span>
         
@@ -1951,7 +2175,22 @@ wrote:
       </summary>
       <div class="acc-body">
         
-        
+        <div class="email-section">
+      <div class="email-header">Site Emails (2)</div>
+      <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
+      <tr>
+          <td>2026-06-25</td>
+          <td><span class="email-cat">Construction</span></td>
+          <td><b>Re: Longleaf Solar Pay App 13 — Final Completion</b><br><span class="email-body">Closeout of Longleaf construction — final completion.</span>
+            </td>
+          <td class="muted">Steve (SolRiver); Glenn McDonald/Bette Anne Mellen</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Regulatory / REC</span></td>
+          <td><b>Longleaf &amp; Williams Solar — filing Notice of Termination (NO</b><br><span class="email-body">Permit closeout (Notice of Termination) for two NC sites.</span>
+            </td>
+          <td class="muted">Steve/Abhinav (SolRiver) ↔ Chris Bailey (NC DEQ-DE</td>
+        </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>All 40 inverters are online and producing as of Jun 9 at 8:10 PM EDT, with site output tracking irradiance on a light-rain day per the production and expected chart.</li><li>A site-wide outage occurred Jun 3–4, with zero meter and inverter production both days visible on the production meter chart.</li><li>Cause is undetermined from available data.</li><li>Estimated loss ~83 MWh (2 days, 100% capacity, ~42 MWh/day expected).</li><li>Production fully recovered Jun 5.</li></ul></div>
         
     <div class="diag-card">
@@ -1972,10 +2211,17 @@ Tracker Controller 1 has been offline since Jun 3 with minimal energy impact (~1
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt18" onchange="sortStrip(18, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb18"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm18" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm18" class="strip-canvas" data-site="Longleaf Pine Solar, LLC"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt18">Capacity Factor (%)</span>
@@ -2016,10 +2262,17 @@ Tracker Controller 1 has been offline since Jun 3 with minimal energy impact (~1
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt19" onchange="sortStrip(19, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb19"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm19" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm19" class="strip-canvas" data-site="McLean"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt19">Capacity Factor (%)</span>
@@ -2069,10 +2322,17 @@ Tracker Controller 1 has been offline since Jun 3 with minimal energy impact (~1
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt20" onchange="sortStrip(20, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb20"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm20" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm20" class="strip-canvas" data-site="RIT"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt20">Capacity Factor (%)</span>
@@ -2113,10 +2373,17 @@ Tracker Controller 1 has been offline since Jun 3 with minimal energy impact (~1
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt21" onchange="sortStrip(21, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb21"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm21" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm21" class="strip-canvas" data-site="RRH 1 &amp; 2"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt21">Capacity Factor (%)</span>
@@ -2220,10 +2487,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt22" onchange="sortStrip(22, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb22"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm22" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm22" class="strip-canvas" data-site="Richmond"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt22">Capacity Factor (%)</span>
@@ -2251,7 +2525,7 @@ Links:
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (1)</div>
+      <div class="email-header">Site Emails (2)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-22</td>
@@ -2315,6 +2589,12 @@ wrote:
 &gt; finds that if the participant’s subscription has generated more kWh than
 &gt; the site consumed during the previous twelve months, the Participant wi…</pre></details></td>
           <td class="muted">Steve Maloney / Brandon Conard (SolRiver) ↔ Oregon</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Regulatory / REC</span></td>
+          <td><b>Arcadia/PGE — Oregon Shines QRE Agreement (Sheridan, Auburn,</b><br><span class="email-body">Oregon Shines QRE REC compliance for 3 OR sites.</span>
+            </td>
+          <td class="muted">SolRiver (Steve, Riley) / Perch (Eric Timlin) / PG</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>Inverter 1 is online and producing, with hardware last update at Jun 9 at 5:09 PM PDT.</li><li>Current conditions are light rain at 59°F, and today's production reached ~2.5 MW at midday under variable irradiance.</li><li>30-day Energy Performance Index averages 1.02 and inverter availability is 100%.</li><li>Total production of 829 MWh is 114% of estimate.</li><li>No major losses identified on the sampled inverter; tracker losses are minimal (&lt;25 kWh/day).</li></ul></div>
         
@@ -2324,10 +2604,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt23" onchange="sortStrip(23, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb23"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm23" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm23" class="strip-canvas" data-site="Sheridan Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt23">Capacity Factor (%)</span>
@@ -2414,10 +2701,17 @@ No production events in the reporting window. A brief site dip on Jun 5 (EPI 0.8
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt24" onchange="sortStrip(24, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb24"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm24" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm24" class="strip-canvas" data-site="Shorthorn"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt24">Capacity Factor (%)</span>
@@ -2510,10 +2804,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt25" onchange="sortStrip(25, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb25"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm25" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm25" class="strip-canvas" data-site="Upson"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt25">Capacity Factor (%)</span>
@@ -2549,10 +2850,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt26" onchange="sortStrip(26, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb26"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm26" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm26" class="strip-canvas" data-site="WCPS - Kate Collins Middle School"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt26">Capacity Factor (%)</span>
@@ -2588,10 +2896,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt27" onchange="sortStrip(27, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb27"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm27" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm27" class="strip-canvas" data-site="WCPS - Waynesboro High School"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt27">Capacity Factor (%)</span>
@@ -2627,10 +2942,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt28" onchange="sortStrip(28, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb28"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm28" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm28" class="strip-canvas" data-site="WCPS - Westwood Hills Elementary School"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt28">Capacity Factor (%)</span>
@@ -2666,10 +2988,17 @@ Links:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt29" onchange="sortStrip(29, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb29"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm29" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm29" class="strip-canvas" data-site="WCPS - William Perry Elementary School"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt29">Capacity Factor (%)</span>
@@ -2697,7 +3026,7 @@ Links:
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (2)</div>
+      <div class="email-header">Site Emails (3)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-16</td>
@@ -2809,6 +3138,12 @@ wrote:
 &gt; finds that if the participant’s subscription has generated more kWh than
 &gt; the site consumed during the previous twelve months, the Participant wi…</pre></details></td>
           <td class="muted">Steve Maloney / Brandon Conard (SolRiver) ↔ Oregon</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Regulatory / REC</span></td>
+          <td><b>Arcadia/PGE — Oregon Shines QRE Agreement (Sheridan, Auburn,</b><br><span class="email-body">Oregon Shines QRE REC compliance for 3 OR sites.</span>
+            </td>
+          <td class="muted">SolRiver (Steve, Riley) / Perch (Eric Timlin) / PG</td>
         </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>Inverter 1 is online and producing, with the hardware last reporting at 5:07 PM PDT on Jun 9.</li><li>Light rain is reducing output today, with a peak hourly output of ~2.4 MWh this morning per the production chart.</li><li>No production events in the last 30 days.</li><li>Inverter availability held at 100%.</li><li>The 30-day EPI averaged 1.07, persistently above 1.0, suggesting a PV model or POA calibration issue rather than a plant problem.</li></ul></div>
         
@@ -2818,10 +3153,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt30" onchange="sortStrip(30, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb30"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm30" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm30" class="strip-canvas" data-site="Wallace Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt30">Capacity Factor (%)</span>
@@ -2848,7 +3190,34 @@ wrote:
       </summary>
       <div class="acc-body">
         
-        
+        <div class="email-section">
+      <div class="email-header">Site Emails (2)</div>
+      <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
+      <tr>
+          <td>2026-06-24</td>
+          <td><span class="email-cat">Grid / Utility</span></td>
+          <td><b>NARENCO O&amp;M | 06/24/26 Incident Report</b><br><span class="email-body">Utility trip at Warbler; reclosed remotely.</span>
+            <details class='transcript-details'><summary>Full transcript</summary><pre class='comm-body'>NCC Daily WO Report - Sol River
+
+Ticket #: 50399
+Site: Warbler
+Start Date | Time: 06/24/2026 | 06:42
+End Date | Time: 06/24/2026 | 08:30
+Issue: Utility Tripped the site offline at 06:42 on 06/24/2026. Production restored to the site by the NCC remotely at 08:30 on 06/24/2026.
+
+===============================================================
+
+# Part 3 — New &amp; Updated Since 2026-06-27 (6/28–6/30 cycle)
+
+*Grid/utility trips recurred at the NC sites (Elk, Warbler, Whitetail all tripped 6/28; NCC reclosed Whitetail and Washington remotely). The Elk theft response advanced on insurance (Marsh claim kickoff call set for 6/30). A new Bulloch County, GA property-tax track opened — sourcing a certified appraiser (BBG, Keystone, Bowery, GMASS, Smithmyer) for the §48-5-311(f) arbitration plus peer-operator coordination. Also: Longleaf/Williams NOT permit closeout with NCDEQ, Oregon Shines QRE REC reports filed by Perch, and the Solectria spare-inverter lead time (4–5 mo).*</pre></details></td>
+          <td class="muted">projects@ (NARENCO NCC) → Brandon; Jayme/Joseph/Ja</td>
+        </tr><tr>
+          <td>2026-06-29</td>
+          <td><span class="email-cat">Grid / Utility</span></td>
+          <td><b>SR/NRCO — Site Trips/Outages on 6/28</b><br><span class="email-body">All three NC sites showed 6/28 outages per AlsoEnergy.</span>
+            </td>
+          <td class="muted">Abhinav Korni (SolRiver) → NARENCO (Jayme Orrock, </td>
+        </tr></table></div>
         <div class='ai-summary'><div class='ai-label'>AI Analysis</div><ul class='ai-bullets'><li>All 32 Sungrow SG125 inverters are online and communicating as of Jun 9 at 8:06 PM EDT, with all balance-of-plant devices reporting normally.</li><li>Today's production was limited by cloud cover; recent clear days (Jun 3–5) reached the 4 MW AC cap during midday hours per the production and expected chart.</li><li>No discrete production events in the last two weeks.</li><li>Day-to-day variability on May 22–26 and Jun 1–2 aligns with weather, not equipment issues.</li><li>30-day Energy Performance Index averaged 0.88 and inverter availability 97%.</li></ul></div>
         
     <div class="diag-card">
@@ -2876,10 +3245,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt31" onchange="sortStrip(31, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb31"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm31" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm31" class="strip-canvas" data-site="Warbler"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt31">Capacity Factor (%)</span>
@@ -2920,10 +3296,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt32" onchange="sortStrip(32, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb32"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm32" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm32" class="strip-canvas" data-site="Whitehall Solar"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt32">Capacity Factor (%)</span>
@@ -2951,7 +3334,7 @@ wrote:
       <div class="acc-body">
         
         <div class="email-section">
-      <div class="email-header">Site Emails (8)</div>
+      <div class="email-header">Site Emails (11)</div>
       <table class="mini"><tr><th>Date</th><th>Category</th><th>Subject / Summary</th><th>From</th></tr>
       <tr>
           <td>2026-06-23</td>
@@ -3080,10 +3463,17 @@ wrote:
             <option value="cf">Capacity Factor (%)</option>
             <option value="kw">Production &ndash; AC (kW)</option>
           </select>
+          <label style="margin-left:10px">Sort:</label>
+          <select id="srt33" onchange="sortStrip(33, this.value)">
+            <option value="none">Original order</option>
+            <option value="desc">&#9660; Highest first</option>
+            <option value="asc">&#9650; Lowest first</option>
+          </select>
+          <span style="font-size:11px;color:#888;margin-left:10px">&#128065; Click any day for detail</span>
         </div>
         <div class="strip-wrap">
           <div class="strip-labels" id="lb33"></div>
-          <div style="flex:1;min-width:0"><canvas id="hm33" class="strip-canvas"></canvas></div>
+          <div style="flex:1;min-width:0"><canvas id="hm33" class="strip-canvas" data-site="Whitetail"></canvas></div>
         </div>
         <div class="legend" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <span class="legend-title" id="lt33">Capacity Factor (%)</span>
@@ -3192,7 +3582,7 @@ wrote:
           <td title="GameChange Tracker Control 2.1">GameChange Tracker Control 2.1</td>
           <td title="Individual Tracker Alarm60: Tracking Disabled	 Individual Tracker Alarm60: E-Stop is pressed">Gamechange Tracker Alert<div class="desc">Individual Tracker Alarm60: Tracking Disabled	 Individual Tracker Alarm60: E-Stop is pressed</div></td>
           <td>06-24 17:49</td>
-          <td>150.3 h</td>
+          <td>150.5 h</td>
           <td>High</td>
           <td><b class='red'>OPEN</b></td>
           <td class="muted">Phase Angle (°)</td>
@@ -3262,7 +3652,7 @@ wrote:
           <td title="CPS SCH125kTL Inv - 8">CPS SCH125kTL Inv - 8</td>
           <td title="External Fan Err - ExtFanerr">.Chint / Solectria / Canadian String Inv Faults<div class="desc">External Fan Err - ExtFanerr</div></td>
           <td>06-24 13:56</td>
-          <td>154.1 h</td>
+          <td>154.4 h</td>
           <td>High</td>
           <td><b class='red'>OPEN</b></td>
           <td class="muted">Power (kW)</td>
@@ -3312,7 +3702,7 @@ wrote:
           <td title="INVERTER 1">INVERTER 1</td>
           <td title="External Fan Damaged">Solectria XGI 1500 Series - Fault Alert<div class="desc">External Fan Damaged</div></td>
           <td>06-24 11:58</td>
-          <td>156.1 h</td>
+          <td>156.4 h</td>
           <td>High</td>
           <td><b class='red'>OPEN</b></td>
           <td class="muted">Power (kW)</td>
@@ -3712,7 +4102,7 @@ wrote:
           <td title="Inverter - 03.10">Inverter - 03.10</td>
           <td title="Islanding (Grid power outage)">Sungrow Inverter Fault Alert<div class="desc">Islanding (Grid power outage)</div></td>
           <td>06-24 10:03</td>
-          <td>158.0 h</td>
+          <td>158.3 h</td>
           <td>High</td>
           <td><b class='red'>OPEN</b></td>
           <td class="muted">AC Voltage (V)</td>
@@ -3722,7 +4112,7 @@ wrote:
           <td title="Inverter - 01.05">Inverter - 01.05</td>
           <td title="Islanding (Grid power outage)">Sungrow Inverter Fault Alert<div class="desc">Islanding (Grid power outage)</div></td>
           <td>06-24 09:51</td>
-          <td>158.2 h</td>
+          <td>158.5 h</td>
           <td>High</td>
           <td><b class='red'>OPEN</b></td>
           <td class="muted">AC Voltage (V)</td>
@@ -3732,7 +4122,7 @@ wrote:
           <td title="Inverter - 03.11">Inverter - 03.11</td>
           <td title="Islanding (Grid power outage)">Sungrow Inverter Fault Alert<div class="desc">Islanding (Grid power outage)</div></td>
           <td>06-24 09:51</td>
-          <td>158.2 h</td>
+          <td>158.5 h</td>
           <td>High</td>
           <td><b class='red'>OPEN</b></td>
           <td class="muted">AC Voltage (V)</td>
@@ -3742,7 +4132,7 @@ wrote:
           <td title="Inverter - 03.14">Inverter - 03.14</td>
           <td title="Islanding (Grid power outage)">Sungrow Inverter Fault Alert<div class="desc">Islanding (Grid power outage)</div></td>
           <td>06-24 09:46</td>
-          <td>158.3 h</td>
+          <td>158.6 h</td>
           <td>High</td>
           <td><b class='red'>OPEN</b></td>
           <td class="muted">AC Voltage (V)</td>
@@ -7737,6 +8127,7 @@ function jet(v) {
 
 const ROW_H = 14, GAP = 1, AVG_H = 16, IRR_H = 16, AXIS_H = 36;
 const stripCache = {};
+const stripSortOrder = {};
 
 function drawStrip(sid, mode) {
   const dEl = document.getElementById('d' + sid);
@@ -7778,6 +8169,17 @@ function drawStrip(sid, mode) {
   /* pick data source based on mode */
   const isCF = mode === 'cf';
   const srcRows = isCF ? data.vals : data.kw;
+
+  /* sorted inverter indices — null/undefined treated as 0 (offline = worst) */
+  const _sort = stripSortOrder[sid] || 'none';
+  let sortedIdx = Array.from({length: nInv}, (_, i) => i);
+  if (_sort !== 'none') {
+    const _avgs = srcRows.map(row =>
+      row.reduce((s, v) => s + (v !== null && v !== undefined ? v : 0), 0) / row.length
+    );
+    sortedIdx.sort((a, b) => _sort === 'asc' ? _avgs[a] - _avgs[b] : _avgs[b] - _avgs[a]);
+  }
+  data._sorted = sortedIdx;
 
   /* compute max kW per inverter for kW-mode scaling */
   let maxKwPerInv = [];
@@ -7847,10 +8249,10 @@ function drawStrip(sid, mode) {
   paintRow(avg, y, AVG_H, 100);
   y += AVG_H;
 
-  /* inverter rows */
-  srcRows.forEach((row, i) => {
-    const scale = isCF ? 100 : (maxKwPerInv[i] || 1);
-    paintRow(row, y + i * ROW_H, ROW_H, scale);
+  /* inverter rows — drawn in sorted order */
+  sortedIdx.forEach((origIdx, drawIdx) => {
+    const scale = isCF ? 100 : (maxKwPerInv[origIdx] || 1);
+    paintRow(srcRows[origIdx], y + drawIdx * ROW_H, ROW_H, scale);
   });
 
   /* x-axis */
@@ -7882,7 +8284,7 @@ function drawStrip(sid, mode) {
   let labelsHtml = '';
   if (hasIrrad) labelsHtml += '<div style="height:' + IRR_H + 'px;line-height:' + IRR_H + 'px;color:#d48800;font-weight:600">Irradiance</div>';
   labelsHtml += '<div class="avg" style="height:' + AVG_H + 'px;line-height:' + AVG_H + 'px">Average</div>';
-  labelsHtml += data.invs.map(n => `<div title="${n}">${n}</div>`).join('');
+  labelsHtml += sortedIdx.map(i => `<div title="${data.invs[i]}">${data.invs[i]}</div>`).join('');
   lb.innerHTML = labelsHtml;
   cv.dataset.drawn = '1';
   cv.dataset.mode = mode;
@@ -7938,10 +8340,11 @@ function drawStrip(sid, mode) {
     else {
       const rowIdx = Math.floor((my - irradOffset - AVG_H) / ROW_H);
       if (rowIdx < 0 || rowIdx >= nInv) { tip.style.display = 'none'; return; }
-      const cf = data.vals[rowIdx] ? data.vals[rowIdx][b] : null;
-      const kw = data.kw && data.kw[rowIdx] ? data.kw[rowIdx][b] : null;
-      const cap = data.caps ? data.caps[rowIdx] : 0;
-      const name = data.invs[rowIdx];
+      const origIdx = sortedIdx[rowIdx];
+      const cf = data.vals[origIdx] ? data.vals[origIdx][b] : null;
+      const kw = data.kw && data.kw[origIdx] ? data.kw[origIdx][b] : null;
+      const cap = data.caps ? data.caps[origIdx] : 0;
+      const name = data.invs[origIdx];
       html = `<b>${name}</b><br>${timeStr}<br>`;
       if (cf === null && kw === null) {
         html += '<span style="color:#bbb">No data</span>';
@@ -7950,21 +8353,107 @@ function drawStrip(sid, mode) {
         if (kw !== null) html += `${kw.toFixed(2)} kW actual`;
         if (cap > 0) html += ` / ${Math.round(cap)} kW capacity`;
       }
-      if (data.alerts[rowIdx] && data.alerts[rowIdx].length)
+      if (data.alerts[origIdx] && data.alerts[origIdx].length)
         html += '<br><span style="color:#ff9999;font-size:10px">' +
-                data.alerts[rowIdx].slice(0, 3).join('<br>') + '</span>';
+                data.alerts[origIdx].slice(0, 3).join('<br>') + '</span>';
     }
     tip.innerHTML = html; tip.style.display = 'block';
     tip.style.left = Math.min(e.clientX + 14, window.innerWidth - 360) + 'px';
     tip.style.top = (e.clientY + 14) + 'px';
   };
   cv.onmouseleave = () => tip.style.display = 'none';
+
+  /* day-column click → expanded bar chart preview */
+  cv.style.cursor = 'crosshair';
+  cv.onclick = e => {
+    const rect = cv.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const b = Math.floor(mx / bw);
+    if (b < 0 || b >= data.bins) return;
+    const binsPerDay = Math.round(24 * 60 / bm);
+    showDayModal(sid, Math.floor(b / binsPerDay), bm, isCF);
+  };
 }
 
 function switchMode(sid) {
   const sel = document.getElementById('sel' + sid);
+  const srt = document.getElementById('srt' + sid);
+  stripSortOrder[sid] = srt ? srt.value : 'none';
   if (sel) drawStrip(sid, sel.value);
 }
+
+function sortStrip(sid, order) {
+  stripSortOrder[sid] = order;
+  const mode = (document.getElementById('sel' + sid) || {}).value || 'cf';
+  drawStrip(sid, mode);
+}
+
+function showDayModal(sid, dayIdx, bm, isCF) {
+  const data = stripCache[sid];
+  if (!data) return;
+  bm = bm || data.binMin || 60;
+  const binsPerDay = Math.round(24 * 60 / bm);
+  const start = dayIdx * binsPerDay;
+  const end = Math.min(start + binsPerDay, data.bins);
+  const src = isCF ? data.vals : data.kw;
+  const sortedIndices = data._sorted || Array.from({length: data.invs.length}, (_, i) => i);
+  const labels = [], values = [], offlineFlags = [];
+  sortedIndices.forEach(origIdx => {
+    labels.push(data.invs[origIdx]);
+    const row = (src[origIdx] || []).slice(start, end);
+    const allNull = row.every(v => v === null || v === undefined);
+    offlineFlags.push(allNull);
+    const avg = row.reduce((s, v) => s + (v !== null && v !== undefined ? v : 0), 0) / Math.max(row.length, 1);
+    values.push(Math.round(avg * 10) / 10);
+  });
+  const t0 = new Date(data.start.replace(' ', 'T'));
+  const dayDate = new Date(t0.getTime() + dayIdx * binsPerDay * bm * 60000);
+  const dateStr = (dayDate.getMonth()+1) + '/' + dayDate.getDate() + '/' + (dayDate.getFullYear() % 100);
+  const cv = document.getElementById('hm' + sid);
+  const siteName = cv ? (cv.dataset.site || '') : '';
+  const maxVal = isCF ? 100 : (Math.max(...values.filter(v => v > 0)) || 1);
+  const colors = values.map((v, i) => {
+    if (offlineFlags[i]) return 'rgba(200,200,200,0.7)';
+    const [r, g, b_] = jet(Math.min(v / maxVal, 1));
+    return `rgba(${r},${g},${b_},0.85)`;
+  });
+  const old = document.getElementById('dayModal');
+  if (old) old.remove();
+  const modal = document.createElement('div');
+  modal.id = 'dayModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center';
+  modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+  const chartH = Math.min(Math.max(labels.length * 22 + 60, 220), 600);
+  modal.innerHTML = `<div style="background:#fff;border-radius:8px;box-shadow:0 8px 32px rgba(0,0,0,.3);padding:18px 20px;width:700px;max-width:95vw;max-height:92vh;overflow-y:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <b style="font-size:14px;color:#1F4E79">${siteName} — ${dateStr} &nbsp;·&nbsp; ${isCF ? 'Capacity Factor' : 'AC Production'} (day detail)</b>
+      <button onclick="document.getElementById('dayModal').remove()" style="border:none;background:#f0f0f0;border-radius:50%;width:28px;height:28px;font-size:16px;cursor:pointer;line-height:1">✕</button>
+    </div>
+    <div style="height:${chartH}px"><canvas id="dayModalChart"></canvas></div>
+    <div style="font-size:11px;color:#999;margin-top:8px">Grey bars = offline / no-data (treated as 0). Average over ${end - start} × ${bm}-min bins.</div>
+  </div>`;
+  document.body.appendChild(modal);
+  new Chart(document.getElementById('dayModalChart'), {
+    type: 'bar',
+    data: { labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 0 }] },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      scales: {
+        x: { beginAtZero: true, max: isCF ? 100 : undefined,
+               grid: { color: 'rgba(0,0,0,.06)' },
+               title: { display: true, text: isCF ? 'Avg Capacity Factor (%)' : 'Avg AC Production (kW)', font: { size: 11 } } },
+        y: { ticks: { font: { size: 10 } } }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x.toFixed(1)} ${isCF ? '%' : 'kW'}` } }
+      }
+    }
+  });
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { const m = document.getElementById('dayModal'); if (m) m.remove(); }
+});
 
 document.querySelectorAll('details.site-acc').forEach(d => {
   const cvEl = d.querySelector('canvas.strip-canvas');
